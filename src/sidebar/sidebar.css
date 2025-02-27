@@ -4720,7 +4720,7 @@ input[type="button"].btn-block {
   }
 }
 
-.nav {
+.nav-sidebar {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -11887,7 +11887,7 @@ h5,
   }
 
   #sidebar .custom-menu {
-    margin-right: -50px !important;
+    margin-right: 50px !important;
     top: 10px !important;
   }
 }
@@ -11896,7 +11896,7 @@ h5,
   display: inline-block;
   position: absolute;
   top: 20px;
-  right: 0;
+  right: 5px;
   margin-right: -20px;
   -webkit-transition: 0.3s;
   -o-transition: 0.3s;

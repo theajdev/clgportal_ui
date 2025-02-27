@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { logout } from '../../services/AuthService';
 
 const AdminDashboard = () => {
@@ -13,7 +13,7 @@ const AdminDashboard = () => {
   return (
     <div>
       <div className="wrapper d-flex align-items-stretch">
-        <nav id="sidebar" className="nav">
+        <nav id="sidebar" className="nav-sidebar">
           <div className="custom-menu">
             <button type="button" id="sidebarCollapse" className="btn btn-primary">
               <i className="bi bi-justify"></i>
@@ -44,8 +44,9 @@ const AdminDashboard = () => {
             </ul>
           </div>
         </nav>
-      </div>
-    </div>
+        <Outlet />
+      </div >
+    </div >
   );
 };
 

@@ -33,6 +33,7 @@ function App() {
             <Footer />
           </AuthenticatedRoute>
         }>
+          
           <Route path="usertype" element={<UserType />} />
           <Route path="courses" element={<Courses />} />
           <Route path="manageCourses" element={<ManageCourses />} />
@@ -40,6 +41,7 @@ function App() {
           <Route path="teachers" element={<Teachers />} />
           <Route path="adminNotice" element={<AdminNotice />} />
         </Route>
+
       </Routes>
     </BrowserRouter>
   );
