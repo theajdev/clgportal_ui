@@ -6648,7 +6648,7 @@ h5,
 }
 
 #sidebar.active {
-  margin-left: -250px;
+  margin-left: -264px;
 }
 
 #sidebar.active .custom-menu {
@@ -6699,7 +6699,7 @@ h5,
 
 @media (max-width: 991.98px) {
   #sidebar {
-    margin-left: -250px;
+    margin-left: -264px;
   }
 
   #sidebar.active {
