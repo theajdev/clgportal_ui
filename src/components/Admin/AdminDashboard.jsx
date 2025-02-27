@@ -39,7 +39,7 @@ const AdminDashboard = () => {
                 <Link to={'/admin/adminNotice'} className="nav-link" aria-current="page">Admin Notice</Link>
               </li>
               <li>
-                <a href='**' onClick={handleLogout} className="nav-link" aria-current="page">Logout</a>
+                <a href='##' onClick={handleLogout} className="nav-link" aria-current="page">Logout</a>
               </li>
             </ul>
           </div>

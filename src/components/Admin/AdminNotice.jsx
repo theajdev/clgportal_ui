@@ -1,8 +1,12 @@
 import React from 'react'
+import Header from './Header'
 
 const AdminNotice = () => {
   return (
-    <div>AdminNotice</div>
+    <div className='container'>
+      <Header />
+      Admin Notice
+    </div>
   )
 }
 

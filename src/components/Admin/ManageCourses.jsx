@@ -1,8 +1,12 @@
 import React from 'react'
+import Header from './Header'
 
 const ManageCourses = () => {
   return (
-    <div>ManageCourses</div>
+    <div className='container'>
+      <Header />
+      Manage Courses
+    </div>
   )
 }
 
