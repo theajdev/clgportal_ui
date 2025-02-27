@@ -2,8 +2,12 @@ import React from 'react';
 
 const UserType = () => {
   return (
-    <div className='mx-auto'>UserType</div>
+
+    <div>
+      <h1>UserType</h1>
+    </div>
+
   )
 }
 
-export default UserType
+export default UserType;

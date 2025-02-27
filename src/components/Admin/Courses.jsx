@@ -1,8 +1,11 @@
 import React from 'react'
+import AdminDashboard from './AdminDashboard'
 
 const Cousres = () => {
   return (
-    <div>Couses</div>
+    <div>
+      <AdminDashboard />
+      Couses</div>
   )
 }
 

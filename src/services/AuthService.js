@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const AUTH_REST_API_BASE_URL = 'https://clgportal-api.onrender.com/api/auth';
+//const AUTH_REST_API_BASE_URL = 'https://clgportal-api.onrender.com/api/auth';
+const AUTH_REST_API_BASE_URL = 'http://localhost:2025/api/auth'
 export const loginAPICall = (usernameOrEmail, password) => axios.post(AUTH_REST_API_BASE_URL + '/login', { usernameOrEmail, password });
 export const storeToken = (token) => localStorage.setItem("token", token);
 export const getToken = (token) => localStorage.getItem("token");
