@@ -38,11 +38,11 @@ const Header = () => {
 
         <nav className="navbar navbar-expand-lg bg-purple" style={{ 'backgroundColor': '#0000' }}>
             <div className='dropdown ms-auto'>
-                <a className="ms-2 btn dropdown-toggle me-auto" href="##" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                <a className="ms-5 btn dropdown-toggle" href="##" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                     {isLightTheme ? (
-                        <i className="bi bi-moon-stars-fill"></i>
+                        <i className="ms-2 bi bi-moon-stars-fill"></i>
                     ) : (
-                        <i className="text-primary bi bi-brightness-high"></i>
+                        <i className="ms-2 text-primary bi bi-brightness-high"></i>
                     )}
                 </a>
                 <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink">
@@ -51,7 +51,7 @@ const Header = () => {
                     <li><a className={`dropdown-item d-flex align-items-center btn-light ${activeTheme === "light" ? "active" : ""
                         }`} href="###" onClick={getDarkTheme}><i className="bi bi-brightness-high me-2 opacity-50"></i>Light</a></li>
                 </ul>
-                <a className="btn dropdown-toggle me-auto" href="##" role="button" id="logoutMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                <a className="btn dropdown-toggle ms-5" href="##" role="button" id="logoutMenu" data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="/default.png" alt="Avatar Logo" width='30px;' className="rounded-pill" />
                 </a>
                 {
