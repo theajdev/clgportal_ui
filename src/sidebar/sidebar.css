@@ -6783,6 +6783,12 @@ a[data-toggle="collapsed"] {
   }
 }
 
+@media(max-width:624px) {
+  #headerNav {
+    margin-left: 26px;
+  }
+}
+
 #content {
   width: 100%;
   padding: 0;
