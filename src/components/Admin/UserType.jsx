@@ -3,11 +3,10 @@ import Header from './Header';
 
 const UserType = () => {
   return (
-
     <div className='container'>
       <Header />
       <div className='row'>
-        <div className='col-md-3'>
+        <div className='col-md-3 mt-4'>
           <div className="card border-primary mb-3">
             <div className="card-header">Header</div>
             <div className="card-body text-primary">
@@ -16,7 +15,7 @@ const UserType = () => {
             </div>
           </div>
         </div>
-        <div className='col-md-3'>
+        <div className='col-md-3 mt-4'>
           <div className="card border-secondary mb-3">
             <div className="card-header">Header</div>
             <div className="card-body text-secondary">
@@ -25,7 +24,7 @@ const UserType = () => {
             </div>
           </div>
         </div>
-        <div className='col-md-3'>
+        <div className='col-md-3 mt-4'>
           <div className="card border-success mb-3">
             <div className="card-header">Header</div>
             <div className="card-body text-success">
@@ -34,7 +33,7 @@ const UserType = () => {
             </div>
           </div>
         </div>
-        <div className='col-md-3'>
+        <div className='col-md-3 mt-4'>
           <div className="card border-danger mb-3">
             <div className="card-header">Header</div>
             <div className="card-body text-danger">

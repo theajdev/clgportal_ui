@@ -23,27 +23,30 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Login />} />
+    <div className='container-fluid'>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Login />} />
 
-        <Route path="/admin" element={
-          <AuthenticatedRoute>
-            <AdminDashboard />
-            <Footer />
-          </AuthenticatedRoute>
-        }>
-          
-          <Route path="usertype" element={<UserType />} />
-          <Route path="courses" element={<Courses />} />
-          <Route path="manageCourses" element={<ManageCourses />} />
-          <Route path="subjects" element={<Subjects />} />
-          <Route path="teachers" element={<Teachers />} />
-          <Route path="adminNotice" element={<AdminNotice />} />
-        </Route>
+          <Route path="/admin" element={
+            <AuthenticatedRoute>
 
-      </Routes>
-    </BrowserRouter>
+              <AdminDashboard />
+              <Footer />
+            </AuthenticatedRoute>
+          }>
+
+            <Route path="usertype" element={<UserType />} />
+            <Route path="courses" element={<Courses />} />
+            <Route path="manageCourses" element={<ManageCourses />} />
+            <Route path="subjects" element={<Subjects />} />
+            <Route path="teachers" element={<Teachers />} />
+            <Route path="adminNotice" element={<AdminNotice />} />
+          </Route>
+
+        </Routes>
+      </BrowserRouter>
+    </div>
   );
 }
 

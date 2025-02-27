@@ -11792,11 +11792,10 @@ h5,
 }
 
 .navbar {
-  padding: 15px 10px;
+
   background: #fff;
   border: none;
   border-radius: 0;
-  margin-bottom: 40px;
   -webkit-box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
 }
@@ -11887,7 +11886,7 @@ h5,
   }
 
   #sidebar .custom-menu {
-    margin-right: 50px !important;
+    margin-right: -50px !important;
     top: 10px !important;
   }
 }
