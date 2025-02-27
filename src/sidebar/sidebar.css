@@ -6611,6 +6611,11 @@ h5,
   background-position: center center;
 }
 
+a {
+  text-decoration: none;
+}
+
+
 
 .navbar {
 
@@ -6710,6 +6715,8 @@ h5,
     margin-right: -50px !important;
     top: 10px !important;
   }
+
+
 }
 
 #sidebar .custom-menu {
@@ -6729,6 +6736,8 @@ h5,
     -o-transition: none;
     transition: none;
   }
+
+
 }
 
 #sidebar .custom-menu .btn {
@@ -6765,6 +6774,12 @@ a[data-toggle="collapsed"] {
 @media (max-width: 991.98px) {
   #sidebarcollapsed span {
     display: none;
+  }
+}
+
+@media(max-width:235px) {
+  #logoutMenu {
+    margin-left: 3rem !important;
   }
 }
 

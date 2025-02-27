@@ -51,7 +51,7 @@ const Header = () => {
                     <li><a className={`dropdown-item d-flex align-items-center btn-light ${activeTheme === "light" ? "active" : ""
                         }`} href="###" onClick={getDarkTheme}><i className="bi bi-brightness-high me-2 opacity-50"></i>Light</a></li>
                 </ul>
-                <a className="btn dropdown-toggle ms-5" href="##" role="button" id="logoutMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                <a className="btn dropdown-toggle" href="##" role="button" id="logoutMenu" data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="/default.png" alt="Avatar Logo" width='30px;' className="rounded-pill" />
                 </a>
                 {
