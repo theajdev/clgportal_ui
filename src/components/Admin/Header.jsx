@@ -45,7 +45,7 @@ const Header = () => {
                         <i className="text-primary bi bi-brightness-high"></i>
                     )}
                 </a>
-                <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink">
                     <li><a className={`dropdown-item d-flex align-items-center btn-dark ${activeTheme === "dark" ? "active" : ""
                         }`} href="###" onClick={getDarkTheme}><i className="bi bi-moon-stars-fill me-2 opacity-50"></i>Dark</a></li>
                     <li><a className={`dropdown-item d-flex align-items-center btn-light ${activeTheme === "light" ? "active" : ""
