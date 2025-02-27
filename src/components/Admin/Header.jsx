@@ -38,7 +38,7 @@ const Header = () => {
 
         <nav className="navbar navbar-expand-lg bg-purple" style={{ 'backgroundColor': '#0000' }}>
             <div className='dropdown ms-auto'>
-                <a className="btn dropdown-toggle me-auto" href="##" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                <a className="ms-2 btn dropdown-toggle me-auto" href="##" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                     {isLightTheme ? (
                         <i className="bi bi-moon-stars-fill"></i>
                     ) : (
