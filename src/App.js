@@ -2,7 +2,6 @@ import './App.css';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Login from './components/Login';
-import Footer from './components/Footer';
 import { isUserLoggedIn } from './services/AuthService';
 import UserType from './components/Admin/UserType';
 import Courses from './components/Admin/Courses';  // Typo fixed here (Cousres to Courses)
@@ -11,6 +10,7 @@ import Subjects from './components/Admin/Subjects';
 import Teachers from './components/Admin/Teachers';
 import AdminNotice from './components/Admin/AdminNotice';
 import AdminDashboard from './components/Admin/AdminDashboard';
+
 
 function App() {
 
@@ -22,8 +22,9 @@ function App() {
     return <Navigate to="/" />;
   }
 
+
   return (
-    <div className='container-fluid'>
+    <div>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
@@ -32,7 +33,7 @@ function App() {
             <AuthenticatedRoute>
 
               <AdminDashboard />
-              <Footer />
+
             </AuthenticatedRoute>
           }>
 

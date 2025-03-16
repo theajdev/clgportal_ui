@@ -3,7 +3,7 @@ import React from 'react'
 const Footer = () => {
     return (
         
-        <footer style={{  display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <footer className='App-header'>
             <p className='text-center'>&copy;2024-25, AJ Softwares&#9749;&trade;</p>
         </footer>
         

@@ -6,7 +6,6 @@ const Header = () => {
 
     const isAuth = isUserLoggedIn();
     const username = sessionStorage.getItem("authenticatedUser");
-    console.log(username);
     const [isLightTheme, setIsLightTheme] = useState(false);
     const [activeTheme, setActiveTheme] = useState("light");
     const navigator = useNavigate();

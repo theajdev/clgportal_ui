@@ -65,7 +65,7 @@ const Login = () => {
                 <div className='col-md-6 mx-auto mt-5'>
                     <div className="card">
                         <div className="card-body">
-                            <div className='App-header' disabled={isLoading}>
+                            <div className='App-login' disabled={isLoading}>
                                 <div><img src="./cap.png" alt="login"></img></div>
                                 <form className='login-form' style={{ 'width': '75%' }}>
                                     <div className="mb-3 form-group">
