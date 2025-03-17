@@ -12,7 +12,7 @@ const AdminDashboard = () => {
       <nav id="sidebar" className="nav-sidebar">
         <div className="custom-menu">
           <button type="button" id="sidebarCollapse" className="btn btn-sideBtn">
-            <b><i className="bi bi-justify"></i></b>
+            <i class="bi bi-justify" style={{ "color": "white" }}></i>
             <span className="sr-only">Toggle Menu</span>
           </button>
         </div>
