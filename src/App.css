@@ -1,36 +1,9 @@
-.App {
-  text-align: center;
-  color: #f8f9fa;
-}
-
 .App-header {
-  margin-top: 33vh;
   /* Pushes the footer to the bottom */
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 10px;
-}
-
-.App-login {
-  min-height: 65vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-}
-
-
-
-/* Default Dark Theme */
-body {
-  background-color: #282c34;
-  /* Dark background */
-  color: #f8f9fa;
-  /* Light text */
-  margin: 0;
-  transition: background-color 0.5s, color 0.5s;
 }
 
 .bg-login {
@@ -39,33 +12,16 @@ body {
   background-size: cover;
   display: flex;
   background-attachment: fixed;
-
-}
-
-/* Light Theme */
-.light-theme {
-  background-color: #f8f9fa;
-  /* Light background */
-  color: #343a40;
-  /* Dark text */
-}
-
-.dark-theme {
-  background-color: #343a40;
-  /* Light background */
-  color: #f8f9fa;
-  /* Dark text */
 }
 
 /* Additional Styles */
 .bg-purple {
-  background-color: #702cf9e1;
+  background-color: #866ec7 !important;
 }
-
 
 .dropdown-item.active,
 .dropdown-item:active {
   color: var(--bs-dropdown-link-active-color);
   text-decoration: none;
-  background-color: #702cf9e1 !important;
+  background-color: #866ec7 !important;
 }

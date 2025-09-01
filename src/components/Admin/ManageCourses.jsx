@@ -3,7 +3,7 @@ import Header from './Header'
 
 const ManageCourses = () => {
   return (
-    <div className='container ms-4'>
+    <div className='container'>
       <Header />
       Manage Courses
     </div>
