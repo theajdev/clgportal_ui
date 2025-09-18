@@ -5,7 +5,6 @@ import Login from "./components/Login";
 import UserType from "./components/Admin/UserType";
 import Courses from "./components/Admin/Courses"; // Typo fixed here (Cousres to Courses)
 import ManageCourses from "./components/Admin/ManageCourses";
-import Subjects from "./components/Admin/Subjects";
 import Teachers from "./components/Admin/Teachers";
 import AdminNotice from "./components/Admin/AdminNotice";
 import Header from "./components/Admin/Header";

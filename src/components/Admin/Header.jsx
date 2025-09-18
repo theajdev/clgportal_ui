@@ -25,6 +25,7 @@ const Header = () => {
     const handleLogout = () => {
         doLogout(() => {
             //logged out
+            setLogin(...login, false);
             setLogin(false);
             localStorage.clear();
             sessionStorage.clear();
@@ -75,7 +76,7 @@ const Header = () => {
 
                 <div className="p-4">
                     <h1>
-                        <a href={` ${homeURL}`} className="logo">College Portal</a>
+                        <a href={`${homeURL}`} className="logo">College Portal</a>
                     </h1>
 
                     <ul className="list-unstyled components mb-5">
@@ -201,7 +202,7 @@ const Header = () => {
                             </li>
                         </ul>
                         <div className='vr text-white'></div>
-                        <a className="btn dropdown-toggle" href="#" role="button" id="logoutMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a className="btn dropdown-toggle" href="##" role="button" id="logoutMenu" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="/default.png" alt="Avatar Logo" width='30px' className="rounded-pill" />
                         </a>
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import bootstrap from 'bootstrap/dist/js/bootstrap.js';
 import { toast } from 'react-toastify';
+import { getAllSubjects } from '../../services/AdminServices/SubjectService';
 
 const Subjects = () => {
 
@@ -10,13 +11,6 @@ const Subjects = () => {
     status: '',
   });
 
-  const [data] = useState([
-    { id: 1, name: 'John Doe', age: 28, email: 'john.doe@example.com' },
-    { id: 2, name: 'Jane Smith', age: 34, email: 'jane.smith@example.com' },
-    { id: 3, name: 'Sam Johnson', age: 22, email: 'sam.johnson@example.com' },
-    { id: 4, name: 'Sara Brown', age: 29, email: 'sara.brown@example.com' },
-  ]);
-
   const [subjects, setSubjects] = useState([]);
   const [isUpdate, setIsUpdate] = useState(false);
   const [selected, setSelected] = useState("All");
@@ -24,6 +18,14 @@ const Subjects = () => {
 
   useEffect(() => {
     setIsLoading(true);
+    getAllSubjects().then((res) => {
+      console.log(res);
+      setSubjects(res);
+      setIsLoading(false);
+    }).catch((err) => {
+      console.log(err);
+      setIsLoading(false);
+    });
 
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     tooltipTriggerList.forEach(tooltipTriggerEl => {
