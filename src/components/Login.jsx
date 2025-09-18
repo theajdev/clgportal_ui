@@ -157,7 +157,7 @@ const Login = () => {
                     <div className='App-login' disabled={isLoading}>
 
                         <div className="dropdown position-fixed end-0 mb-3 me-3 bd-mode-toggle">
-                            <button className="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" >
+                            <button className="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" onClick={e => { handleRipple(e); }}>
                                 <svg className="bi my-1 theme-icon-active" aria-hidden="true">
                                     <use href="#circle-half"></use>
                                 </svg>

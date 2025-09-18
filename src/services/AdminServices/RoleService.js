@@ -1,4 +1,4 @@
-import { private_axios_url } from "./base";
+import { private_axios_url } from "../base";
 
 export const getAllRoles = () => {
   return private_axios_url.get("/role/").then((response) => response.data);

@@ -36,6 +36,28 @@ const Header = () => {
         });
     };
 
+    const handleRipple = (e) => {
+        const button = e.currentTarget;
+        const rect = button.getBoundingClientRect();
+
+        // Remove any old ripple
+        document.querySelectorAll('.global-ripple').forEach(el => el.remove());
+
+        const circle = document.createElement('span');
+        circle.classList.add('global-ripple');
+
+        const size = Math.max(rect.width, rect.height) * 2;
+        circle.style.width = circle.style.height = `${size}px`;
+        circle.style.left = `${e.clientX - size / 2}px`;
+        circle.style.top = `${e.clientY - size / 2}px`;
+
+        document.body.appendChild(circle);
+
+        circle.addEventListener('animationend', () => {
+            circle.remove();
+        });
+    };
+
     return (
         <div className="wrapper d-flex align-items-stretch">
             <nav id="sidebar" className={`nav-sidebar ${isSidebarActive ? "active" : ""}`}>
@@ -137,7 +159,7 @@ const Header = () => {
                 <div className="navbar navbar-expand-lg bg-purple">
                     <div className='dropdown bd-mode-toggle ms-auto d-flex'>
                         <div className='vr text-white'></div>
-                        <button className="btn bg-purple py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
+                        <button className="btn bg-purple py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" onClick={e => handleRipple(e)}>
                             <svg className="bi my-1 theme-icon-active text-white" aria-hidden="true">
                                 <use href="#circle-half"></use>
                             </svg>
@@ -203,8 +225,8 @@ const Header = () => {
                 </div>
 
                 <Footer />
-            </main>
-        </div>
+            </main >
+        </div >
     )
 }
 
