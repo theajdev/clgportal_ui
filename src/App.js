@@ -54,7 +54,6 @@ function App() {
             <Route path="usertype" element={<UserType />} />
             <Route path="courses" element={<Courses />} />
             <Route path="manageCourses" element={<ManageCourses />} />
-            <Route path="subjects" element={<Subjects />} />
             <Route path="teachers" element={<Teachers />} />
             <Route path="adminNotice" element={<AdminNotice />} />
           </Route>

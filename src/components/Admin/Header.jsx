@@ -90,9 +90,6 @@ const Header = () => {
                                     <Link to="/admin/courses" className={`nav-link ${location.pathname === '/admin/courses' ? 'active' : ''}`} >Department</Link>
                                 </li>
                                 <li>
-                                    <Link to="/admin/subjects" className={`nav-link ${location.pathname === '/admin/subjects' ? 'active' : ''}`} >Subject</Link>
-                                </li>
-                                <li>
                                     <Link to="/admin/teachers" className={`nav-link ${location.pathname === '/admin/teachers' ? 'active' : ''}`} >Teacher</Link>
                                 </li>
                                 <li>
