@@ -411,7 +411,7 @@ const Cousres = () => {
               <div className={`card-body ${isLoading ? "disabled" : " "}`}>
                 {
                   isLoading ? (<div className="text-center">
-                    <strong role="status">Pleae Wait...</strong>
+                    <strong role="status">Loading courses...</strong>
                     <div className="spinner-grow spinner-grow-sm text-danger" role='status'></div>
                     <div className="spinner-grow spinner-grow-sm text-success" role="status"></div>
                     <div className="spinner-grow spinner-grow-sm text-primary" role="status"></div>
