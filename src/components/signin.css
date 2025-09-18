@@ -48,7 +48,7 @@ body {
   width: 1.5rem;
   height: 100vh;
 }
-.bi {
+.my-1 {
   vertical-align: -0.125em;
   fill: currentColor;
 }
@@ -69,19 +69,19 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 .btn-bd-primary {
-  --bd-violet-bg: #712cf9;
-  --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
-  --bs-btn-font-weight: 600;
-  --bs-btn-color: var(--bs-white);
-  --bs-btn-bg: var(--bd-violet-bg);
-  --bs-btn-border-color: var(--bd-violet-bg);
-  --bs-btn-hover-color: var(--bs-white);
-  --bs-btn-hover-bg: #6528e0;
-  --bs-btn-hover-border-color: #6528e0;
-  --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
-  --bs-btn-active-color: var(--bs-btn-hover-color);
-  --bs-btn-active-bg: #5a23c8;
-  --bs-btn-active-border-color: #5a23c8;
+  --bs-btn-bg: #3b71ca !important;
+  --bs-btn-color: #fff !important;
+  --bs-btn-box-shadow: 0 4px 9px -4px #3b71ca !important;
+  --bs-btn-hover-bg: #3b71ca !important;
+  --bs-btn-hover-color: #fff !important;
+  --bs-btn-focus-bg: #3b71ca !important;
+  --bs-btn-focus-color: #fff !important;
+  --bs-btn-active-bg: #3b71ca !important;
+  --bs-btn-active-color: #fff !important;
+  --bs-btn-box-shadow-state: 0 8px 9px -4px rgba(59, 113, 202, 0.3),
+    0 4px 18px 0 rgba(59, 113, 202, 0.2) !important;
+
+  --bs-btn-font-weight: 600 !important;
 }
 .bd-mode-toggle {
   z-index: 1500;
@@ -92,4 +92,28 @@ body {
 }
 .bd-mode-toggle .dropdown-menu .active .bi {
   display: block !important;
+}
+
+/* Ripple effect styles */
+.ripple-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5); /* white semi-transparent */
+  width: 100px;
+  height: 100px;
+  transform: scale(0);
+  animation: ripple-animate 0.5s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes ripple-animate {
+  to {
+    transform: scale(3);
+    opacity: 0;
+  }
 }

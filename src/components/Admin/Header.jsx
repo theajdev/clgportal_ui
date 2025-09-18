@@ -4,7 +4,6 @@ import Footer from '../Footer';
 import useBootstrapTheme from '../../hooks/useBootstrapTheme';
 import { isLoggedIn, doLogout } from '../../services/auth';
 import userContext from '../../context/userContext';
-import { toast } from 'react-toastify';
 const Header = () => {
     useBootstrapTheme();
     const [login, setLogin] = useState(false);
@@ -63,19 +62,19 @@ const Header = () => {
                             <>
 
                                 <li>
-                                    <Link to="/admin/usertype" className={`nav-link ${location.pathname === '/admin/usertype' ? 'active' : ''}`}>User Type</Link>
+                                    <Link to="/admin/usertype" id="sidebarCollapse" className={`btn-sideBtn nav-link ${location.pathname === '/admin/usertype' ? 'active' : ''}`} >User Type</Link>
                                 </li>
                                 <li>
-                                    <Link to="/admin/courses" className={`nav-link ${location.pathname === '/admin/courses' ? 'active' : ''}`}>Department</Link>
+                                    <Link to="/admin/courses" className={`nav-link ${location.pathname === '/admin/courses' ? 'active' : ''}`} >Department</Link>
                                 </li>
                                 <li>
-                                    <Link to="/admin/subjects" className={`nav-link ${location.pathname === '/admin/subjects' ? 'active' : ''}`}>Subject</Link>
+                                    <Link to="/admin/subjects" className={`nav-link ${location.pathname === '/admin/subjects' ? 'active' : ''}`} >Subject</Link>
                                 </li>
                                 <li>
-                                    <Link to="/admin/teachers" className={`nav-link ${location.pathname === '/admin/teachers' ? 'active' : ''}`}>Teacher</Link>
+                                    <Link to="/admin/teachers" className={`nav-link ${location.pathname === '/admin/teachers' ? 'active' : ''}`} >Teacher</Link>
                                 </li>
                                 <li>
-                                    <Link to="/admin/adminNotice" className={`nav-link ${location.pathname === '/admin/adminNotice' ? 'active' : ''}`}>Admin Notice</Link>
+                                    <Link to="/admin/adminNotice" className={`nav-link ${location.pathname === '/admin/adminNotice' ? 'active' : ''}`} >Admin Notice</Link>
                                 </li>
                             </>
                         )}
@@ -137,8 +136,9 @@ const Header = () => {
                 </svg>
                 <div className="navbar navbar-expand-lg bg-purple">
                     <div className='dropdown bd-mode-toggle ms-auto d-flex'>
-                        <button className="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
-                            <svg className="bi my-1 theme-icon-active" aria-hidden="true">
+                        <div className='vr text-white'></div>
+                        <button className="btn bg-purple py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
+                            <svg className="bi my-1 theme-icon-active text-white" aria-hidden="true">
                                 <use href="#circle-half"></use>
                             </svg>
                             <span className="visually-hidden" id="bd-theme-text">Toggle theme</span>
@@ -158,16 +158,16 @@ const Header = () => {
                             </li>
                             <li>
                                 <button type="button" className="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
-                                    <svg className="bi me-2 opacity-50" aria-hidden="true">
+                                    <svg className="bi me-2 opacity-50 text-white" aria-hidden="true">
                                         <use href="#moon-stars-fill"></use>
                                     </svg>
                                     Dark
-
                                     <svg className="bi ms-auto d-none" aria-hidden="true">
                                         <use href="#check2"></use>
                                     </svg>
                                 </button>
                             </li>
+
                             <li>
                                 <button type="button" className="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto" aria-pressed="true">
                                     <svg className="bi me-2 opacity-50" aria-hidden="true">
@@ -181,6 +181,7 @@ const Header = () => {
                                 </button>
                             </li>
                         </ul>
+                        <div className='vr text-white'></div>
                         <a className="btn dropdown-toggle" href="#" role="button" id="logoutMenu" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="/default.png" alt="Avatar Logo" width='30px' className="rounded-pill" />
                         </a>

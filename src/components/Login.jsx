@@ -113,6 +113,27 @@ const Login = () => {
                 });
         */
     }
+
+    // Handle ripple effect on button click
+    const handleRipple = (e) => {
+        const button = e.currentTarget;
+        const circle = document.createElement('span');
+        circle.classList.add('ripple-circle');
+
+        // Get click coordinates relative to button
+        const rect = button.getBoundingClientRect();
+        const x = e.clientX - rect.left - 50; // center 100px ripple
+        const y = e.clientY - rect.top - 50;
+
+        circle.style.left = `${x}px`;
+        circle.style.top = `${y}px`;
+
+        button.appendChild(circle);
+
+        circle.addEventListener('animationend', () => {
+            circle.remove();
+        });
+    };
     return (
         <div className='container-fluid'>
             <svg xmlns="http://www.w3.org/2000/svg" className="d-none">
@@ -136,7 +157,7 @@ const Login = () => {
                     <div className='App-login' disabled={isLoading}>
 
                         <div className="dropdown position-fixed end-0 mb-3 me-3 bd-mode-toggle">
-                            <button className="btn btn-primary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" style={{ "backgroundColor": "rgba(33, 5, 198, 0.74)" }}>
+                            <button className="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" >
                                 <svg className="bi my-1 theme-icon-active" aria-hidden="true">
                                     <use href="#circle-half"></use>
                                 </svg>
@@ -181,26 +202,29 @@ const Login = () => {
                                 </li>
                             </ul>
                         </div>
-                        <main className='form-signin w-100 mx-auto'>
-                            <form className='login-form'>
-                                <img src="./cap.png" alt="login" width="72" height="57" className='mb-4'></img>
-                                <h1 className="h3 mb-3 fw-normal">Please Sign In</h1>
-                                <div className="form-floating">
-                                    <input type="email" className="form-control" id="usernameOrEmail" aria-describedby="emailHelp" value={loginDetails.usernameOrEmail} onChange={e => handleChange(e, "usernameOrEmail")} disabled={isLoading} placeholder="name@example.com" />
-                                    <label htmlFor="usernameOrEmail">Email address Or Username</label>
-                                </div>
-                                <div className="form-floating">
-                                    <input type="password" className="form-control" id="password" value={loginDetails.password} onChange={e => handleChange(e, "password")} disabled={isLoading} placeholder='Password' />
-                                    <label htmlFor="password">Password</label>
-                                </div>
-                                <div className="form-check text-start my-3"> <input className="form-check-input" type="checkbox" value="remember-me" id="checkDefault" />
-                                    <label className="form-check-label" htmlFor="checkDefault" >
-                                        Remember me
-                                    </label> </div>
-                                <button type="submit" className="btn btn-primary w-100 py-2" onClick={e => handleLoginForm(e)} disabled={isLoading} style={{ 'width': '100%', 'backgroundColor': '#2105c6bd' }}> {isLoading ? "Logging in..." : "Sign In"}</button>
-
-                            </form>
-                        </main>
+                        <div className='my-3 p-3 bg-body rounded shadow-sm'>
+                            <main className='form-signin w-100 mx-auto'>
+                                <form className='login-form'>
+                                    <img src="./cap.png" alt="login" width="72" height="57" className='mb-4'></img>
+                                    <h1 className="h3 mb-3 fw-normal">Please Sign In</h1>
+                                    <div className="form-floating position-relative">
+                                        <input type="email" className="form-control cut-border mb-3" id="usernameOrEmail" aria-describedby="emailHelp" value={loginDetails.usernameOrEmail} onChange={e => handleChange(e, "usernameOrEmail")} disabled={isLoading} placeholder="name@example.com" />
+                                        <label htmlFor="usernameOrEmail">Email Or Username</label>
+                                    </div>
+                                    <div className="form-floating position-relative">
+                                        <input type="password" className="form-control cut-border mb-3" id="password" value={loginDetails.password} onChange={e => handleChange(e, "password")} disabled={isLoading} placeholder='Password' />
+                                        <label htmlFor="password">Password</label>
+                                    </div>
+                                    <div className="form-check text-start my-3"> <input className="form-check-input" type="checkbox" value="remember-me" id="checkDefault" />
+                                        <label className="form-check-label" htmlFor="checkDefault" >
+                                            Remember me
+                                        </label> </div>
+                                    <div className="ripple-container">
+                                        <button type="submit" className="btn btn-bd-primary w-100 py-2" onClick={e => { handleRipple(e); handleLoginForm(e); }} disabled={isLoading} style={{ 'width': '100%' }}> {isLoading ? "Loggin In..." : "Sign In"}</button>
+                                    </div>
+                                </form>
+                            </main>
+                        </div>
                     </div>
                 </div>
             </div>

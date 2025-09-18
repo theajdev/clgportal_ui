@@ -23,5 +23,19 @@
 .dropdown-item:active {
   color: var(--bs-dropdown-link-active-color);
   text-decoration: none;
-  background-color: #866ec7 !important;
+}
+
+/* Header menu get behind the button that's why added this CSS */
+.input-group .btn {
+  z-index: 0 !important;
+}
+
+.dropdown-toggle::after {
+  color: #fff !important;
+}
+
+@media (min-width: 356px) {
+  .input-group-limit {
+    max-width: 175px;
+  }
 }
