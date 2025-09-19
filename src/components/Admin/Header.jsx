@@ -25,7 +25,6 @@ const Header = () => {
     const handleLogout = () => {
         doLogout(() => {
             //logged out
-            setLogin(...login, false);
             setLogin(false);
             localStorage.clear();
             sessionStorage.clear();
@@ -47,7 +46,7 @@ const Header = () => {
         const circle = document.createElement('span');
         circle.classList.add('global-ripple');
 
-        const size = Math.max(rect.width, rect.height) * 2;
+        const size = Math.max(rect.width, rect.height);
         circle.style.width = circle.style.height = `${size}px`;
         circle.style.left = `${e.clientX - size / 2}px`;
         circle.style.top = `${e.clientY - size / 2}px`;

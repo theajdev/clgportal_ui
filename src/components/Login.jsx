@@ -15,12 +15,39 @@ const Login = () => {
         password: "",
     });
 
-    const handleChange = (event, field) => {
-        let actualValue = event.target.value;
-        setLoginDetails({
-            ...loginDetails,
-            [field]: actualValue,
-        });
+    const [validation, setValidation] = useState({
+        usernameOrEmail: false,
+        password: false,
+    });
+
+    const validateFields = () => {
+        const errors = {};
+
+        if (!loginDetails.usernameOrEmail.trim()) { errors.usernameOrEmail = true; }
+        if (!loginDetails.password.trim()) { errors.password = true; }
+
+
+        setValidation(prev => ({ ...prev, ...errors }));
+
+        return Object.keys(errors).length === 0;
+    };
+
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+
+
+        setLoginDetails({ ...loginDetails, [event.target.name]: event.target.value });
+
+        setLoginDetails(prev => ({
+            ...prev,
+            [name]: value
+        }));
+
+        // Clear error when the user starts typing
+        setValidation(prev => ({
+            ...prev,
+            [name]: false
+        }));
     };
 
 
@@ -29,14 +56,9 @@ const Login = () => {
 
     const handleLoginForm = (e) => {
         e.preventDefault();
+        if (!validateFields()) return;
         //console.log("Hey: " + JSON.stringify(loginDetails));
-        if (loginDetails.usernameOrEmail === "" || loginDetails.password === "") {
-            toast.info("Username and password required !!!", {
-                position: 'bottom-center',
-                autoClose: 1200,
-            });
-            return;
-        }
+
         setIsLoading(true); // Start loading
 
         loginUser(loginDetails).then((data) => {
@@ -89,18 +111,20 @@ const Login = () => {
     // Handle ripple effect on button click
     const handleRipple = (e) => {
         const button = e.currentTarget;
-        const circle = document.createElement('span');
-        circle.classList.add('ripple-circle');
-
-        // Get click coordinates relative to button
         const rect = button.getBoundingClientRect();
-        const x = e.clientX - rect.left - 50; // center 100px ripple
-        const y = e.clientY - rect.top - 50;
 
-        circle.style.left = `${x}px`;
-        circle.style.top = `${y}px`;
+        // Remove any old ripple
+        document.querySelectorAll('.global-ripple').forEach(el => el.remove());
 
-        button.appendChild(circle);
+        const circle = document.createElement('span');
+        circle.classList.add('global-ripple');
+
+        const size = Math.max(rect.width, rect.height);
+        circle.style.width = circle.style.height = `${size}px`;
+        circle.style.left = `${e.clientX - size / 2}px`;
+        circle.style.top = `${e.clientY - size / 2}px`;
+
+        document.body.appendChild(circle);
 
         circle.addEventListener('animationend', () => {
             circle.remove();
@@ -128,7 +152,7 @@ const Login = () => {
                 <div className='col-md-6 mx-auto mt-5'>
                     <div className='App-login' disabled={isLoading}>
 
-                        <div className="dropdown position-fixed end-0 mb-3 me-3 bd-mode-toggle">
+                        <div className="dropdown position-fixed mb-3 me-3 bd-mode-toggle">
                             <button className="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" onClick={e => { handleRipple(e); }}>
                                 <svg className="bi my-1 theme-icon-active" aria-hidden="true">
                                     <use href="#circle-half"></use>
@@ -180,11 +204,11 @@ const Login = () => {
                                     <img src="./cap.png" alt="login" width="72" height="57" className='mb-4'></img>
                                     <h1 className="h3 mb-3 fw-normal">Please Sign In</h1>
                                     <div className="form-floating position-relative">
-                                        <input type="email" className="form-control cut-border mb-3" id="usernameOrEmail" aria-describedby="emailHelp" value={loginDetails.usernameOrEmail} onChange={e => handleChange(e, "usernameOrEmail")} disabled={isLoading} placeholder="name@example.com" />
+                                        <input type="email" className={`form-control mb-3 ${validation.usernameOrEmail ? 'ripple-invalid' : ''}`} name="usernameOrEmail" id="usernameOrEmail" aria-describedby="emailHelp" value={loginDetails.usernameOrEmail} onChange={handleChange} disabled={isLoading} placeholder="name@example.com" />
                                         <label htmlFor="usernameOrEmail">Email Or Username</label>
                                     </div>
                                     <div className="form-floating position-relative">
-                                        <input type="password" className="form-control cut-border mb-3" id="password" value={loginDetails.password} onChange={e => handleChange(e, "password")} disabled={isLoading} placeholder='Password' />
+                                        <input type="password" className={`form-control mb-3 ${validation.password ? 'ripple-invalid' : ''}`} name="password" id="password" value={loginDetails.password} onChange={handleChange} disabled={isLoading} placeholder='Password' />
                                         <label htmlFor="password">Password</label>
                                     </div>
                                     <div className="form-check text-start my-3"> <input className="form-check-input" type="checkbox" value="remember-me" id="checkDefault" />

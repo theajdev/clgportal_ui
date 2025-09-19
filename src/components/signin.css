@@ -100,15 +100,48 @@ body {
   overflow: hidden;
 }
 
+.global-ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple-animation 0.6s linear;
+  background-color: rgba(255, 255, 255, 0.5); /* tweak for visibility */
+  pointer-events: none;
+  z-index: 999;
+}
+
 .ripple-circle {
   position: absolute;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.5); /* white semi-transparent */
-  width: 100px;
-  height: 100px;
   transform: scale(0);
-  animation: ripple-animate 0.5s ease-out forwards;
+  animation: ripple-animation 0.6s linear;
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.5
+  ); /* Light ripple for dark buttons */
   pointer-events: none;
+  z-index: 999;
+}
+.ripple-invalid {
+  position: relative;
+  border: 1px solid red !important;
+  box-shadow: 0 0 8px 2px rgba(255, 0, 0, 0.6);
+  animation: ripple-pulse 0.6s ease-in-out;
+  transition: box-shadow 0.3s ease;
+}
+
+@keyframes ripple-pulse {
+  0% {
+    box-shadow: 0 0 0px 0px rgba(255, 0, 0, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 8px 3px rgba(255, 0, 0, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 0px 0px rgba(255, 0, 0, 0.2);
+  }
 }
 
 @keyframes ripple-animate {

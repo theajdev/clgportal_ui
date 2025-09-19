@@ -15,6 +15,41 @@ const Cousres = () => {
   const [isUpdate, setIsUpdate] = useState(false);
   const [selected, setSelected] = useState("All");
   const [isLoading, setIsLoading] = useState(false);  // State htmlFor loading
+  const [validation, setValidation] = useState({
+    deptDesc: false,
+    status: false,
+  });
+
+  const validateFields = () => {
+    const errors = {};
+
+    if (!course.deptDesc.trim()) { errors.deptDesc = true; }
+    if (!course.status.trim()) { errors.status = true; }
+
+
+    setValidation(prev => ({ ...prev, ...errors }));
+
+    return Object.keys(errors).length === 0;
+  };
+
+  //field change handler
+  const fieldChanged = (event) => {
+    const { name, value } = event.target;
+
+    setCourse({ ...course, [event.target.name]: event.target.value });
+
+    setCourse(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // Clear error when the user starts typing
+    setValidation(prev => ({
+      ...prev,
+      [name]: false
+    }));
+
+  };
 
   // on page load
   useEffect(() => {
@@ -41,11 +76,6 @@ const Cousres = () => {
     });
   }, []);
 
-  //field change handler
-  const fieldChanged = (event) => {
-    setCourse({ ...course, [event.target.name]: event.target.value });
-  };
-
   // add new course
   const newCourse = () => {
     setIsUpdate(false);
@@ -59,53 +89,7 @@ const Cousres = () => {
   // save course
   const saveCourse = (event) => {
     event.preventDefault();
-    if (course.deptDesc.trim() === "") {
-      toast.info(<div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="38"
-          height="38"
-          fill="red"
-          className="bi bi-exclamation-triangle"
-          viewBox="0 0 16 16"
-          aria-label="Warning"
-          role="img"
-        >
-          <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z" />
-          <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
-        </svg>
-        <span>Course name is required.</span>
-      </div>,
-        {
-          position: 'top-right',
-          ariaLabel: "Course name is required.",
-          icon: false,
-        });
-      return;
-    }
-
-    if (course.status.trim() === "") {
-      toast.info(<div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="38"
-          height="38"
-          fill="red"
-          className="bi bi-exclamation-triangle"
-          viewBox="0 0 16 16"
-          aria-label="Warning"
-          role="img"
-        >
-          <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z" />
-          <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
-        </svg>
-        <span>Please select status</span>
-      </div>, {
-        position: "top-right",
-        icon: false,
-      })
-      return;
-    }
+    if (!validateFields()) return;
 
     addCourse(course).then(response => {
 
@@ -169,53 +153,7 @@ const Cousres = () => {
   const updateCourse = (event) => {
     event.preventDefault();
     setIsUpdate(true);
-    if (course.deptDesc.trim() === "") {
-      toast.info(<div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="38"
-          height="38"
-          fill="red"
-          className="bi bi-exclamation-triangle"
-          viewBox="0 0 16 16"
-          aria-label="Warning"
-          role="img"
-        >
-          <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z" />
-          <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
-        </svg>
-        <span>Course name is required.</span>
-      </div>,
-        {
-          position: 'top-right',
-          ariaLabel: "Course name is required.",
-          icon: false,
-        });
-      return;
-    }
-
-    if (course.status.trim() === "") {
-      toast.info(<div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="38"
-          height="38"
-          fill="red"
-          className="bi bi-exclamation-triangle"
-          viewBox="0 0 16 16"
-          aria-label="Warning"
-          role="img"
-        >
-          <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z" />
-          <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
-        </svg>
-        <span>Please select status</span>
-      </div>, {
-        position: "top-right",
-        icon: false,
-      })
-      return;
-    }
+    if (!validateFields()) return;
 
     updateDepartment(course, course.id).then(response => {
 
@@ -371,7 +309,7 @@ const Cousres = () => {
     const circle = document.createElement('span');
     circle.classList.add('global-ripple');
 
-    const size = Math.max(rect.width, rect.height) * 2;
+    const size = Math.max(rect.width, rect.height);
     circle.style.width = circle.style.height = `${size}px`;
     circle.style.left = `${e.clientX - size / 2}px`;
     circle.style.top = `${e.clientY - size / 2}px`;
@@ -464,14 +402,14 @@ const Cousres = () => {
               <input
                 type='text'
                 name="deptDesc"
-                className='form-control mb-3'
+                className={`form-control mb-3 ${validation.deptDesc ? 'ripple-invalid' : ''}`}
                 placeholder='Enter Course Description'
                 value={course.deptDesc}
                 onChange={fieldChanged}
               />
               <select
                 name="status"
-                className="form-select"
+                className={`form-select mb-3 ${validation.status ? 'ripple-invalid' : ''}`}
                 aria-label="Default select example"
                 value={course.status}
                 onChange={fieldChanged}
