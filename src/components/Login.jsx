@@ -84,34 +84,6 @@ const Login = () => {
         }).finally(() => {
             setIsLoading(false); // Stop loading
         });
-
-        /*
-                loginAPICall(username, password).then(response => {
-                    const token = "Bearer " + response.data.accessToken;
-                    storeToken(token);
-                    saveLoggedInUsers(username);
-                    const auth = response.data.authority;
-                    sessionStorage.setItem("userRole", auth);
-                    if (auth === "ROLE_ADMIN") {
-                        sessionStorage.setItem("homeURL", "/admin");
-                        navigator("/admin");
-                        window.location.reload(false);
-                    } else if (auth === "ROLE_TEACHER") {
-                        sessionStorage.setItem("homeURL", "/teacher");
-                        navigator("/teacher");
-                        window.location.reload(false);
-                    } else if (auth === "ROLE_STUDENT") {
-                        sessionStorage.setItem("homeURL", "/student");
-                        navigator("/student");
-                        window.location.reload(false);
-                    }
-                }).catch((error) => {
-                    setShowLable(true);
-                    loadFunction(setShowLable);
-                }).finally(() => {
-                    setIsLoading(false); // Stop loading
-                });
-        */
     }
 
     // Handle ripple effect on button click
