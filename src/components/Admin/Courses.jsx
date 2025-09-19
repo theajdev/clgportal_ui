@@ -102,12 +102,16 @@ const Cousres = () => {
         toast.dismiss();
         setCourse({ id: '', deptDesc: '', status: '' });
         toast.success("course added.", { position: "top-right", autoClose: 1600 });
-
+        const modalElement = document.getElementById('coursesModal');
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
       }, 2000);
 
       setTimeout(() => {
         toast.dismiss();
-        window.location.reload(false);
+        handleAll();
       }, 3500);
 
       return true;
@@ -166,12 +170,16 @@ const Cousres = () => {
         toast.dismiss();
         setCourse({ id: '', deptDesc: '', status: '' });
         toast.success("Course updated.", { position: "top-right", autoClose: 1600 });
-
+        const modalElement = document.getElementById('coursesModal');
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
       }, 2000);
 
       setTimeout(() => {
         toast.dismiss();
-        window.location.reload(false);
+        handleAll();
       }, 3500);
       return true;
 
@@ -241,7 +249,7 @@ const Cousres = () => {
 
         setTimeout(() => {
           toast.dismiss();
-          window.location.reload(false);
+          handleAll();
         }, 3500);
 
         setCourse({ id: '', deptDesc: '', status: '' });

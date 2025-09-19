@@ -43,7 +43,6 @@ const UserType = () => {
 
     // Required fields
     if (!role.roleDesc.trim()) { errors.roleDesc = true; }
-    if (!role.roleDisp.trim()) { errors.roleDisp = true; }
     if (!role.status.trim()) { errors.status = true; }
 
     // Update validation state
@@ -177,8 +176,8 @@ const UserType = () => {
   const saveUserType = (e) => {
     e.preventDefault();
     if (!validateFields()) return;
-    addNewRole(role).then(response => {
 
+    addNewRole(role).then(response => {
       toast.info("User type adding please wait...", {
         position: "top-right",
         autoClose: 1200,
@@ -193,12 +192,16 @@ const UserType = () => {
           id: "",
         });
         toast.success("User type added..", { position: "top-right", autoClose: 1600 });
-
+        const modalElement = document.getElementById('userTypeModal');
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
       }, 2000);
 
       setTimeout(() => {
         toast.dismiss();
-        window.location.reload(false);
+        handleAll();
       }, 3500);
 
       return true;
@@ -247,12 +250,16 @@ const UserType = () => {
           id: "",
         });
         toast.success("User type Updated..", { position: "top-right", autoClose: 1600 });
-
+        const modalElement = document.getElementById('userTypeModal');
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
       }, 2000);
 
       setTimeout(() => {
         toast.dismiss();
-        window.location.reload(false);
+        handleAll();
       }, 3500);
       return true;
     }).catch((error) => {
@@ -325,7 +332,7 @@ const UserType = () => {
 
         setTimeout(() => {
           toast.dismiss();
-          window.location.reload(false);
+          handleAll();
         }, 3500);
 
         setRole({

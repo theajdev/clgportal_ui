@@ -163,14 +163,18 @@ const Teachers = () => {
           deptId: "",
         });
 
-        setTeachers([...teachers, res]);
-        toast.success("Teacher added.", { position: "top-right", autoClose: 1600 });
 
+        toast.success("Teacher added.", { position: "top-right", autoClose: 1600 });
+        const modalElement = document.getElementById('teacherModal');
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
       }, 2000);
 
       setTimeout(() => {
         toast.dismiss();
-        window.location.reload(false);
+        handleAll();
       }, 3500);
       // Append new teacher to the list
     }).catch((err) => {
@@ -219,12 +223,16 @@ const Teachers = () => {
           deptId: "",
         });
         toast.success("teacher updated.", { position: "top-right", autoClose: 1600 });
-
+        const modalElement = document.getElementById('teacherModal');
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
       }, 2000);
 
       setTimeout(() => {
         toast.dismiss();
-        window.location.reload(false);
+        handleAll();
       }, 3500);
       return true;
 
@@ -306,7 +314,7 @@ const Teachers = () => {
 
         setTimeout(() => {
           toast.dismiss();
-          window.location.reload(false);
+          handleAll();
         }, 3500);
 
 
