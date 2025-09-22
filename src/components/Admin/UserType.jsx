@@ -76,10 +76,6 @@ const UserType = () => {
 
   }, []);
 
-
-
-
-
   const handleAll = (event) => {
     setSelected("All");
     setRole({
@@ -374,8 +370,6 @@ const UserType = () => {
       circle.remove();
     });
   };
-
-
 
   return (
     <div className='App-content' >
