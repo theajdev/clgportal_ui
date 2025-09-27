@@ -412,7 +412,7 @@ const Teachers = () => {
           <div className='mx-auto'>
             <div className="card mt-4">
               <div className="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
-                <button color="primary" className='btn btn-bd-primary me-2' onClick={e => { handleRipple(e); newTeacher() }}>
+                <button color="primary" className='btn btn-primary me-2' onClick={e => { handleRipple(e); newTeacher() }}>
                   Teacher
                 </button>
                 <div className="input-group ms-auto input-group-limit">
@@ -442,35 +442,37 @@ const Teachers = () => {
                     <div className="spinner-grow spinner-grow-sm text-dark" role="status"></div>
                   </div>
                   ) : (
-                    <table className="table">
-                      <thead>
-                        <tr>
-                          <th>Sr. No.</th>
-                          <th>First Name</th>
-                          <th>Last Name</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {(!teachers || teachers.length === 0) ? (
+                    <div className=' table-wrapper'>
+                      <table className="table table-responsible">
+                        <thead>
                           <tr>
-                            <td colSpan="3" className="text-center"><div className="text-muted fw-semibold" style={{ fontSize: "1.2rem", padding: "20px" }}>
-                              <span role="img" aria-label="sad" style={{ fontSize: "2.5rem" }}>🤷🏻</span> No teachers found
-                            </div></td>
+                            <th scope="row" className="col-srno">Sr. No.</th>
+                            <th scope="row">First Name</th>
+                            <th scope="row">Last Name</th>
+                            <th scope="row">Action</th>
                           </tr>
-                        ) : (
-
-                          teachers.map((row) => (
-                            <tr key={row.id}>
-                              <td>{row.id}</td>
-                              <td>{row.firstName}</td>
-                              <td>{row.lastName}</td>
-                              <td><button className='btn btn-info me-2' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Edit" onClick={e => { handleRipple(e); editTeacher(row) }}><i className="bi bi-pencil-square"></i></button> <button className='btn btn-danger' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Delete" onClick={e => { handleRipple(e); removeTeacher(e, row.id, row.deptDesc) }}><i className="bi bi-trash"></i></button></td>
+                        </thead>
+                        <tbody>
+                          {(!teachers || teachers.length === 0) ? (
+                            <tr>
+                              <td colSpan="3" className="text-center"><div className="text-muted fw-semibold" style={{ fontSize: "1.2rem", padding: "20px" }}>
+                                <span role="img" aria-label="sad" style={{ fontSize: "2.5rem" }}>🤷🏻</span> No teachers found
+                              </div></td>
                             </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
+                          ) : (
+
+                            teachers.map((row) => (
+                              <tr key={row.id}>
+                                <td>{row.id}</td>
+                                <td>{row.firstName}</td>
+                                <td>{row.lastName}</td>
+                                <td><button className='btn btn-info me-2' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Edit" onClick={e => { handleRipple(e); editTeacher(row) }}><i className="bi bi-pencil-square"></i></button> <button className='btn btn-danger' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Delete" onClick={e => { handleRipple(e); removeTeacher(e, row.id, row.deptDesc) }}><i className="bi bi-trash"></i></button></td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
                   )}
               </div>
             </div>
@@ -568,7 +570,7 @@ const Teachers = () => {
                   {isUpdate ? (
                     <button type="button" className="btn btn-warning" onClick={e => { handleRipple(e); updateTeacher(e) }}>Update</button>
                   ) : (
-                    <button type="button" className="btn btn-bd-primary" onClick={e => { handleRipple(e); saveTeacher(e) }}>Save</button>
+                    <button type="button" className="btn btn-primary" onClick={e => { handleRipple(e); saveTeacher(e) }}>Save</button>
                   )
                   }
                   <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>

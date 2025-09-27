@@ -60,12 +60,12 @@ const Header = () => {
 
     return (
         <div className="wrapper d-flex align-items-stretch">
-            <nav id="sidebar" className={`nav-sidebar ${isSidebarActive ? "active" : ""}`}>
+            <nav id="sidebar" className={`nav-sidebar navbar-brand ${isSidebarActive ? "active" : ""}`}>
                 <div className="custom-menu">
                     <button
                         type="button"
                         id="sidebarCollapse"
-                        className="btn btn-sideBtn"
+                        className="btns btns-sideBtn"
                         onClick={() => setSidebarActive(!isSidebarActive)}
                     >
                         <i className="bi bi-justify" style={{ color: "white" }}></i>
@@ -84,7 +84,7 @@ const Header = () => {
                             <>
 
                                 <li>
-                                    <Link to="/admin/usertype" id="sidebarCollapse" className={`btn-sideBtn nav-link ${location.pathname === '/admin/usertype' ? 'active' : ''}`} >User Type</Link>
+                                    <Link to="/admin/usertype" id="sidebarCollapse" className={`btns-sideBtn nav-link ${location.pathname === '/admin/usertype' ? 'active' : ''}`} >User Type</Link>
                                 </li>
                                 <li>
                                     <Link to="/admin/courses" className={`nav-link ${location.pathname === '/admin/courses' ? 'active' : ''}`} >Department</Link>
@@ -143,7 +143,7 @@ const Header = () => {
                         <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"></path>
                     </symbol>
                     <symbol id="circle-half" viewBox="0 0 16 16">
-                        <path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z"></path>
+                        <path d="M1.5 0A1.5 1.5 0 0 0 0 1.5v7A1.5 1.5 0 0 0 1.5 10H6v1H1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-5v-1h4.5A1.5 1.5 0 0 0 16 8.5v-7A1.5 1.5 0 0 0 14.5 0zm0 1h13a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .5-.5M12 12.5a.5.5 0 1 1 1 0 .5.5 0 0 1-1 0m2 0a.5.5 0 1 1 1 0 .5.5 0 0 1-1 0M1.5 12h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1M1 14.25a.25.25 0 0 1 .25-.25h5.5a.25.25 0 1 1 0 .5h-5.5a.25.25 0 0 1-.25-.25"></path>
                     </symbol>
                     <symbol id="moon-stars-fill" viewBox="0 0 16 16">
                         <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"></path>
@@ -155,17 +155,17 @@ const Header = () => {
                 </svg>
                 <div className="navbar navbar-expand-lg bg-purple">
                     <div className='dropdown bd-mode-toggle ms-auto d-flex'>
-                        <div className='vr text-white'></div>
-                        <button className="btn bg-purple py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" onClick={e => handleRipple(e)}>
-                            <svg className="bi my-1 theme-icon-active text-white" aria-hidden="true">
+
+                        <button className="btn py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" onClick={e => handleRipple(e)}>
+                            <svg className="bi my-1 theme-icon-active text-white" aria-hidden="true" fill='currentColor'>
                                 <use href="#circle-half"></use>
                             </svg>
                             <span className="visually-hidden" id="bd-theme-text">Toggle theme</span>
                         </button>
                         <ul className="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
                             <li>
-                                <button type="button" className="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
-                                    <svg className="bi me-2 opacity-50" aria-hidden="true">
+                                <button type="button" className="dropdown-item d-flex align-items-center" data-mdb-theme-value="light" aria-pressed="false">
+                                    <svg className="bi me-2" aria-hidden="true" fill='currentColor'>
                                         <use href="#sun-fill"></use>
                                     </svg>
                                     Light
@@ -176,8 +176,8 @@ const Header = () => {
                                 </button>
                             </li>
                             <li>
-                                <button type="button" className="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
-                                    <svg className="bi me-2 opacity-50 text-white" aria-hidden="true">
+                                <button type="button" className="dropdown-item d-flex align-items-center" data-mdb-theme-value="dark" aria-pressed="false">
+                                    <svg className="bi me-2" aria-hidden="true" fill='currentColor'>
                                         <use href="#moon-stars-fill"></use>
                                     </svg>
                                     Dark
@@ -188,19 +188,18 @@ const Header = () => {
                             </li>
 
                             <li>
-                                <button type="button" className="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto" aria-pressed="true">
-                                    <svg className="bi me-2 opacity-50" aria-hidden="true">
+                                <button type="button" className="dropdown-item d-flex align-items-center active" data-mdb-theme-value="auto" aria-pressed="true">
+                                    <svg className="bi me-2" aria-hidden="true" fill='currentColor'>
                                         <use href="#circle-half"></use>
                                     </svg>
-                                    Auto
-
+                                    System
                                     <svg className="bi ms-auto d-none" aria-hidden="true">
                                         <use href="#check2"></use>
                                     </svg>
                                 </button>
                             </li>
                         </ul>
-                        <div className='vr text-white'></div>
+
                         <a className="btn dropdown-toggle" href="##" role="button" id="logoutMenu" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="/default.png" alt="Avatar Logo" width='30px' className="rounded-pill" />
                         </a>
@@ -217,7 +216,7 @@ const Header = () => {
                 </div>
 
                 {/* Content Area */}
-                <div className='container-fluid mt-3'>
+                <div className="container-fluid ps-5">
                     <Outlet />
                 </div>
 

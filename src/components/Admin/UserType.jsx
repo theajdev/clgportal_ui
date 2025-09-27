@@ -104,6 +104,7 @@ const UserType = () => {
       status: "",
       id: "",
     });
+
     getRolesByStatus('V').then(data => {
       setRoles(data);
     }).catch(error => {
@@ -124,6 +125,7 @@ const UserType = () => {
       status: "",
       id: "",
     });
+
     getRolesByStatus('I').then(data => {
       setRoles(data);
     }).catch(error => {
@@ -378,7 +380,7 @@ const UserType = () => {
           <div className='mx-auto'>
             <div className="card mt-4 border-1">
               <div className="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
-                <button color="primary" className='btn btn-bd-primary me-2' onClick={e => { handleRipple(e); newUserType() }}>
+                <button color="primary" className='btn btn-primary me-2' onClick={e => { newUserType() }}>
                   User Type
                 </button>
                 <div className="input-group ms-auto input-group-limit">
@@ -386,7 +388,7 @@ const UserType = () => {
                   <button type='button' className='btn btn-outline-success' >
                     {selected}
                   </button>
-                  <button type="button" className="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false" onClick={e => { handleRipple(e); }}>
+                  <button type="button" className="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
                     <span className="visually-hidden">Toggle Dropdown</span>
                   </button>
                   <ul className='dropdown-menu dropdown-menu-end'>
@@ -408,34 +410,35 @@ const UserType = () => {
                     <div className="spinner-grow spinner-grow-sm text-dark" role="status"></div>
                   </div>
                   ) : (
-
-                    <table className="table">
-                      <thead>
-                        <tr>
-                          <th>Sr. No.</th>
-                          <th>User Type</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {(!roles || roles.length === 0) ? (
+                    <div className=' table-wrapper'>
+                      <table className="table">
+                        <thead>
                           <tr>
-                            <td colSpan="3" className="text-center"><div className="text-muted fw-semibold" style={{ fontSize: "1.2rem", padding: "20px" }}>
-                              <span role="img" aria-label="sad" style={{ fontSize: "2.5rem" }}>🤷🏻</span> No user types found
-                            </div></td>
+                            <th scope="row">Sr. No.</th>
+                            <th scope="row">User Type</th>
+                            <th scope="row">Action</th>
                           </tr>
-                        ) : (
-
-                          roles.map((row) => (
-                            <tr key={row.id}>
-                              <td>{row.id}</td>
-                              <td>{row.roleDisp}</td>
-                              <td><button className='btn btn-info me-2' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Edit" onClick={e => { handleRipple(e); editUserType(row) }}><i className="bi bi-pencil-square"></i></button><button className='btn btn-danger' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Delete" onClick={e => { handleRipple(e); removeRole(e, row.id, row.roleDisp) }}><i className="bi bi-trash"></i></button></td>
+                        </thead>
+                        <tbody>
+                          {(!roles || roles.length === 0) ? (
+                            <tr>
+                              <td colSpan="3" className="text-center"><div className="text-muted fw-semibold" style={{ fontSize: "1.2rem", padding: "20px" }}>
+                                <span role="img" aria-label="sad" style={{ fontSize: "2.5rem" }}>🤷🏻</span> No user types found
+                              </div></td>
                             </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
+                          ) : (
+
+                            roles.map((row) => (
+                              <tr key={row.id}>
+                                <td>{row.id}</td>
+                                <td>{row.roleDisp}</td>
+                                <td><button className='btn btn-info me-2' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Edit" onClick={e => { handleRipple(e); editUserType(row) }}><i className="bi bi-pencil-square"></i></button><button className='btn btn-danger' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Delete" onClick={e => { handleRipple(e); removeRole(e, row.id, row.roleDisp) }}><i className="bi bi-trash"></i></button></td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
                   )}
               </div>
             </div>
@@ -474,11 +477,11 @@ const UserType = () => {
 
               {isUpdate ? (
 
-                <button type="button" className="btn btn-warning" onClick={e => { handleRipple(e); updateUserType(e) }}>Update</button>
+                <button type="button" className="btn btn-warning" onClick={e => { updateUserType(e) }}>Update</button>
 
               ) : (
 
-                <button type="button" className="btn btn-bd-primary" onClick={e => { handleRipple(e); saveUserType(e) }}>Save</button>
+                <button type="button" className="btn btn-primary" onClick={e => { saveUserType(e) }}>Save</button>
 
               )
 

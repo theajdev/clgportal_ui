@@ -17,13 +17,13 @@ export default function useBootstrapTheme() {
     const setTheme = (theme) => {
       if (theme === "auto") {
         document.documentElement.setAttribute(
-          "data-bs-theme",
+          "data-mdb-theme",
           window.matchMedia("(prefers-color-scheme: dark)").matches
             ? "dark"
             : "light"
         );
       } else {
-        document.documentElement.setAttribute("data-bs-theme", theme);
+        document.documentElement.setAttribute("data-mdb-theme", theme);
       }
     };
 
@@ -34,19 +34,21 @@ export default function useBootstrapTheme() {
       const themeSwitcherText = document.querySelector("#bd-theme-text");
       const activeThemeIcon = document.querySelector(".theme-icon-active use");
       const btnToActive = document.querySelector(
-        `[data-bs-theme-value="${theme}"]`
+        `[data-mdb-theme-value="${theme}"]`
       );
       const svgOfActiveBtn = btnToActive
         ?.querySelector("svg use")
         ?.getAttribute("href");
 
-      document.querySelectorAll("[data-bs-theme-value]").forEach((el) => {
+      document.querySelectorAll("[data-mdb-theme-value]").forEach((el) => {
         el.classList.remove("active");
+        el.classList.remove("text-primary");
         el.setAttribute("aria-pressed", "false");
       });
 
       if (btnToActive) {
         btnToActive.classList.add("active");
+        btnToActive.classList.add("text-primary");
         btnToActive.setAttribute("aria-pressed", "true");
         if (activeThemeIcon && svgOfActiveBtn) {
           activeThemeIcon.setAttribute("href", svgOfActiveBtn);
@@ -62,9 +64,9 @@ export default function useBootstrapTheme() {
     setTheme(preferredTheme);
     showActiveTheme(preferredTheme);
 
-    document.querySelectorAll("[data-bs-theme-value]").forEach((toggle) => {
+    document.querySelectorAll("[data-mdb-theme-value]").forEach((toggle) => {
       toggle.addEventListener("click", () => {
-        const theme = toggle.getAttribute("data-bs-theme-value");
+        const theme = toggle.getAttribute("data-mdb-theme-value");
         setStoredTheme(theme);
         setTheme(theme);
         showActiveTheme(theme, true);

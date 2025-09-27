@@ -33,71 +33,32 @@
 .dropdown-toggle::after {
   color: #fff !important;
 }
-.ripple-container {
-  position: relative;
-  display: inline-block;
-  overflow: hidden;
+
+.table-wrapper {
+  max-height: 350px;
+  /* Adjust height as needed */
+  overflow-y: auto;
 }
 
-.ripple-container .btn {
-  position: relative;
-  overflow: hidden; /* ensures the ripple is contained within button */
+thead th {
+  position: sticky;
+  top: 0;
+  background-color: #f8f9fa;
+  /* Light gray bg to match Bootstrap table */
+  z-index: 1;
 }
 
-.global-ripple {
-  position: absolute;
-  border-radius: 50%;
-  transform: scale(0);
-  animation: ripple-animation 0.6s linear;
-  background-color: rgba(255, 255, 255, 0.5); /* tweak for visibility */
-  pointer-events: none;
-  z-index: 999;
+table {
+  table-layout: fixed;
 }
 
-.ripple-circle {
-  position: absolute;
-  border-radius: 50%;
-  transform: scale(0);
-  animation: ripple-animation 0.6s linear;
-  background-color: rgba(
-    255,
-    255,
-    255,
-    0.5
-  ); /* Light ripple for dark buttons */
-  pointer-events: none;
-  z-index: 999;
+.col-srno {
+  width: 85px;
+  min-width: 85px;
+  max-width: 85px;
 }
-
-.ripple-invalid {
-  position: relative;
-  border: 1px solid red !important;
-  box-shadow: 0 0 8px 2px rgba(255, 0, 0, 0.6);
-  animation: ripple-pulse 0.6s ease-in-out;
-  transition: box-shadow 0.3s ease;
-}
-
-@keyframes ripple-pulse {
-  0% {
-    box-shadow: 0 0 0px 0px rgba(255, 0, 0, 0.2);
-  }
-  50% {
-    box-shadow: 0 0 8px 3px rgba(255, 0, 0, 0.6);
-  }
-  100% {
-    box-shadow: 0 0 0px 0px rgba(255, 0, 0, 0.2);
-  }
-}
-
-@keyframes ripple-animation {
-  to {
-    transform: scale(4);
-    opacity: 0;
-  }
-}
-
 @media (min-width: 356px) {
   .input-group-limit {
-    max-width: 175px;
+    max-width: 185px;
   }
 }
