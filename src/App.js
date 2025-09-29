@@ -8,8 +8,6 @@ import ManageCourses from "./components/Admin/ManageCourses";
 import Teachers from "./components/Admin/Teachers";
 import AdminNotice from "./components/Admin/AdminNotice";
 import Header from "./components/Admin/Header";
-import "./sidebar/sidebar.css";
-import "./sidebar/sidebar";
 import TeacherDashboard from "./components/Teacher/TeacherDashboard";
 import TeacherProfile from "./components/Teacher/TeacherProfile";
 import ManageStudents from "./components/Teacher/ManageStudents";

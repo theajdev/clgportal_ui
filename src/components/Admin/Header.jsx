@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { useNavigate, Link, Outlet, useLocation } from 'react-router-dom';
+import "../../sidebar/sidebar.css";
+import "../../sidebar/sidebar.js";
 import Footer from '../Footer';
 import useBootstrapTheme from '../../hooks/useBootstrapTheme';
 import { isLoggedIn, doLogout } from '../../services/auth';
@@ -36,40 +38,13 @@ const Header = () => {
         });
     };
 
-    const handleRipple = (e) => {
-        const button = e.currentTarget;
-        const rect = button.getBoundingClientRect();
-
-        // Remove any old ripple
-        document.querySelectorAll('.global-ripple').forEach(el => el.remove());
-
-        const circle = document.createElement('span');
-        circle.classList.add('global-ripple');
-
-        const size = Math.max(rect.width, rect.height);
-        circle.style.width = circle.style.height = `${size}px`;
-        circle.style.left = `${e.clientX - size / 2}px`;
-        circle.style.top = `${e.clientY - size / 2}px`;
-
-        document.body.appendChild(circle);
-
-        circle.addEventListener('animationend', () => {
-            circle.remove();
-        });
-    };
-
     return (
         <div className="wrapper d-flex align-items-stretch">
             <nav id="sidebar" className={`nav-sidebar navbar-brand ${isSidebarActive ? "active" : ""}`}>
                 <div className="custom-menu">
-                    <button
-                        type="button"
-                        id="sidebarCollapse"
-                        className="btns btns-sideBtn"
-                        onClick={() => setSidebarActive(!isSidebarActive)}
-                    >
-                        <i className="bi bi-justify" style={{ color: "white" }}></i>
-                        <span className="sr-only">Toggle Menu</span>
+
+                    <button type="button" class="btn btn-primary btn-floating btns-sideBtn" data-mdb-ripple-init id="sidebarCollapse" onClick={() => setSidebarActive(!isSidebarActive)}>
+                        <i class="bi bi-list"></i>
                     </button>
                 </div>
 
@@ -156,7 +131,7 @@ const Header = () => {
                 <div className="navbar navbar-expand-lg bg-purple">
                     <div className='dropdown bd-mode-toggle ms-auto d-flex'>
 
-                        <button className="btn py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" onClick={e => handleRipple(e)}>
+                        <button className="btn py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" >
                             <svg className="bi my-1 theme-icon-active text-white" aria-hidden="true" fill='currentColor'>
                                 <use href="#circle-half"></use>
                             </svg>

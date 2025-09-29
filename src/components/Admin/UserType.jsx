@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import bootstrap from 'bootstrap/dist/js/bootstrap.js';
 import { addNewRole, deleteRole, getAllRoles, getRolesByStatus, UpdateRole } from '../../services/AdminServices/RoleService';
 import { toast } from 'react-toastify';
+// Initialization for ES Users
+
 
 const UserType = () => {
   const [role, setRole] = useState({
@@ -74,6 +76,29 @@ const UserType = () => {
       }, 0); // ensures DOM is updated
     });
 
+    //cleanup validation errors on modal close
+    const modalElement = document.getElementById('userTypeModal');
+
+    const handleModalClose = () => {
+      // Clear validation errors
+      setValidation({
+        roleDisp: false,
+        roleDesc: false,
+        status: false,
+      });
+    };
+
+    if (modalElement) {
+      modalElement.addEventListener('hidden.bs.modal', handleModalClose);
+    }
+
+    // Clean up listener on unmount
+    return () => {
+      if (modalElement) {
+        modalElement.removeEventListener('hidden.bs.modal', handleModalClose);
+      }
+    };
+
   }, []);
 
   const handleAll = (event) => {
@@ -139,7 +164,8 @@ const UserType = () => {
   }
 
   // handle edit button click
-  const editUserType = (userType) => {
+  const editUserType = (e, userType) => {
+
     setRole({
       roleDisp: userType.roleDisp,
       roleDesc: userType.roleDisp,
@@ -152,6 +178,7 @@ const UserType = () => {
     const modalElement = document.getElementById('userTypeModal');
     const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
     modalInstance.show();
+
   };
 
   // handle new user type button click
@@ -351,28 +378,6 @@ const UserType = () => {
 
   }
 
-  const handleRipple = (e) => {
-    const button = e.currentTarget;
-    const rect = button.getBoundingClientRect();
-
-    // Remove any old ripple
-    document.querySelectorAll('.global-ripple').forEach(el => el.remove());
-
-    const circle = document.createElement('span');
-    circle.classList.add('global-ripple');
-
-    const size = Math.max(rect.width, rect.height);
-    circle.style.width = circle.style.height = `${size}px`;
-    circle.style.left = `${e.clientX - size / 2}px`;
-    circle.style.top = `${e.clientY - size / 2}px`;
-
-    document.body.appendChild(circle);
-
-    circle.addEventListener('animationend', () => {
-      circle.remove();
-    });
-  };
-
   return (
     <div className='App-content' >
       <div className='container'>
@@ -432,7 +437,7 @@ const UserType = () => {
                               <tr key={row.id}>
                                 <td>{row.id}</td>
                                 <td>{row.roleDisp}</td>
-                                <td><button className='btn btn-info me-2' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Edit" onClick={e => { handleRipple(e); editUserType(row) }}><i className="bi bi-pencil-square"></i></button><button className='btn btn-danger' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Delete" onClick={e => { handleRipple(e); removeRole(e, row.id, row.roleDisp) }}><i className="bi bi-trash"></i></button></td>
+                                <td><button className='btn btn-info me-2' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Edit" onClick={e => { editUserType(e, row) }}><i className="bi bi-pencil-square"></i></button><button className='btn btn-danger' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Delete" onClick={e => { removeRole(e, row.id, row.roleDisp) }}><i className="bi bi-trash"></i></button></td>
                               </tr>
                             ))
                           )}
@@ -477,16 +482,16 @@ const UserType = () => {
 
               {isUpdate ? (
 
-                <button type="button" className="btn btn-warning" onClick={e => { updateUserType(e) }}>Update</button>
+                <button type="button" className="btn btn-warning" onClick={e => { updateUserType(e) }} data-mdb-ripple-init>Update</button>
 
               ) : (
 
-                <button type="button" className="btn btn-primary" onClick={e => { saveUserType(e) }}>Save</button>
+                <button type="button" className="btn btn-primary" onClick={e => { saveUserType(e) }} data-mdb-ripple-init>Save</button>
 
               )
 
               }
-              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" >Close</button>
+              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" data-mdb-ripple-init>Close</button>
 
             </div>
           </div>

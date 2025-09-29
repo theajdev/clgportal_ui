@@ -202,11 +202,12 @@ const Login = () => {
                             <main className='form-signin w-100 mx-auto'>
                                 <form className='login-form'>
                                     <img src="./cap.png" alt="login" width="72" height="57" className='mb-4'></img>
-                                    <h1 className="h3 mb-3 fw-normal">Please Sign In</h1>
+                                    <h1 className="mb-3 fw-normal">Please Sign In</h1>
                                     <div className="form-floating position-relative">
                                         <input type="email" className={`form-control mb-3 ${validation.usernameOrEmail ? 'ripple-invalid' : ''}`} name="usernameOrEmail" id="usernameOrEmail" aria-describedby="emailHelp" value={loginDetails.usernameOrEmail} onChange={handleChange} disabled={isLoading} placeholder="name@example.com" />
                                         <label htmlFor="usernameOrEmail">Email Or Username</label>
                                     </div>
+
                                     <div className="form-floating position-relative">
                                         <input type="password" className={`form-control mb-3 ${validation.password ? 'ripple-invalid' : ''}`} name="password" id="password" value={loginDetails.password} onChange={handleChange} disabled={isLoading} placeholder='Password' />
                                         <label htmlFor="password">Password</label>
@@ -215,9 +216,18 @@ const Login = () => {
                                         <label className="form-check-label" htmlFor="checkDefault" >
                                             Remember me
                                         </label> </div>
-                                    <div className="ripple-container">
-                                        <button type="submit" className="btn btn-primary w-100 py-2" onClick={e => { handleRipple(e); handleLoginForm(e); }} disabled={isLoading} style={{ 'width': '100%' }}> {isLoading ? "Loggin In..." : "Sign In"}</button>
-                                    </div>
+
+                                    <button type="submit" className="btn btn-primary w-100 py-2" onClick={e => { handleLoginForm(e); }} disabled={isLoading} style={{ 'width': '100%' }}> {isLoading ? (
+                                        <>
+                                            <span
+                                                className="spinner-border spinner-border-sm me-2"
+                                                role="status"
+                                                aria-hidden="true"
+                                            ></span>
+                                            Please Wait...
+                                        </>
+                                    ) : ("Sign In")}</button>
+
                                 </form>
                             </main>
                         </div>
