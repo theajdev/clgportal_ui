@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import bootstrap from 'bootstrap/dist/js/bootstrap.js';
 import { addNewRole, deleteRole, getAllRoles, getRolesByStatus, UpdateRole } from '../../services/AdminServices/RoleService';
 import { toast } from 'react-toastify';
+import { checkTokenAndLogout } from '../../services/auth';
 // Initialization for ES Users
 
 
@@ -56,6 +57,7 @@ const UserType = () => {
 
   //On page load
   useEffect(() => {
+    checkTokenAndLogout();
     setIsLoading(true);
     getAllRoles().then(data => {
       setRoles(data);

@@ -3,6 +3,7 @@ import bootstrap from 'bootstrap/dist/js/bootstrap.js';
 import { addTeacher, deleteTeacher, getAllTeachers, getTeachersByStatus, modifyTeacher } from '../../services/AdminServices/TeacherService';
 import { getAllCourses } from '../../services/AdminServices/DeptService';
 import { toast } from 'react-toastify';
+import { checkTokenAndLogout } from '../../services/auth';
 
 const Teachers = () => {
 
@@ -65,6 +66,7 @@ const Teachers = () => {
 
 
   useEffect(() => {
+    checkTokenAndLogout();
     setIsLoading(true);
     getAllTeachers().then((data) => {
       setTeachers(data);
@@ -95,6 +97,35 @@ const Teachers = () => {
     tooltipTriggerList.forEach(tooltipTriggerEl => {
       new bootstrap.Tooltip(tooltipTriggerEl);
     });
+
+    //cleanup validation errors on modal close
+    const modalElement = document.getElementById('teacherModal');
+
+    const handleModalClose = () => {
+      // Clear validation errors
+      setValidation({
+        firstName: false,
+        middleName: false,
+        lastName: false,
+        email: false,
+        username: false,
+        password: false,
+        profilePic: false,
+        status: false,
+        deptId: false,
+      });
+    };
+
+    if (modalElement) {
+      modalElement.addEventListener('hidden.bs.modal', handleModalClose);
+    }
+
+    // Clean up listener on unmount
+    return () => {
+      if (modalElement) {
+        modalElement.removeEventListener('hidden.bs.modal', handleModalClose);
+      }
+    };
   }, []);
 
   //field change handler

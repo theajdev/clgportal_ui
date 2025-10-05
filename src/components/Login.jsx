@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { loginUser } from '../services/AuthService';
 import { useNavigate } from 'react-router-dom';
 import './signin.css';
@@ -13,6 +13,7 @@ const Login = () => {
     const [loginDetails, setLoginDetails] = useState({
         usernameOrEmail: "",
         password: "",
+        rememberMe: false,
     });
 
     const [validation, setValidation] = useState({
@@ -20,34 +21,51 @@ const Login = () => {
         password: false,
     });
 
+    useEffect(() => {
+        const savedUsername = localStorage.getItem("rememberedUsername");
+        if (savedUsername) {
+            setLoginDetails(prev => ({
+                ...prev,
+                usernameOrEmail: savedUsername,
+                password: "",
+                rememberMe: true,
+            }));
+        }
+
+        if (loginDetails.rememberMe) {
+            localStorage.setItem("rememberedUsername", loginDetails.usernameOrEmail);
+        } else {
+            localStorage.removeItem("rememberedUsername");
+        }
+    }, []);
+
     const validateFields = () => {
         const errors = {};
 
         if (!loginDetails.usernameOrEmail.trim()) { errors.usernameOrEmail = true; }
         if (!loginDetails.password.trim()) { errors.password = true; }
-
-
         setValidation(prev => ({ ...prev, ...errors }));
-
         return Object.keys(errors).length === 0;
     };
 
     const handleChange = (event) => {
-        const { name, value } = event.target;
+        const { name, value, type, checked } = event.target;
 
+        const newValue = type === 'checkbox' ? checked : value;
 
         setLoginDetails({ ...loginDetails, [event.target.name]: event.target.value });
 
         setLoginDetails(prev => ({
             ...prev,
-            [name]: value
+            [name]: newValue
         }));
 
-        // Clear error when the user starts typing
-        setValidation(prev => ({
-            ...prev,
-            [name]: false
-        }));
+        if (type !== 'checkbox') {
+            setValidation(prev => ({
+                ...prev,
+                [name]: false
+            }));
+        }
     };
 
 
@@ -73,12 +91,14 @@ const Login = () => {
                 });
 
                 const isAuth = isLoggedIn();
+
                 if (isAuth) {
                     toast.success("Login Success.", {
                         position: 'bottom-center',
                         autoClose: 1200,
                     });
                 }
+
                 setTimeout(() => {
                     if (auth === "ADMIN") {
                         sessionStorage.setItem("homeURL", "/admin");
@@ -108,28 +128,7 @@ const Login = () => {
         });
     }
 
-    // Handle ripple effect on button click
-    const handleRipple = (e) => {
-        const button = e.currentTarget;
-        const rect = button.getBoundingClientRect();
 
-        // Remove any old ripple
-        document.querySelectorAll('.global-ripple').forEach(el => el.remove());
-
-        const circle = document.createElement('span');
-        circle.classList.add('global-ripple');
-
-        const size = Math.max(rect.width, rect.height);
-        circle.style.width = circle.style.height = `${size}px`;
-        circle.style.left = `${e.clientX - size / 2}px`;
-        circle.style.top = `${e.clientY - size / 2}px`;
-
-        document.body.appendChild(circle);
-
-        circle.addEventListener('animationend', () => {
-            circle.remove();
-        });
-    };
     return (
         <div className='container-fluid'>
             <svg xmlns="http://www.w3.org/2000/svg" className="d-none">
@@ -153,7 +152,7 @@ const Login = () => {
                     <div className='App-login' disabled={isLoading}>
 
                         <div className="dropdown position-fixed mb-3 me-3 bd-mode-toggle">
-                            <button className="btn btn-primary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" onClick={e => { handleRipple(e); }}>
+                            <button className="btn btn-primary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" >
                                 <svg className="bi my-1 theme-icon-active" aria-hidden="true">
                                     <use href="#circle-half"></use>
                                 </svg>
@@ -212,12 +211,22 @@ const Login = () => {
                                         <input type="password" className={`form-control mb-3 ${validation.password ? 'ripple-invalid' : ''}`} name="password" id="password" value={loginDetails.password} onChange={handleChange} disabled={isLoading} placeholder='Password' />
                                         <label htmlFor="password">Password</label>
                                     </div>
-                                    <div className="form-check text-start my-3"> <input className="form-check-input" type="checkbox" value="remember-me" id="checkDefault" />
-                                        <label className="form-check-label" htmlFor="checkDefault" >
+                                    <div className="form-check text-start my-3">
+                                        <input
+                                            className="form-check-input"
+                                            type="checkbox"
+                                            name="rememberMe"
+                                            id="checkDefault"
+                                            checked={loginDetails.rememberMe}
+                                            onChange={handleChange}
+                                            disabled={isLoading}
+                                        />
+                                        <label className="form-check-label" htmlFor="checkDefault">
                                             Remember me
-                                        </label> </div>
+                                        </label>
+                                    </div>
 
-                                    <button type="submit" className="btn btn-primary w-100 py-2" onClick={e => { handleLoginForm(e); }} disabled={isLoading} style={{ 'width': '100%' }}> {isLoading ? (
+                                    <button type="submit" className="btn btn-primary w-100" onClick={e => { handleLoginForm(e); }} disabled={isLoading}> {isLoading ? (
                                         <>
                                             <span
                                                 className="spinner-border spinner-border-sm me-2"

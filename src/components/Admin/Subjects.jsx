@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import bootstrap from 'bootstrap/dist/js/bootstrap.js';
 import { toast } from 'react-toastify';
 import { getAllSubjects } from '../../services/AdminServices/SubjectService';
+import { checkTokenAndLogout } from '../../services/auth';
 
 const Subjects = () => {
 
@@ -17,6 +18,7 @@ const Subjects = () => {
   const [isLoading, setIsLoading] = useState(false);  // State htmlFor loading
 
   useEffect(() => {
+    checkTokenAndLogout();
     setIsLoading(true);
     getAllSubjects().then((res) => {
       console.log(res);

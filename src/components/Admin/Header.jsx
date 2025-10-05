@@ -43,8 +43,8 @@ const Header = () => {
             <nav id="sidebar" className={`nav-sidebar navbar-brand ${isSidebarActive ? "active" : ""}`}>
                 <div className="custom-menu">
 
-                    <button type="button" class="btn btn-primary btn-floating btns-sideBtn" data-mdb-ripple-init id="sidebarCollapse" onClick={() => setSidebarActive(!isSidebarActive)}>
-                        <i class="bi bi-list"></i>
+                    <button type="button" className="btn btn-primary btn-floating btns-sideBtn" data-mdb-ripple-init id="sidebarCollapse" onClick={() => setSidebarActive(!isSidebarActive)}>
+                        <i className="bi bi-list"></i>
                     </button>
                 </div>
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import bootstrap from 'bootstrap/dist/js/bootstrap.js';
 import { addCourse, deleteCourse, getAllCourses, getCoursesByStatus, updateDepartment } from '../../services/AdminServices/DeptService';
 import { toast } from 'react-toastify';
+import { checkTokenAndLogout } from '../../services/auth';
 
 const Cousres = () => {
   //declarations
@@ -53,6 +54,7 @@ const Cousres = () => {
 
   // on page load
   useEffect(() => {
+    checkTokenAndLogout();
     setIsLoading(true);
     getAllCourses().then((res) => {
       console.log(res);
@@ -74,6 +76,28 @@ const Cousres = () => {
     tooltipTriggerList.forEach(tooltipTriggerEl => {
       new bootstrap.Tooltip(tooltipTriggerEl);
     });
+
+    //cleanup validation errors on modal close
+    const modalElement = document.getElementById('coursesModal');
+
+    const handleModalClose = () => {
+      // Clear validation errors
+      setValidation({
+        deptDesc: false,
+        status: false,
+      });
+    };
+
+    if (modalElement) {
+      modalElement.addEventListener('hidden.bs.modal', handleModalClose);
+    }
+
+    // Clean up listener on unmount
+    return () => {
+      if (modalElement) {
+        modalElement.removeEventListener('hidden.bs.modal', handleModalClose);
+      }
+    };
   }, []);
 
   // add new course
