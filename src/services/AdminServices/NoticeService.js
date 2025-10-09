@@ -27,3 +27,9 @@ export const deleteNotice = (id) => {
     .delete(`/notice/${id}`)
     .then((response) => response.data);
 };
+
+export const getNoticeCount = () => {
+  return private_axios_url
+    .get(`/notice/count`)
+    .then((response) => response.data);
+};

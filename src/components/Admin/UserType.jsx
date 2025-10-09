@@ -57,6 +57,7 @@ const UserType = () => {
 
   //On page load
   useEffect(() => {
+    document.title = "User type - Admin";
     checkTokenAndLogout();
     setIsLoading(true);
     getAllRoles().then(data => {
@@ -195,7 +196,12 @@ const UserType = () => {
 
     // Open the Bootstrap modal programmatically
     const modalElement = document.getElementById('userTypeModal');
-    const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+    const modalInstance =
+      bootstrap.Modal.getInstance(modalElement) ||
+      new bootstrap.Modal(modalElement, {
+        backdrop: 'static',
+        keyboard: false
+      });
     modalInstance.show();
   };
 
@@ -219,11 +225,19 @@ const UserType = () => {
           id: "",
         });
         toast.success("User type added..", { position: "top-right", autoClose: 1600 });
+
         const modalElement = document.getElementById('userTypeModal');
-        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        const modalInstance =
+          bootstrap.Modal.getInstance(modalElement) ||
+          new bootstrap.Modal(modalElement, {
+            backdrop: 'non-static',
+            keyboard: false
+          });
         if (modalInstance) {
           modalInstance.hide();
         }
+
+
       }, 2000);
 
       setTimeout(() => {
@@ -278,7 +292,12 @@ const UserType = () => {
         });
         toast.success("User type Updated..", { position: "top-right", autoClose: 1600 });
         const modalElement = document.getElementById('userTypeModal');
-        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        const modalInstance =
+          bootstrap.Modal.getInstance(modalElement) ||
+          new bootstrap.Modal(modalElement, {
+            backdrop: 'non-static',
+            keyboard: false
+          });
         if (modalInstance) {
           modalInstance.hide();
         }

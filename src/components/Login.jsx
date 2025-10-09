@@ -23,21 +23,26 @@ const Login = () => {
 
     useEffect(() => {
         const savedUsername = localStorage.getItem("rememberedUsername");
+        const savedPassword = localStorage.getItem("password");
         if (savedUsername) {
             setLoginDetails(prev => ({
                 ...prev,
                 usernameOrEmail: savedUsername,
-                password: "",
+                password: savedPassword,
                 rememberMe: true,
             }));
         }
+    }, []);
 
+    // 2. Update localStorage when rememberMe or username changes
+    useEffect(() => {
         if (loginDetails.rememberMe) {
             localStorage.setItem("rememberedUsername", loginDetails.usernameOrEmail);
+            localStorage.setItem("password", loginDetails.password);
         } else {
             localStorage.removeItem("rememberedUsername");
         }
-    }, []);
+    }, [loginDetails.rememberMe, loginDetails.usernameOrEmail, loginDetails.password]);
 
     const validateFields = () => {
         const errors = {};
@@ -50,10 +55,7 @@ const Login = () => {
 
     const handleChange = (event) => {
         const { name, value, type, checked } = event.target;
-
         const newValue = type === 'checkbox' ? checked : value;
-
-        setLoginDetails({ ...loginDetails, [event.target.name]: event.target.value });
 
         setLoginDetails(prev => ({
             ...prev,
@@ -92,31 +94,23 @@ const Login = () => {
 
                 const isAuth = isLoggedIn();
 
-                if (isAuth) {
+                if (auth === "ADMIN") {
                     toast.success("Login Success.", {
-                        position: 'bottom-center',
-                        autoClose: 1200,
+                        autoClose: 1000,
                     });
+                    sessionStorage.setItem("homeURL", "/admin");
+                    navigator("/admin");
+                } else if (auth === "TEACHER") {
+                    sessionStorage.setItem("homeURL", "/teacher");
+                    navigator("/teacher");
+                    window.location.reload(false);
+                } else if (auth === "STUDENT") {
+                    sessionStorage.setItem("homeURL", "/student");
+                    navigator("/student");
+                    window.location.reload(false);
                 }
 
-                setTimeout(() => {
-                    if (auth === "ADMIN") {
-                        sessionStorage.setItem("homeURL", "/admin");
-                        navigator("/admin");
-                        window.location.reload(false);
-                    } else if (auth === "TEACHER") {
-                        sessionStorage.setItem("homeURL", "/teacher");
-                        navigator("/teacher");
-                        window.location.reload(false);
-                    } else if (auth === "STUDENT") {
-                        sessionStorage.setItem("homeURL", "/student");
-                        navigator("/student");
-                        window.location.reload(false);
-                    }
-                }, 1300);
             }); // Adjust delay as needed
-
-
         }).catch((error) => {
             console.log(error);
             toast.error("Login Failed! Please check your credentials.", {
@@ -152,7 +146,7 @@ const Login = () => {
                     <div className='App-login' disabled={isLoading}>
 
                         <div className="dropdown position-fixed mb-3 me-3 bd-mode-toggle">
-                            <button className="btn btn-primary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" >
+                            <button className="btn btn-primary py-2 dropdown-toggle d-flex align-items-center data-mdb-dropdown-init data-mdb-ripple-init" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" >
                                 <svg className="bi my-1 theme-icon-active" aria-hidden="true">
                                     <use href="#circle-half"></use>
                                 </svg>
@@ -235,7 +229,12 @@ const Login = () => {
                                             ></span>
                                             Please Wait...
                                         </>
-                                    ) : ("Sign In")}</button>
+                                    ) : (
+                                        <>
+                                            <i className="bi bi-box-arrow-in-right ms-2 me-2 fs-6 p-1"></i>
+                                            Sign In
+                                        </>
+                                    )}</button>
 
                                 </form>
                             </main>

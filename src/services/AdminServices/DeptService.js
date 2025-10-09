@@ -31,3 +31,9 @@ export const getCoursesByStatus = (status) => {
     .get(`/department/status/${status}`)
     .then((response) => response.data);
 };
+
+export const getCourseCount = () => {
+  return private_axios_url
+    .get("/department/count")
+    .then((response) => response.data);
+};

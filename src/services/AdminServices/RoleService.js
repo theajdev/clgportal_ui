@@ -27,3 +27,7 @@ export const deleteRole = (id) => {
     .delete(`/role/${id}`)
     .then((response) => response.data);
 };
+
+export const getRoleCount = () => {
+  return private_axios_url.get("/role/count").then((response) => response.data);
+};

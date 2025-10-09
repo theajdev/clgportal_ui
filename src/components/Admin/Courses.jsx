@@ -54,6 +54,7 @@ const Cousres = () => {
 
   // on page load
   useEffect(() => {
+    document.title = "Department - Admin";
     checkTokenAndLogout();
     setIsLoading(true);
     getAllCourses().then((res) => {
@@ -105,6 +106,7 @@ const Cousres = () => {
     setIsUpdate(false);
     setCourse({ id: '', deptDesc: '', status: '' });
     var myModal = new bootstrap.Modal(document.getElementById('coursesModal'), {
+      backdrop: 'static',
       keyboard: false
     });
     myModal.show();
@@ -127,7 +129,12 @@ const Cousres = () => {
         setCourse({ id: '', deptDesc: '', status: '' });
         toast.success("course added.", { position: "top-right", autoClose: 1600 });
         const modalElement = document.getElementById('coursesModal');
-        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        const modalInstance =
+          bootstrap.Modal.getInstance(modalElement) ||
+          new bootstrap.Modal(modalElement, {
+            backdrop: 'non-static',
+            keyboard: false
+          });
         if (modalInstance) {
           modalInstance.hide();
         }
@@ -172,6 +179,7 @@ const Cousres = () => {
 
     // Open the Bootstrap modal programmatically
     var myModal = new bootstrap.Modal(document.getElementById('coursesModal'), {
+      backdrop: 'static',
       keyboard: false
     });
     myModal.show();
@@ -194,8 +202,14 @@ const Cousres = () => {
         toast.dismiss();
         setCourse({ id: '', deptDesc: '', status: '' });
         toast.success("Course updated.", { position: "top-right", autoClose: 1600 });
+
         const modalElement = document.getElementById('coursesModal');
-        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        const modalInstance =
+          bootstrap.Modal.getInstance(modalElement) ||
+          new bootstrap.Modal(modalElement, {
+            backdrop: 'non-static',
+            keyboard: false
+          });
         if (modalInstance) {
           modalInstance.hide();
         }

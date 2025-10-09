@@ -66,6 +66,7 @@ const Teachers = () => {
 
 
   useEffect(() => {
+    document.title = "Teacher - Admin";
     checkTokenAndLogout();
     setIsLoading(true);
     getAllTeachers().then((data) => {
@@ -162,6 +163,7 @@ const Teachers = () => {
       deptId: "",
     });
     var myModal = new bootstrap.Modal(document.getElementById('teacherModal'), {
+      backdrop: 'static',
       keyboard: false
     });
     myModal.show();
@@ -197,7 +199,12 @@ const Teachers = () => {
 
         toast.success("Teacher added.", { position: "top-right", autoClose: 1600 });
         const modalElement = document.getElementById('teacherModal');
-        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        const modalInstance =
+          bootstrap.Modal.getInstance(modalElement) ||
+          new bootstrap.Modal(modalElement, {
+            backdrop: 'non-static',
+            keyboard: false
+          });
         if (modalInstance) {
           modalInstance.hide();
         }
@@ -220,6 +227,7 @@ const Teachers = () => {
     setIsUpdate(true);
     setTeacher(teacher);
     var myModal = new bootstrap.Modal(document.getElementById('teacherModal'), {
+      backdrop: 'static',
       keyboard: false
     });
     myModal.show();
@@ -254,8 +262,14 @@ const Teachers = () => {
           deptId: "",
         });
         toast.success("teacher updated.", { position: "top-right", autoClose: 1600 });
+
         const modalElement = document.getElementById('teacherModal');
-        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        const modalInstance =
+          bootstrap.Modal.getInstance(modalElement) ||
+          new bootstrap.Modal(modalElement, {
+            backdrop: 'non-static',
+            keyboard: false
+          });
         if (modalInstance) {
           modalInstance.hide();
         }
@@ -564,14 +578,10 @@ const Teachers = () => {
                     value={teacher.password}
                     onChange={fieldChanged}
                   />
-                  <input
-                    type='text'
-                    name="profilePic"
-                    className='form-control mb-3'
-                    placeholder='Profile Pic'
-                    value={teacher.profilePic}
-                    onChange={fieldChanged}
-                  />
+                  <div class="form-floating">
+                    <input class="form-control mb-3" type="file" id="formFile" name="profilePic" value={teacher.profilePic} onChange={fieldChanged} placeholder='Profile Picture' />
+                    <label for="formFile">Profile Picture</label>
+                  </div>
                   <select
                     name="status"
                     className={`form-control mb-3 ${validation.status ? 'ripple-invalid' : ''}`}

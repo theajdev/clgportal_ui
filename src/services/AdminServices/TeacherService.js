@@ -28,3 +28,9 @@ export const getTeachersByStatus = (status) => {
     .get(`/teacher/status/${status}`)
     .then((response) => response.data);
 };
+
+export const getTeacherCount = () => {
+  return private_axios_url
+    .get(`/teacher/count`)
+    .then((response) => response.data);
+};

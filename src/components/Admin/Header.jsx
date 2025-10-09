@@ -131,7 +131,7 @@ const Header = () => {
                 <div className="navbar navbar-expand-lg bg-purple">
                     <div className='dropdown bd-mode-toggle ms-auto d-flex'>
 
-                        <button className="btn py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" >
+                        <button className="btn py-2 dropdown-toggle d-flex align-items-center data-mdb-dropdown-init data-mdb-ripple-init" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" >
                             <svg className="bi my-1 theme-icon-active text-white" aria-hidden="true" fill='currentColor'>
                                 <use href="#circle-half"></use>
                             </svg>
@@ -175,16 +175,15 @@ const Header = () => {
                             </li>
                         </ul>
 
-                        <a className="btn dropdown-toggle" href="##" role="button" id="logoutMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a className="btn dropdown-toggle data-mdb-dropdown-init data-mdb-ripple-init" href="##" role="button" id="logoutMenu" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="/default.png" alt="Avatar Logo" width='30px' className="rounded-pill" />
                         </a>
 
                         {isAuth && (
                             <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="logoutMenu">
-                                <li className='nav-item dropdown'>
-                                    <button type="button" className="dropdown-item active">{username}</button>
-                                    <button type="button" className="dropdown-item" onClick={handleLogout}>Logout</button>
-                                </li>
+                                <li><a className="dropdown-item active d-flex" href="##"><i className="bi bi-person-circle ms-2 me-2 fs-6 text-primary fw-bold"></i> {username}</a></li>
+                                <li><a className="dropdown-item" href="##" onClick={handleLogout}> <i className="bi bi-box-arrow-right ms-2 me-2 fs-6 text-danger fw-bold"></i>Logout</a></li>
+
                             </ul>
                         )}
                     </div>
