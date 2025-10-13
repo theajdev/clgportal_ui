@@ -411,7 +411,7 @@ const AdminNotice = () => {
           <div className="card mt-4">
             <div className="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
               <button color="primary" className='btn btn-primary me-2' onClick={e => { newNotice() }}>
-                Notice
+                <i class="bi bi-pencil-fill fs-8 me-2"></i>Notice
               </button>
               <div className="input-group ms-auto input-group-limit">
                 <span className="input-group-text" id="basic-addon1">Status</span>
@@ -518,7 +518,7 @@ const AdminNotice = () => {
 
               <div className="dropdown mb-3">
                 <button
-                  className="btn btn-outline-secondary dropdown-toggle w-100"
+                  className={`btn dropdown-toggle w-100 ${validation.deptId ? 'ripple-invalid' : 'btn-outline-secondary'}`}
                   type="button"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
@@ -533,7 +533,7 @@ const AdminNotice = () => {
                         .join(", ")
                   }
                 </button>
-                <ul className={`dropdown-menu p-3 w-100 ${validation.deptId ? 'ripple-invalid' : ''}`}>
+                <ul className="dropdown-menu p-3 w-100">
                   {/* Select All */}
                   <li>
                     <div className="form-check">
@@ -550,6 +550,11 @@ const AdminNotice = () => {
                           } else {
                             setNotice(prev => ({ ...prev, deptId: [] }));
                           }
+                          // Reset validation error when user interacts
+                          setValidation(prev => ({
+                            ...prev,
+                            deptId: false
+                          }));
                         }}
                       />
                       <label className="form-check-label fw-bold" htmlFor="selectAll">
@@ -581,6 +586,11 @@ const AdminNotice = () => {
                                 deptId: prev.deptId.filter(id => id !== dept.id)
                               }));
                             }
+                            // Reset validation error when user interacts
+                            setValidation(prev => ({
+                              ...prev,
+                              deptId: false
+                            }));
                           }}
                         />
                         <label className="form-check-label" htmlFor={`dept-${dept.id}`}>

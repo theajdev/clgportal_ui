@@ -375,7 +375,7 @@ const Cousres = () => {
             <div className="card mt-4">
               <div className="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
                 <button color="primary" className='btn btn-primary me-2' onClick={e => { handleRipple(e); newCourse() }}>
-                  Course
+                  <i class="bi bi-book-fill fs-8 me-2"></i>Course
                 </button>
                 <div className="input-group ms-auto input-group-limit">
                   <span className="input-group-text" id="basic-addon1">Status</span>

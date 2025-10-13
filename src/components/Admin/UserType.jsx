@@ -407,7 +407,7 @@ const UserType = () => {
             <div className="card mt-4 border-1">
               <div className="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
                 <button color="primary" className='btn btn-primary me-2' onClick={e => { newUserType() }}>
-                  User Type
+                  <i class="bi bi-person-circle fs-7 me-2"></i>User Type
                 </button>
                 <div className="input-group ms-auto input-group-limit">
                   <span className="input-group-text" id="basic-addon1">Status</span>

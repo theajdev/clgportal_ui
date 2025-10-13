@@ -73,10 +73,10 @@ const AdminDashboard = () => {
                                     <div className="d-flex justify-content-between px-md-1">
                                         <div>
                                             <h3 className="text-success">{deptCount}</h3>
-                                            <p className="mb-0">Departments</p>
+                                            <p className="mb-0">Courses</p>
                                         </div>
                                         <div className="align-self-center">
-                                            <i className="bi bi-buildings-fill fs-1"></i>
+                                            <i class="bi bi-book-fill text-success fs-1"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -91,7 +91,7 @@ const AdminDashboard = () => {
                                             <p className="mb-0">Teachers</p>
                                         </div>
                                         <div className="align-self-center">
-                                            <i className="bi bi-person-vcard text-warning fs-1"></i>
+                                            <i class="bi bi-person-video3 text-warning fs-1"></i>
                                         </div>
                                     </div>
                                 </div>

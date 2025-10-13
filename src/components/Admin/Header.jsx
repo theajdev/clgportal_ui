@@ -48,7 +48,7 @@ const Header = () => {
                     </button>
                 </div>
 
-                <div className="p-4">
+                <div className="p-pb-4 pt-0 pl-4">
                     <h1>
                         <a href={`${homeURL}`} className="logo">College Portal</a>
                     </h1>
@@ -62,7 +62,7 @@ const Header = () => {
                                     <Link to="/admin/usertype" id="sidebarCollapse" className={`btns-sideBtn nav-link ${location.pathname === '/admin/usertype' ? 'active' : ''}`} >User Type</Link>
                                 </li>
                                 <li>
-                                    <Link to="/admin/courses" className={`nav-link ${location.pathname === '/admin/courses' ? 'active' : ''}`} >Department</Link>
+                                    <Link to="/admin/courses" className={`nav-link ${location.pathname === '/admin/courses' ? 'active' : ''}`} >Courses</Link>
                                 </li>
                                 <li>
                                     <Link to="/admin/teachers" className={`nav-link ${location.pathname === '/admin/teachers' ? 'active' : ''}`} >Teacher</Link>

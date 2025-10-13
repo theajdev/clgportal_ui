@@ -458,7 +458,7 @@ const Teachers = () => {
             <div className="card mt-4">
               <div className="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
                 <button color="primary" className='btn btn-primary me-2' onClick={e => { handleRipple(e); newTeacher() }}>
-                  Teacher
+                  <i class="bi bi-person-video3 fs-8 me-2"></i>Teacher
                 </button>
                 <div className="input-group ms-auto input-group-limit">
                   <span className="input-group-text" id="basic-addon1">Status</span>
@@ -500,7 +500,7 @@ const Teachers = () => {
                         <tbody>
                           {(!teachers || teachers.length === 0) ? (
                             <tr>
-                              <td colSpan="3" className="text-center"><div className="text-muted fw-semibold" style={{ fontSize: "1.2rem", padding: "20px" }}>
+                              <td colSpan="4" className="text-center"><div className="text-muted fw-semibold" style={{ fontSize: "1.2rem", padding: "20px" }}>
                                 <span role="img" aria-label="sad" style={{ fontSize: "2.5rem" }}>🤷🏻</span> No teachers found
                               </div></td>
                             </tr>
