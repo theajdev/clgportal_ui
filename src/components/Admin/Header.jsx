@@ -143,7 +143,7 @@ const Header = () => {
             {/* end of navbar */}
 
             {/* -- start of Sidebar -- */}
-            <aside className={`sidebar mt-4 ${isSidebarActive ? 'collapsed' : ''}`} id="sidebar">
+            <aside className={`sidebar mt-2 ${isSidebarActive ? 'collapsed' : ''}`} id="sidebar">
                 <div className="sidebar-heading">Menu</div>
                 <ul className="list-unstyled components mb-5">
                     {/* Admin Sidebar */}

@@ -50,7 +50,7 @@ const AdminDashboard = () => {
     return (
         <div>
             <section>
-                <div className="row mt-5">
+                <div className="row mt-4">
                     <div className="col-xl-3 col-sm-6 col-12 mb-4">
                         <div className="card">
                             <div className="card-body">
