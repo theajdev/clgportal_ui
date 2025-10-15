@@ -49,73 +49,70 @@ const AdminDashboard = () => {
 
     return (
         <div>
-            <div className='container'>
-                <section>
-                    <div className="row mt-5">
-                        <div className="col-xl-3 col-sm-6 col-12 mb-4">
-                            <div className="card">
-                                <div className="card-body">
-                                    <div className="d-flex justify-content-between px-md-1">
-                                        <div>
-                                            <h3 className="text-danger">{roleCount}</h3>
-                                            <p className="mb-0">User Types</p>
-                                        </div>
-                                        <div className="align-self-center">
-                                            <i className="bi bi-person-circle text-danger fs-1"></i>
-                                        </div>
+            <section>
+                <div className="row mt-5">
+                    <div className="col-xl-3 col-sm-6 col-12 mb-4">
+                        <div className="card">
+                            <div className="card-body">
+                                <div className="d-flex justify-content-between px-md-1">
+                                    <div>
+                                        <h3 className="text-danger">{roleCount}</h3>
+                                        <p className="mb-0">User Types</p>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-xl-3 col-sm-6 col-12 mb-4">
-                            <div className="card">
-                                <div className="card-body">
-                                    <div className="d-flex justify-content-between px-md-1">
-                                        <div>
-                                            <h3 className="text-success">{deptCount}</h3>
-                                            <p className="mb-0">Courses</p>
-                                        </div>
-                                        <div className="align-self-center">
-                                            <i class="bi bi-book-fill text-success fs-1"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-xl-3 col-sm-6 col-12 mb-4">
-                            <div className="card">
-                                <div className="card-body">
-                                    <div className="d-flex justify-content-between px-md-1">
-                                        <div>
-                                            <h3 className="text-warning">{teacherCount}</h3>
-                                            <p className="mb-0">Teachers</p>
-                                        </div>
-                                        <div className="align-self-center">
-                                            <i class="bi bi-person-video3 text-warning fs-1"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-xl-3 col-sm-6 col-12 mb-4">
-                            <div className="card">
-                                <div className="card-body">
-                                    <div className="d-flex justify-content-between px-md-1">
-                                        <div>
-                                            <h3 className="text-info">{noticeCount}</h3>
-                                            <p className="mb-0">Notices</p>
-                                        </div>
-                                        <div className="align-self-center">
-                                            <i className="bi bi-pencil-fill text-info fs-1"></i>
-                                        </div>
+                                    <div className="align-self-center">
+                                        <i className="bi bi-person-circle text-danger fs-1"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                </section>
-            </div>
+                    <div className="col-xl-3 col-sm-6 col-12 mb-4">
+                        <div className="card">
+                            <div className="card-body">
+                                <div className="d-flex justify-content-between px-md-1">
+                                    <div>
+                                        <h3 className="text-success">{deptCount}</h3>
+                                        <p className="mb-0">Courses</p>
+                                    </div>
+                                    <div className="align-self-center">
+                                        <i class="bi bi-book-fill text-success fs-1"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-xl-3 col-sm-6 col-12 mb-4">
+                        <div className="card">
+                            <div className="card-body">
+                                <div className="d-flex justify-content-between px-md-1">
+                                    <div>
+                                        <h3 className="text-warning">{teacherCount}</h3>
+                                        <p className="mb-0">Teachers</p>
+                                    </div>
+                                    <div className="align-self-center">
+                                        <i class="bi bi-person-video3 text-warning fs-1"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-xl-3 col-sm-6 col-12 mb-4">
+                        <div className="card">
+                            <div className="card-body">
+                                <div className="d-flex justify-content-between px-md-1">
+                                    <div>
+                                        <h3 className="text-info">{noticeCount}</h3>
+                                        <p className="mb-0">Notices</p>
+                                    </div>
+                                    <div className="align-self-center">
+                                        <i className="bi bi-pencil-fill text-info fs-1"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     )
 }

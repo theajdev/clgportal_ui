@@ -451,177 +451,177 @@ const Teachers = () => {
   };
 
   return (
-    <div>
-      <div className='container'>
-        <div className='row'>
-          <div className='mx-auto'>
-            <div className="card mt-4">
-              <div className="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
-                <button color="primary" className='btn btn-primary me-2' onClick={e => { handleRipple(e); newTeacher() }}>
-                  <i class="bi bi-person-video3 fs-8 me-2"></i>Teacher
-                </button>
-                <div className="input-group ms-auto input-group-limit">
-                  <span className="input-group-text" id="basic-addon1">Status</span>
-                  <button type='button' className='btn btn-outline-success'>
-                    {selected}
-                  </button>
-                  <button type="button" className="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false" onClick={e => { handleRipple(e); }}>
-                    <span className="visually-hidden">Toggle Dropdown</span>
-                  </button>
-                  <ul className='dropdown-menu dropdown-menu-end'>
-                    <li><button className={`dropdown-item ${selected === "All" ? "active" : ""}`} onClick={handleAll}>All</button></li>
-                    <li><button className={`dropdown-item ${selected === "Valid" ? "active" : ""}`} onClick={handleValid}>Valid</button></li>
-                    <li><button className={`dropdown-item ${selected === "Invalid" ? "active" : ""}`} onClick={handleInvalid}>In-valid</button></li>
-                  </ul>
-                </div>
-              </div>
-              <div className={`card-body ${isLoading ? "disabled" : " "}`}>
-                {
-                  isLoading ? (<div className="text-center">
-                    <strong role="status">Loading teachers...</strong>
-                    <div className="spinner-grow spinner-grow-sm text-danger" role='status'></div>
-                    <div className="spinner-grow spinner-grow-sm text-success" role="status"></div>
-                    <div className="spinner-grow spinner-grow-sm text-primary" role="status"></div>
-                    <div className="spinner-grow spinner-grow-sm text-warning" role="status"></div>
-                    <div className="spinner-grow spinner-grow-sm text-light" role="status"></div>
-                    <div className="spinner-grow spinner-grow-sm text-dark" role="status"></div>
-                  </div>
-                  ) : (
-                    <div className=' table-wrapper'>
-                      <table className="table table-responsible">
-                        <thead>
-                          <tr>
-                            <th scope="row" className="col-srno">Sr. No.</th>
-                            <th scope="row">First Name</th>
-                            <th scope="row">Last Name</th>
-                            <th scope="row">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {(!teachers || teachers.length === 0) ? (
-                            <tr>
-                              <td colSpan="4" className="text-center"><div className="text-muted fw-semibold" style={{ fontSize: "1.2rem", padding: "20px" }}>
-                                <span role="img" aria-label="sad" style={{ fontSize: "2.5rem" }}>🤷🏻</span> No teachers found
-                              </div></td>
-                            </tr>
-                          ) : (
+    <>
 
-                            teachers.map((row) => (
-                              <tr key={row.id}>
-                                <td>{row.id}</td>
-                                <td>{row.firstName}</td>
-                                <td>{row.lastName}</td>
-                                <td><button className='btn btn-info me-2' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Edit" onClick={e => { handleRipple(e); editTeacher(row) }}><i className="bi bi-pencil-square"></i></button> <button className='btn btn-danger' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Delete" onClick={e => { handleRipple(e); removeTeacher(e, row.id, row.deptDesc) }}><i className="bi bi-trash"></i></button></td>
-                              </tr>
-                            ))
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+      <div className='row'>
+        <div className='mx-auto col-12'>
+          <div className="card mt-4">
+            <div className="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+              <button color="primary" className='btn btn-primary me-2' onClick={e => { handleRipple(e); newTeacher() }}>
+                <i class="bi bi-person-video3 fs-8 me-2"></i>Teacher
+              </button>
+              <div className="input-group ms-auto input-group-limit">
+                <span className="input-group-text" id="basic-addon1">Status</span>
+                <button type='button' className='btn btn-outline-success'>
+                  {selected}
+                </button>
+                <button type="button" className="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false" onClick={e => { handleRipple(e); }}>
+                  <span className="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul className='dropdown-menu dropdown-menu-end'>
+                  <li><button className={`dropdown-item ${selected === "All" ? "active" : ""}`} onClick={handleAll}>All</button></li>
+                  <li><button className={`dropdown-item ${selected === "Valid" ? "active" : ""}`} onClick={handleValid}>Valid</button></li>
+                  <li><button className={`dropdown-item ${selected === "Invalid" ? "active" : ""}`} onClick={handleInvalid}>In-valid</button></li>
+                </ul>
               </div>
             </div>
-          </div>
-          <div className="modal fade" id="teacherModal" aria-labelledby="exampleModalLabel" aria-hidden="true" >
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h1 className="modal-title fs-5" id="exampleModalLabel">{isUpdate ? "Update Teacher" : "Add New Teacher"}</h1>
-                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div className={`card-body ${isLoading ? "disabled" : " "}`}>
+              {
+                isLoading ? (<div className="text-center">
+                  <strong role="status">Loading teachers...</strong>
+                  <div className="spinner-grow spinner-grow-sm text-danger" role='status'></div>
+                  <div className="spinner-grow spinner-grow-sm text-success" role="status"></div>
+                  <div className="spinner-grow spinner-grow-sm text-primary" role="status"></div>
+                  <div className="spinner-grow spinner-grow-sm text-warning" role="status"></div>
+                  <div className="spinner-grow spinner-grow-sm text-light" role="status"></div>
+                  <div className="spinner-grow spinner-grow-sm text-dark" role="status"></div>
                 </div>
-                <div className="modal-body">
-                  <input
-                    type='text'
-                    name="firstName"
-                    className={`form-control mb-3 ${validation.firstName ? 'ripple-invalid' : ''}`}
-                    placeholder='First Name'
-                    value={teacher.firstName}
-                    onChange={fieldChanged}
-                  />
-                  <input
-                    type='text'
-                    name="middleName"
-                    className='form-control mb-3'
-                    placeholder='Middle Name'
-                    value={teacher.middleName}
-                    onChange={fieldChanged}
-                  />
-                  <input
-                    type='text'
-                    name="lastName"
-                    className={`form-control mb-3 ${validation.lastName ? 'ripple-invalid' : ''}`}
-                    placeholder='Last Name'
-                    value={teacher.lastName}
-                    onChange={fieldChanged}
-                  />
-                  <input
-                    type='text'
-                    name="username"
-                    className={`form-control mb-3 ${validation.username ? 'ripple-invalid' : ''}`}
-                    placeholder='username'
-                    value={teacher.username}
-                    onChange={fieldChanged}
-                  />
-                  <input
-                    type='text'
-                    name="email"
-                    className={`form-control mb-3 ${validation.email ? 'ripple-invalid' : ''}`}
-                    placeholder='email'
-                    value={teacher.email}
-                    onChange={fieldChanged}
-                  />
-                  <input
-                    type={`${isUpdate ? "hidden" : "password"}`}
-                    name="password"
-                    className={`form-control mb-3 ${validation.password ? 'ripple-invalid' : ''}`}
-                    placeholder='password'
-                    value={teacher.password}
-                    onChange={fieldChanged}
-                  />
-                  <div class="form-floating">
-                    <input class="form-control mb-3" type="file" id="formFile" name="profilePic" value={teacher.profilePic} onChange={fieldChanged} placeholder='Profile Picture' />
-                    <label for="formFile">Profile Picture</label>
-                  </div>
-                  <select
-                    name="status"
-                    className={`form-control mb-3 ${validation.status ? 'ripple-invalid' : ''}`}
-                    aria-label="Select Status"
-                    value={teacher.status}
-                    onChange={fieldChanged}
-                  >
-                    <option value="" disabled>Select</option>
-                    <option value="V">Valid</option>
-                    <option value="I">Invalid</option>
-                  </select>
-                  <select
-                    name="deptId"
-                    className={`form-control mb-3 ${validation.deptId ? 'ripple-invalid' : ''}`}
-                    aria-label="Select Department"
-                    value={teacher.deptId || ""}
-                    onChange={fieldChanged}
-                  >
-                    <option value="" disabled>Select Department</option>
-                    {depts.map((dept) => (
-                      <option key={dept.id} value={dept.id}>{dept.deptDesc}</option>
-                    ))}
-                  </select>
+                ) : (
+                  <div className=' table-wrapper'>
+                    <table className="table table-responsible">
+                      <thead>
+                        <tr>
+                          <th scope="row">Sr. No.</th>
+                          <th scope="row">First Name</th>
+                          <th scope="row">Last Name</th>
+                          <th scope="row">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(!teachers || teachers.length === 0) ? (
+                          <tr>
+                            <td colSpan="4" className="text-center"><div className="text-muted fw-semibold" style={{ fontSize: "1.2rem", padding: "20px" }}>
+                              <span role="img" aria-label="sad" style={{ fontSize: "2.5rem" }}>🤷🏻</span> No teachers found
+                            </div></td>
+                          </tr>
+                        ) : (
 
+                          teachers.map((row) => (
+                            <tr key={row.id}>
+                              <td>{row.id}</td>
+                              <td>{row.firstName}</td>
+                              <td>{row.lastName}</td>
+                              <td><button className='btn btn-info me-2' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Edit" onClick={e => { handleRipple(e); editTeacher(row) }}><i className="bi bi-pencil-square"></i></button> <button className='btn btn-danger' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Delete" onClick={e => { handleRipple(e); removeTeacher(e, row.id, row.deptDesc) }}><i className="bi bi-trash"></i></button></td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+            </div>
+          </div>
+        </div>
+        <div className="modal fade" id="teacherModal" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h1 className="modal-title fs-5" id="exampleModalLabel">{isUpdate ? "Update Teacher" : "Add New Teacher"}</h1>
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div className="modal-body">
+                <input
+                  type='text'
+                  name="firstName"
+                  className={`form-control mb-3 ${validation.firstName ? 'ripple-invalid' : ''}`}
+                  placeholder='First Name'
+                  value={teacher.firstName}
+                  onChange={fieldChanged}
+                />
+                <input
+                  type='text'
+                  name="middleName"
+                  className='form-control mb-3'
+                  placeholder='Middle Name'
+                  value={teacher.middleName}
+                  onChange={fieldChanged}
+                />
+                <input
+                  type='text'
+                  name="lastName"
+                  className={`form-control mb-3 ${validation.lastName ? 'ripple-invalid' : ''}`}
+                  placeholder='Last Name'
+                  value={teacher.lastName}
+                  onChange={fieldChanged}
+                />
+                <input
+                  type='text'
+                  name="username"
+                  className={`form-control mb-3 ${validation.username ? 'ripple-invalid' : ''}`}
+                  placeholder='username'
+                  value={teacher.username}
+                  onChange={fieldChanged}
+                />
+                <input
+                  type='text'
+                  name="email"
+                  className={`form-control mb-3 ${validation.email ? 'ripple-invalid' : ''}`}
+                  placeholder='email'
+                  value={teacher.email}
+                  onChange={fieldChanged}
+                />
+                <input
+                  type={`${isUpdate ? "hidden" : "password"}`}
+                  name="password"
+                  className={`form-control mb-3 ${validation.password ? 'ripple-invalid' : ''}`}
+                  placeholder='password'
+                  value={teacher.password}
+                  onChange={fieldChanged}
+                />
+                <div class="form-floating">
+                  <input class="form-control mb-3" type="file" id="formFile" name="profilePic" value={teacher.profilePic} onChange={fieldChanged} placeholder='Profile Picture' />
+                  <label for="formFile">Profile Picture</label>
                 </div>
-                <div className="modal-footer">
-                  {isUpdate ? (
-                    <button type="button" className="btn btn-warning" onClick={e => { handleRipple(e); updateTeacher(e) }}>Update</button>
-                  ) : (
-                    <button type="button" className="btn btn-primary" onClick={e => { handleRipple(e); saveTeacher(e) }}>Save</button>
-                  )
-                  }
-                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
+                <select
+                  name="status"
+                  className={`form-control mb-3 ${validation.status ? 'ripple-invalid' : ''}`}
+                  aria-label="Select Status"
+                  value={teacher.status}
+                  onChange={fieldChanged}
+                >
+                  <option value="" disabled>Select</option>
+                  <option value="V">Valid</option>
+                  <option value="I">Invalid</option>
+                </select>
+                <select
+                  name="deptId"
+                  className={`form-control mb-3 ${validation.deptId ? 'ripple-invalid' : ''}`}
+                  aria-label="Select Department"
+                  value={teacher.deptId || ""}
+                  onChange={fieldChanged}
+                >
+                  <option value="" disabled>Select Department</option>
+                  {depts.map((dept) => (
+                    <option key={dept.id} value={dept.id}>{dept.deptDesc}</option>
+                  ))}
+                </select>
+
+              </div>
+              <div className="modal-footer">
+                {isUpdate ? (
+                  <button type="button" className="btn btn-warning" onClick={e => { handleRipple(e); updateTeacher(e) }}>Update</button>
+                ) : (
+                  <button type="button" className="btn btn-primary" onClick={e => { handleRipple(e); saveTeacher(e) }}>Save</button>
+                )
+                }
+                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+
+    </>
   )
 }
 

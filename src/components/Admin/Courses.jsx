@@ -368,77 +368,76 @@ const Cousres = () => {
   };
 
   return (
-    <div>
-      <div className='container'>
-        <div className='row'>
-          <div className='mx-auto'>
-            <div className="card mt-4">
-              <div className="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
-                <button color="primary" className='btn btn-primary me-2' onClick={e => { handleRipple(e); newCourse() }}>
-                  <i class="bi bi-book-fill fs-8 me-2"></i>Course
+    <>
+      <div className='row'>
+        <div className='mx-auto'>
+          <div className="card mt-4">
+            <div className="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+              <button color="primary" className='btn btn-primary me-2' onClick={e => { handleRipple(e); newCourse() }}>
+                <i class="bi bi-book-fill fs-8 me-2"></i>Course
+              </button>
+              <div className="input-group ms-auto input-group-limit">
+                <span className="input-group-text" id="basic-addon1">Status</span>
+                <button type='button' className='btn btn-outline-success'>
+                  {selected}
                 </button>
-                <div className="input-group ms-auto input-group-limit">
-                  <span className="input-group-text" id="basic-addon1">Status</span>
-                  <button type='button' className='btn btn-outline-success'>
-                    {selected}
-                  </button>
-                  <button type="button" className="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false" onClick={e => { handleRipple(e); }}>
-                    <span className="visually-hidden">Toggle Dropdown</span>
-                  </button>
-                  <ul className='dropdown-menu dropdown-menu-end'>
-                    <li><button className={`dropdown-item ${selected === "All" ? "active" : ""}`} onClick={handleAll}>All</button></li>
-                    <li><button className={`dropdown-item ${selected === "Valid" ? "active" : ""}`} onClick={handleValid}>Valid</button></li>
-                    <li><button className={`dropdown-item ${selected === "Invalid" ? "active" : ""}`} onClick={handleInvalid}>In-valid</button></li>
-                  </ul>
+                <button type="button" className="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false" onClick={e => { handleRipple(e); }}>
+                  <span className="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul className='dropdown-menu dropdown-menu-end'>
+                  <li><button className={`dropdown-item ${selected === "All" ? "active" : ""}`} onClick={handleAll}>All</button></li>
+                  <li><button className={`dropdown-item ${selected === "Valid" ? "active" : ""}`} onClick={handleValid}>Valid</button></li>
+                  <li><button className={`dropdown-item ${selected === "Invalid" ? "active" : ""}`} onClick={handleInvalid}>In-valid</button></li>
+                </ul>
+              </div>
+            </div>
+            <div className={`card-body ${isLoading ? "disabled" : " "}`}>
+              {
+                isLoading ? (<div className="text-center">
+                  <strong role="status">Loading courses...</strong>
+                  <div className="spinner-grow spinner-grow-sm text-danger" role='status'></div>
+                  <div className="spinner-grow spinner-grow-sm text-success" role="status"></div>
+                  <div className="spinner-grow spinner-grow-sm text-primary" role="status"></div>
+                  <div className="spinner-grow spinner-grow-sm text-warning" role="status"></div>
+                  <div className="spinner-grow spinner-grow-sm text-light" role="status"></div>
+                  <div className="spinner-grow spinner-grow-sm text-dark" role="status"></div>
                 </div>
-              </div>
-              <div className={`card-body ${isLoading ? "disabled" : " "}`}>
-                {
-                  isLoading ? (<div className="text-center">
-                    <strong role="status">Loading courses...</strong>
-                    <div className="spinner-grow spinner-grow-sm text-danger" role='status'></div>
-                    <div className="spinner-grow spinner-grow-sm text-success" role="status"></div>
-                    <div className="spinner-grow spinner-grow-sm text-primary" role="status"></div>
-                    <div className="spinner-grow spinner-grow-sm text-warning" role="status"></div>
-                    <div className="spinner-grow spinner-grow-sm text-light" role="status"></div>
-                    <div className="spinner-grow spinner-grow-sm text-dark" role="status"></div>
-                  </div>
-                  ) : (
-                    <div className=' table-wrapper'>
-                      <table className="table table-responsive">
-                        <thead>
+                ) : (
+                  <div className=' table-wrapper'>
+                    <table className="table table-responsive">
+                      <thead>
+                        <tr>
+                          <th scope="row" >Sr. No.</th>
+                          <th scope="row">Course</th>
+                          <th scope="row">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(!courses || courses.length === 0) ? (
                           <tr>
-                            <th scope="row" >Sr. No.</th>
-                            <th scope="row">Course</th>
-                            <th scope="row">Action</th>
+                            <td colSpan="3" className="text-center"><div className="text-muted fw-semibold" style={{ fontSize: "1.2rem", padding: "20px" }}>
+                              <span role="img" aria-label="sad" style={{ fontSize: "2.5rem" }}>🤷🏻</span> No courses found
+                            </div></td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          {(!courses || courses.length === 0) ? (
-                            <tr>
-                              <td colSpan="3" className="text-center"><div className="text-muted fw-semibold" style={{ fontSize: "1.2rem", padding: "20px" }}>
-                                <span role="img" aria-label="sad" style={{ fontSize: "2.5rem" }}>🤷🏻</span> No courses found
-                              </div></td>
-                            </tr>
-                          ) : (
+                        ) : (
 
-                            courses.map((row) => (
-                              <tr key={row.id}>
-                                <td>{row.id}</td>
-                                <td>{row.deptDesc}</td>
-                                <td><button className='btn btn-info me-2' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Edit" onClick={e => { handleRipple(e); editCourses(row) }}><i className="bi bi-pencil-square"></i></button> <button className='btn btn-danger' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Delete" onClick={e => { handleRipple(e); removeCourses(e, row.id, row.deptDesc) }}><i className="bi bi-trash"></i></button></td>
-                              </tr>
-                            ))
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-              </div>
+                          courses.map((row) => (
+                            <tr key={row.id}>
+                              <td>{row.id}</td>
+                              <td>{row.deptDesc}</td>
+                              <td><button className='btn btn-info me-2' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Edit" onClick={e => { handleRipple(e); editCourses(row) }}><i className="bi bi-pencil-square"></i></button> <button className='btn btn-danger' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Delete" onClick={e => { handleRipple(e); removeCourses(e, row.id, row.deptDesc) }}><i className="bi bi-trash"></i></button></td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
             </div>
           </div>
         </div>
       </div>
+
       <div className="modal fade" id="coursesModal" aria-labelledby="exampleModalLabel" aria-hidden="true" >
         <div className="modal-dialog">
           <div className="modal-content">
@@ -480,7 +479,7 @@ const Cousres = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

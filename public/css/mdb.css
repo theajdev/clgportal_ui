@@ -14396,7 +14396,7 @@ input[type="file"].form-control.is-invalid:focus-within
     0 4px 18px 0 rgba(var(--mdb-box-shadow-color-rgb), 0.1);
   padding-top: var(--mdb-btn-padding-top);
   padding-bottom: var(--mdb-btn-padding-bottom);
-  text-transform: uppercase;
+  text-transform: none;
   vertical-align: bottom;
   border: 0;
   border-radius: var(--mdb-btn-border-radius);
@@ -16014,7 +16014,7 @@ fieldset:disabled .btn-group-vertical > .btn {
   border-bottom: var(--mdb-nav-tabs-link-border-bottom-width) solid
     rgba(0, 0, 0, 0);
   border-radius: 0;
-  text-transform: uppercase;
+  text-transform: none;
   line-height: 1;
   font-weight: var(--mdb-nav-tabs-link-font-weight);
   font-size: var(--mdb-nav-tabs-link-font-size);
@@ -16052,7 +16052,7 @@ fieldset:disabled .btn-group-vertical > .btn {
   --mdb-nav-pills-margin: 0.5rem;
   border-radius: var(--mdb-nav-pills-link-border-radius);
   font-size: var(--mdb-nav-pills-link-font-size);
-  text-transform: uppercase;
+  text-transform: none;
   padding: var(--mdb-nav-pills-link-padding-top)
     var(--mdb-nav-pills-link-padding-x) var(--mdb-nav-pills-link-padding-bottom)
     var(--mdb-nav-pills-link-padding-x);
@@ -17310,7 +17310,7 @@ fieldset:disabled .btn-group-vertical > .btn {
 }
 .sidenav-subheading {
   color: unset;
-  text-transform: uppercase;
+  text-transform: none;
   font-size: var(--mdb-sidenav-subheading-font-size);
   padding: var(--mdb-sidenav-subheading-padding-y)
     var(--mdb-sidenav-subheading-padding-x);

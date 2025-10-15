@@ -400,76 +400,75 @@ const UserType = () => {
   }
 
   return (
-    <div className='App-content' >
-      <div className='container'>
-        <div className='row'>
-          <div className='mx-auto'>
-            <div className="card mt-4 border-1">
-              <div className="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
-                <button color="primary" className='btn btn-primary me-2' onClick={e => { newUserType() }}>
-                  <i class="bi bi-person-circle fs-7 me-2"></i>User Type
+    <>
+      <div className='row'>
+        <div className='mx-auto col-12'>
+          <div className="card mt-4 border-1 col-12">
+            <div className="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+              <button color="primary" className='btn btn-primary me-2' onClick={e => { newUserType() }}>
+                <i class="bi bi-person-circle fs-7 me-2"></i>User Type
+              </button>
+              <div className="input-group ms-auto input-group-limit">
+                <span className="input-group-text" id="basic-addon1">Status</span>
+                <button type='button' className='btn btn-outline-success' >
+                  {selected}
                 </button>
-                <div className="input-group ms-auto input-group-limit">
-                  <span className="input-group-text" id="basic-addon1">Status</span>
-                  <button type='button' className='btn btn-outline-success' >
-                    {selected}
-                  </button>
-                  <button type="button" className="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-                    <span className="visually-hidden">Toggle Dropdown</span>
-                  </button>
-                  <ul className='dropdown-menu dropdown-menu-end'>
-                    <li><button className={`dropdown-item ${selected === "All" ? "active" : ""}`} onClick={handleAll}>All</button></li>
-                    <li><button className={`dropdown-item ${selected === "Valid" ? "active" : ""}`} onClick={handleValid}>Valid</button></li>
-                    <li><button className={`dropdown-item ${selected === "Invalid" ? "active" : ""}`} onClick={handleInvalid}>In-valid</button></li>
-                  </ul>
+                <button type="button" className="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                  <span className="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul className='dropdown-menu dropdown-menu-end'>
+                  <li><button className={`dropdown-item ${selected === "All" ? "active" : ""}`} onClick={handleAll}>All</button></li>
+                  <li><button className={`dropdown-item ${selected === "Valid" ? "active" : ""}`} onClick={handleValid}>Valid</button></li>
+                  <li><button className={`dropdown-item ${selected === "Invalid" ? "active" : ""}`} onClick={handleInvalid}>In-valid</button></li>
+                </ul>
+              </div>
+            </div>
+            <div className={`card-body ${isLoading ? "disabled" : " "}`}>
+              {
+                isLoading ? (<div className="text-center">
+                  <strong role="status">Pleae Wait...</strong>
+                  <div className="spinner-grow spinner-grow-sm text-danger" role='status'></div>
+                  <div className="spinner-grow spinner-grow-sm text-success" role="status"></div>
+                  <div className="spinner-grow spinner-grow-sm text-primary" role="status"></div>
+                  <div className="spinner-grow spinner-grow-sm text-warning" role="status"></div>
+                  <div className="spinner-grow spinner-grow-sm text-light" role="status"></div>
+                  <div className="spinner-grow spinner-grow-sm text-dark" role="status"></div>
                 </div>
-              </div>
-              <div className={`card-body ${isLoading ? "disabled" : " "}`}>
-                {
-                  isLoading ? (<div className="text-center">
-                    <strong role="status">Pleae Wait...</strong>
-                    <div className="spinner-grow spinner-grow-sm text-danger" role='status'></div>
-                    <div className="spinner-grow spinner-grow-sm text-success" role="status"></div>
-                    <div className="spinner-grow spinner-grow-sm text-primary" role="status"></div>
-                    <div className="spinner-grow spinner-grow-sm text-warning" role="status"></div>
-                    <div className="spinner-grow spinner-grow-sm text-light" role="status"></div>
-                    <div className="spinner-grow spinner-grow-sm text-dark" role="status"></div>
-                  </div>
-                  ) : (
-                    <div className=' table-wrapper'>
-                      <table className="table">
-                        <thead>
+                ) : (
+                  <div className=' table-wrapper'>
+                    <table className="table">
+                      <thead>
+                        <tr>
+                          <th scope="row">Sr. No.</th>
+                          <th scope="row">User Type</th>
+                          <th scope="row">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(!roles || roles.length === 0) ? (
                           <tr>
-                            <th scope="row">Sr. No.</th>
-                            <th scope="row">User Type</th>
-                            <th scope="row">Action</th>
+                            <td colSpan="3" className="text-center"><div className="text-muted fw-semibold" style={{ fontSize: "1.2rem", padding: "20px" }}>
+                              <span role="img" aria-label="sad" style={{ fontSize: "2.5rem" }}>🤷🏻</span> No user types found
+                            </div></td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          {(!roles || roles.length === 0) ? (
-                            <tr>
-                              <td colSpan="3" className="text-center"><div className="text-muted fw-semibold" style={{ fontSize: "1.2rem", padding: "20px" }}>
-                                <span role="img" aria-label="sad" style={{ fontSize: "2.5rem" }}>🤷🏻</span> No user types found
-                              </div></td>
-                            </tr>
-                          ) : (
+                        ) : (
 
-                            roles.map((row) => (
-                              <tr key={row.id}>
-                                <td>{row.id}</td>
-                                <td>{row.roleDisp}</td>
-                                <td><button className='btn btn-info me-2' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Edit" onClick={e => { editUserType(e, row) }}><i className="bi bi-pencil-square"></i></button><button className='btn btn-danger' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Delete" onClick={e => { removeRole(e, row.id, row.roleDisp) }}><i className="bi bi-trash"></i></button></td>
-                              </tr>
-                            ))
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-              </div>
+                          roles.map((row) => (
+                            <tr key={row.id}>
+                              <td>{row.id}</td>
+                              <td>{row.roleDisp}</td>
+                              <td><button className='btn btn-info me-2' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Edit" onClick={e => { editUserType(e, row) }}><i className="bi bi-pencil-square"></i></button><button className='btn btn-danger' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Delete" onClick={e => { removeRole(e, row.id, row.roleDisp) }}><i className="bi bi-trash"></i></button></td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
             </div>
           </div>
         </div>
+
       </div>
       <div className="modal fade" id="userTypeModal" aria-labelledby="exampleModalLabel" aria-hidden="true" >
         <div className="modal-dialog">
@@ -519,7 +518,7 @@ const UserType = () => {
         </div>
       </div>
 
-    </div >
+    </>
   )
 }
 
