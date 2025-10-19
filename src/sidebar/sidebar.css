@@ -130,7 +130,8 @@ footer {
   }
 
   .main-content {
-    margin-left: 90px;
+    margin-left: 10px;
+    margin-right: 0px;
   }
 
   .sidebar .nav-link span {

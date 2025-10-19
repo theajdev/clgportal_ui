@@ -223,16 +223,16 @@ const Login = () => {
                                     <button type="submit" className="btn btn-primary w-100" onClick={e => { handleLoginForm(e); }} disabled={isLoading}> {isLoading ? (
                                         <>
                                             <span
-                                                className="spinner-border spinner-border-sm me-2"
+                                                className="spinner-border spinner-border-sm me-2 fs-4"
                                                 role="status"
                                                 aria-hidden="true"
                                             ></span>
-                                            Please Wait...
+                                            <span className='fw-bold fs-5'>Please Wait...</span>
                                         </>
                                     ) : (
                                         <>
-                                            <i className="bi bi-box-arrow-in-right ms-2 me-2 fs-6 p-1"></i>
-                                            Sign In
+                                            <i className="bi bi-box-arrow-in-right ms-2 me-2 fs-5 p-1 fw-bold"></i>
+                                            <span className='fw-bold fs-5'>Sign In</span>
                                         </>
                                     )}</button>
 

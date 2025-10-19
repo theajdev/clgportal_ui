@@ -80,7 +80,7 @@ const Header = () => {
                     <div className="navbar navbar-expand-lg">
                         <div className='dropdown bd-mode-toggle ms-auto d-flex'>
 
-                            <button className="btn py-2 dropdown-toggle d-flex align-items-center data-mdb-dropdown-init data-mdb-ripple-init" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" >
+                            <button className="btn py-2 dropdown-toggle d-flex align-items-center data-mdb-dropdown-init data-mdb-ripple-init btn-link" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" >
                                 <svg className="bi my-1 theme-icon-active text-white" aria-hidden="true" fill='currentColor'>
                                     <use href="#circle-half"></use>
                                 </svg>
@@ -122,9 +122,12 @@ const Header = () => {
                                         </svg>
                                     </button>
                                 </li>
-                            </ul>
 
-                            <a className="btn dropdown-toggle data-mdb-dropdown-init data-mdb-ripple-init" href="##" role="button" id="logoutMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                            </ul>
+                            <span className='nav-item py-2 py-lg-1 col-lg-auto'>
+                                <div className="vr vr-blurry d-lg-flex h-100 mx-lg-2 text-white"></div>
+                                <hr className="my-2 text-white-50" /></span>
+                            <a className="btn dropdown-toggle data-mdb-dropdown-init data-mdb-ripple-init btn-link" href="##" role="button" id="logoutMenu" data-bs-toggle="dropdown" aria-expanded="false">
                                 <img src="/default.png" alt="Avatar Logo" width='30px' className="rounded-pill" />
                             </a>
 
@@ -172,16 +175,16 @@ const Header = () => {
                     {userRole === 'TEACHER' && (
                         <>
                             <li>
-                                <Link to="/teacher/profile" className={`nav-link ${location.pathname === '/teacher/TeacherProfile' ? 'active' : ''}`}>Profile</Link>
+                                <Link to="/teacher/profile" className={`nav-link ${location.pathname === '/teacher/TeacherProfile' ? 'active' : ''}`}><i class="bi bi-person-square fw-bold"></i><span>Profile</span></Link>
                             </li>
                             <li>
-                                <Link to="/teacher/managestudents" className={`nav-link ${location.pathname === '/teacher/ManageCourses' ? 'active' : ''}`}>Manage Students</Link>
+                                <Link to="/teacher/managestudents" className={`nav-link ${location.pathname === '/teacher/ManageCourses' ? 'active' : ''}`}><i class="bi bi-person-fill-gear fw-bold"></i><span>Manage Students</span></Link>
                             </li>
                             <li>
-                                <Link to="/teacher/deptnotice" className={`nav-link ${location.pathname === '/teacher/DepartmentNotice' ? 'active' : ''}`}>Department Notice</Link>
+                                <Link to="/teacher/deptnotice" className={`nav-link ${location.pathname === '/teacher/DepartmentNotice' ? 'active' : ''}`}><i class="bi bi-buildings-fill fw-bold"></i><span>Department Notice</span></Link>
                             </li>
                             <li>
-                                <Link to="/teacher/guardiannotice" className={`nav-link ${location.pathname === '/teacher/GuardianNotice' ? 'active' : ''}`}>Guardian Notice</Link>
+                                <Link to="/teacher/guardiannotice" className={`nav-link ${location.pathname === '/teacher/GuardianNotice' ? 'active' : ''}`}><i class="bi bi-chat-left-text-fill fw-bold"></i><span>Guardian Notice</span></Link>
                             </li>
                         </>
                     )}
@@ -190,13 +193,13 @@ const Header = () => {
                     {userRole === 'STUDENT' && (
                         <>
                             <li>
-                                <Link to="/student/profile" className={`nav-link ${location.pathname === '/student/StudentProfile' ? 'active' : ''}`}>Profile</Link>
+                                <Link to="/student/profile" className={`nav-link ${location.pathname === '/student/StudentProfile' ? 'active' : ''}`}><i class="bi bi-person-square fw-bold"></i><span>Profile</span></Link>
                             </li>
                             <li>
-                                <Link to="/student/teachernotice" className={`nav-link ${location.pathname === '/student/TeacherNotice' ? 'active' : ''}`}>Teacher Notice</Link>
+                                <Link to="/student/teachernotice" className={`nav-link ${location.pathname === '/student/TeacherNotice' ? 'active' : ''}`}><i class="bi bi-eye-fill fw-bold"></i><span>Teacher Notice</span></Link>
                             </li>
                             <li>
-                                <Link to="/student/feedback" className={`nav-link ${location.pathname === '/student/FeedBack' ? 'active' : ''}`}>Feedback</Link>
+                                <Link to="/student/feedback" className={`nav-link ${location.pathname === '/student/FeedBack' ? 'active' : ''}`}><i class="bi bi-pen fw-bold"></i><span>Feedback</span></Link>
                             </li>
 
                         </>

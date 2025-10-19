@@ -75,7 +75,7 @@ const AdminDashboard = () => {
                                         <p className="mb-0">Courses</p>
                                     </div>
                                     <div className="align-self-center">
-                                        <i class="bi bi-book-fill text-success fs-1"></i>
+                                        <i className="bi bi-book-fill text-success fs-1"></i>
                                     </div>
                                 </div>
                             </div>
@@ -90,7 +90,7 @@ const AdminDashboard = () => {
                                         <p className="mb-0">Teachers</p>
                                     </div>
                                     <div className="align-self-center">
-                                        <i class="bi bi-person-video3 text-warning fs-1"></i>
+                                        <i className="bi bi-person-video3 text-warning fs-1"></i>
                                     </div>
                                 </div>
                             </div>
