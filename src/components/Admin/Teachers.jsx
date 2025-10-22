@@ -456,22 +456,50 @@ const Teachers = () => {
       <div className='row'>
         <div className='mx-auto col-12'>
           <div className="card mt-4">
-            <div className="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
-              <button color="primary" className='btn btn-primary me-2' onClick={e => { handleRipple(e); newTeacher() }}>
-                <i class="bi bi-person-video3 fs-8 me-2"></i>Teacher
+            <div className="card-header d-flex justify-content-between align-items-center flex-wrap">
+              {/* Left-aligned Notice Button */}
+              <button color="primary" className="btn btn-primary" onClick={e => newTeacher()}>
+                <i className="bi bi-pencil-fill fs-8 me-2"></i>Teacher
               </button>
-              <div className="input-group ms-auto input-group-limit">
-                <span className="input-group-text" id="basic-addon1">Status</span>
-                <button type='button' className='btn btn-outline-success'>
+
+              {/* Right-aligned Dropdown Filter */}
+              <div className="input-group input-group-limit w-auto">
+                <button type="button" className="btn btn-outline-success btn-lg">
                   {selected}
                 </button>
-                <button type="button" className="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false" onClick={e => { handleRipple(e); }}>
+                <button
+                  type="button"
+                  className="btn btn-success dropdown-toggle dropdown-toggle-split"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
                   <span className="visually-hidden">Toggle Dropdown</span>
                 </button>
-                <ul className='dropdown-menu dropdown-menu-end'>
-                  <li><button className={`dropdown-item ${selected === "All" ? "active" : ""}`} onClick={handleAll}>All</button></li>
-                  <li><button className={`dropdown-item ${selected === "Valid" ? "active" : ""}`} onClick={handleValid}>Valid</button></li>
-                  <li><button className={`dropdown-item ${selected === "Invalid" ? "active" : ""}`} onClick={handleInvalid}>In-valid</button></li>
+                <ul className="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <button
+                      className={`dropdown-item ${selected === "All" ? "active" : ""}`}
+                      onClick={handleAll}
+                    >
+                      All
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      className={`dropdown-item ${selected === "Valid" ? "active" : ""}`}
+                      onClick={handleValid}
+                    >
+                      Valid
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      className={`dropdown-item ${selected === "Invalid" ? "active" : ""}`}
+                      onClick={handleInvalid}
+                    >
+                      In-valid
+                    </button>
+                  </li>
                 </ul>
               </div>
             </div>

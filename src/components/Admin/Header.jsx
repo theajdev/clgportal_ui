@@ -13,7 +13,6 @@ const Header = () => {
     const isAuth = isLoggedIn();
     const username = sessionStorage.getItem("authenticatedUser");
     const userRole = sessionStorage.getItem("userRole");
-    const homeURL = sessionStorage.getItem("homeURL");
     const [isSidebarActive, setSidebarActive] = useState(false);
     const navigator = useNavigate();
 
@@ -153,11 +152,11 @@ const Header = () => {
                     {userRole === 'ADMIN' && (
                         <>
                             <li>
-                                <Link to="/admin" id="sidebarCollapse" className={`nav-link ${location.pathname === '/admin' ? 'active' : ''}`} ><i className="bi bi-house-door-fill fw-bold"></i><span>Dashboard</span></Link>
+                                <Link to="/admin" className={`nav-link ${location.pathname === '/admin' ? 'active' : ''}`} ><i className="bi bi-house-door-fill fw-bold"></i><span>Dashboard</span></Link>
                             </li>
 
                             <li>
-                                <Link to="/admin/usertype" id="sidebarCollapse" className={`nav-link ${location.pathname === '/admin/usertype' ? 'active' : ''}`} ><i className="bi bi-person-circle fw-bold"></i><span>User Role</span></Link>
+                                <Link to="/admin/usertype" className={`nav-link ${location.pathname === '/admin/usertype' ? 'active' : ''}`} ><i className="bi bi-person-circle fw-bold"></i><span>User Role</span></Link>
                             </li>
                             <li>
                                 <Link to="/admin/courses" className={`nav-link ${location.pathname === '/admin/courses' ? 'active' : ''}`} ><i className="bi bi-book-half fw-bold"></i><span>Courses</span></Link>
@@ -175,16 +174,16 @@ const Header = () => {
                     {userRole === 'TEACHER' && (
                         <>
                             <li>
-                                <Link to="/teacher/profile" className={`nav-link ${location.pathname === '/teacher/TeacherProfile' ? 'active' : ''}`}><i class="bi bi-person-square fw-bold"></i><span>Profile</span></Link>
+                                <Link to="/teacher/profile" className={`nav-link ${location.pathname === '/teacher/profile' ? 'active' : ''}`}><i class="bi bi-person-square fw-bold"></i><span>Profile</span></Link>
                             </li>
                             <li>
-                                <Link to="/teacher/managestudents" className={`nav-link ${location.pathname === '/teacher/ManageCourses' ? 'active' : ''}`}><i class="bi bi-person-fill-gear fw-bold"></i><span>Manage Students</span></Link>
+                                <Link to="/teacher/managestudents" className={`nav-link ${location.pathname === '/teacher/managestudents' ? 'active' : ''}`}><i class="bi bi-person-fill-gear fw-bold"></i><span>Manage Students</span></Link>
                             </li>
                             <li>
-                                <Link to="/teacher/deptnotice" className={`nav-link ${location.pathname === '/teacher/DepartmentNotice' ? 'active' : ''}`}><i class="bi bi-buildings-fill fw-bold"></i><span>Department Notice</span></Link>
+                                <Link to="/teacher/deptnotice" className={`nav-link ${location.pathname === '/teacher/deptnotice' ? 'active' : ''}`}><i class="bi bi-buildings-fill fw-bold"></i><span>Department Notice</span></Link>
                             </li>
                             <li>
-                                <Link to="/teacher/guardiannotice" className={`nav-link ${location.pathname === '/teacher/GuardianNotice' ? 'active' : ''}`}><i class="bi bi-chat-left-text-fill fw-bold"></i><span>Guardian Notice</span></Link>
+                                <Link to="/teacher/guardiannotice" className={`nav-link ${location.pathname === '/teacher/guardiannotice' ? 'active' : ''}`}><i class="bi bi-chat-left-text-fill fw-bold"></i><span>Guardian Notice</span></Link>
                             </li>
                         </>
                     )}
@@ -193,13 +192,13 @@ const Header = () => {
                     {userRole === 'STUDENT' && (
                         <>
                             <li>
-                                <Link to="/student/profile" className={`nav-link ${location.pathname === '/student/StudentProfile' ? 'active' : ''}`}><i class="bi bi-person-square fw-bold"></i><span>Profile</span></Link>
+                                <Link to="/student/profile" className={`nav-link ${location.pathname === '/student/profile' ? 'active' : ''}`}><i class="bi bi-person-square fw-bold"></i><span>Profile</span></Link>
                             </li>
                             <li>
-                                <Link to="/student/teachernotice" className={`nav-link ${location.pathname === '/student/TeacherNotice' ? 'active' : ''}`}><i class="bi bi-eye-fill fw-bold"></i><span>Teacher Notice</span></Link>
+                                <Link to="/student/teachernotice" className={`nav-link ${location.pathname === '/student/teachernotice' ? 'active' : ''}`}><i class="bi bi-eye-fill fw-bold"></i><span>Teacher Notice</span></Link>
                             </li>
                             <li>
-                                <Link to="/student/feedback" className={`nav-link ${location.pathname === '/student/FeedBack' ? 'active' : ''}`}><i class="bi bi-pen fw-bold"></i><span>Feedback</span></Link>
+                                <Link to="/student/feedback" className={`nav-link ${location.pathname === '/student/feedback' ? 'active' : ''}`}><i class="bi bi-pen fw-bold"></i><span>Feedback</span></Link>
                             </li>
 
                         </>

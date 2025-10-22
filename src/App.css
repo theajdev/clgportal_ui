@@ -57,8 +57,49 @@ table {
   min-width: 85px;
   max-width: 85px;
 }
-@media (min-width: 356px) {
-  .input-group-limit {
-    max-width: 185px;
+@media (min-width: 510px) {
+  .dash {
+    margin-top: 20px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tr {
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    background: #fff;
+  }
+
+  td {
+    text-align: right;
+    position: relative;
+    padding-left: 50%;
+    border-bottom: 1px solid #eee;
+  }
+
+  td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 15px;
+    width: 45%;
+    padding-right: 10px;
+    font-weight: bold;
+    text-align: left;
+    color: #333;
   }
 }
