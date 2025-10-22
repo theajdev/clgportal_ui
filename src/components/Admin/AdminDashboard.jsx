@@ -8,8 +8,13 @@ import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import * as am5percent from "@amcharts/amcharts5/percent";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
+import am5themes_Dark from "@amcharts/amcharts5/themes/Dark";
+import useBootstrapTheme from '../../hooks/useBootstrapTheme';
+
+
 
 const AdminDashboard = () => {
+    const theme = useBootstrapTheme();
     const [roleCount, setRoleCount] = React.useState(0);
     const [deptCount, setDeptCount] = React.useState(0);
     const [teacherCount, setTeacherCount] = React.useState(0);
@@ -23,8 +28,9 @@ const AdminDashboard = () => {
 
     // First useEffect - fetch and set barData
     useEffect(() => {
-        document.title = "Admin";
 
+        document.title = "Admin";
+        console.log("theme" + theme);
         Promise.all([
             getRoleCount(),
             getCourseCount(),
@@ -52,12 +58,27 @@ const AdminDashboard = () => {
     }, []);
 
     useEffect(() => {
+
         if (!barData || barData.length === 0) return;
 
         let root = am5.Root.new("chartdiv");
         let root1 = am5.Root.new("piediv");
+        root._logo?.dispose();
+        root1._logo?.dispose();
 
-        root.setThemes([am5themes_Animated.new(root)]);
+
+        root.setThemes([
+            am5themes_Animated.new(root),
+            theme === "dark" ? am5themes_Dark.new(root) : null,
+        ].filter(Boolean));
+
+        root1.setThemes([
+            am5themes_Animated.new(root1),
+            theme === "dark" ? am5themes_Dark.new(root1) : null,
+        ].filter(Boolean));
+
+
+
         const barChart = root.container.children.push(
             am5xy.XYChart.new(root, {
                 layout: root.verticalLayout,
@@ -96,6 +117,7 @@ const AdminDashboard = () => {
                 categoryXField: "category",
                 tooltip: am5.Tooltip.new(root, { labelText: "{valueY}" }),
             })
+
         );
 
         // ✅ Ensure DOM is ready by wrapping in a minimal delay
@@ -108,10 +130,24 @@ const AdminDashboard = () => {
         }, 0);
 
         // Pie chart (works fine)
-        root1.setThemes([am5themes_Animated.new(root1)]);
+
         const pieChart = root1.container.children.push(
             am5percent.PieChart.new(root1, { endAngle: 270 })
         );
+
+        xAxis.get("renderer").labels.template.setAll({
+            rotation: -45, // or -90
+            centerY: am5.p50,
+            centerX: am5.p100,
+            paddingRight: 15
+        });
+
+        xAxis.get("renderer").labels.template.setAll({
+            oversizedBehavior: "truncate", // or "wrap"
+            maxWidth: 100
+        });
+
+
 
         const pieSeries = pieChart.series.push(am5percent.PieSeries.new(root1, {
             valueField: "value",
@@ -124,7 +160,6 @@ const AdminDashboard = () => {
         pieSeries.labels.template.setAll({
             text: "{category}: {value}%",
             fontSize: 14,
-            fill: am5.color(0x000000), // Optional: label color
             oversizedBehavior: "wrap"
         });
 
@@ -136,7 +171,7 @@ const AdminDashboard = () => {
             root.dispose();
             root1.dispose();
         };
-    }, [barData]);
+    }, [barData, theme]);
 
 
 
@@ -214,7 +249,7 @@ const AdminDashboard = () => {
                             <div className="card">
                                 <div className="card-body">
                                     <div className="py-3">
-                                        <div id="chartdiv" style={{ width: "100%", minHeight: "200px" }}></div>
+                                        <div id="chartdiv" style={{ width: "100%", minHeight: "250px" }}></div>
                                     </div>
                                 </div>
                             </div>
@@ -223,7 +258,7 @@ const AdminDashboard = () => {
                             <div className="card">
                                 <div className="card-body">
                                     <div className="py-3">
-                                        <div id="piediv" style={{ width: "100%", minHeight: "200px" }}></div>
+                                        <div id="piediv" style={{ width: "100%", minHeight: "250px" }}></div>
                                     </div>
                                 </div>
                             </div>

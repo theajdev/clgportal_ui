@@ -57,9 +57,15 @@ table {
   min-width: 85px;
   max-width: 85px;
 }
-@media (min-width: 510px) {
+@media (max-width: 510px) {
   .dash {
     margin-top: 20px !important;
+  }
+}
+
+@media (max-width: 428px) {
+  .dept {
+    margin-top: 1rem !important;
   }
 }
 

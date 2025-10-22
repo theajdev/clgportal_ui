@@ -375,12 +375,12 @@ const Cousres = () => {
             <div className="card-header d-flex justify-content-between align-items-center flex-wrap">
               {/* Left-aligned Notice Button */}
               <button color="primary" className="btn btn-primary" onClick={e => newCourse()}>
-                <i className="bi bi-pencil-fill fs-8 me-2"></i>Department
+                <i className="bi bi-book-fill fs-6 me-2 ms-2"></i> <span className='me-2'>Department</span>
               </button>
 
               {/* Right-aligned Dropdown Filter */}
-              <div className="input-group input-group-limit w-auto">
-                <button type="button" className="btn btn-outline-success btn-lg">
+              <div className="input-group input-group-limit w-auto dept">
+                <button type="button" className="btn btn-outline-success btn-lg fs-6">
                   {selected}
                 </button>
                 <button
