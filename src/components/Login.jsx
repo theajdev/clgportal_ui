@@ -7,8 +7,8 @@ import { doLogin, isLoggedIn } from '../services/auth';
 import userContext from '../context/userContext';
 import { ToastContainer, toast } from 'react-toastify';
 const Login = () => {
-    useBootstrapTheme();
-
+    const { storedTheme, resolvedTheme } = useBootstrapTheme();
+    console.log("stored theme: " + storedTheme + " resolved theme: " + resolvedTheme);
     const userContextData = useContext(userContext);
     const [loginDetails, setLoginDetails] = useState({
         usernameOrEmail: "",
@@ -148,7 +148,16 @@ const Login = () => {
                         <div className="dropdown position-fixed mb-3 me-3 bd-mode-toggle">
                             <button className="btn btn-primary py-2 dropdown-toggle d-flex align-items-center data-mdb-dropdown-init data-mdb-ripple-init" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" >
                                 <svg className="bi my-1 theme-icon-active" aria-hidden="true">
-                                    <use href="#circle-half"></use>
+
+                                    <use
+                                        href={
+                                            storedTheme === "light"
+                                                ? "#sun-fill"
+                                                : storedTheme === "dark"
+                                                    ? "#moon-stars-fill"
+                                                    : "#circle-half"
+                                        }
+                                    ></use>
                                 </svg>
                                 <span className="visually-hidden" id="bd-theme-text">Toggle theme</span>
                             </button>
@@ -160,7 +169,7 @@ const Login = () => {
                                         </svg>
                                         Light
 
-                                        <svg className="bi ms-auto d-none" aria-hidden="true">
+                                        <svg className={`bi ms-auto ${storedTheme === "light" ? '' : 'd-none'}`} aria-hidden="true">
                                             <use href="#check2"></use>
                                         </svg>
                                     </button>
@@ -172,19 +181,19 @@ const Login = () => {
                                         </svg>
                                         Dark
 
-                                        <svg className="bi ms-auto d-none" aria-hidden="true">
+                                        <svg className={`bi ms-auto ${storedTheme === "dark" ? '' : 'd-none'}`} aria-hidden="true">
                                             <use href="#check2"></use>
                                         </svg>
                                     </button>
                                 </li>
                                 <li>
-                                    <button type="button" className="dropdown-item d-flex align-items-center active" data-mdb-theme-value="auto" aria-pressed="true">
+                                    <button type="button" className="dropdown-item d-flex align-items-center" data-mdb-theme-value="auto" aria-pressed="true">
                                         <svg className="bi me-2" aria-hidden="true" fill='currentColor'>
                                             <use href="#circle-half"></use>
                                         </svg>
                                         System
 
-                                        <svg className="bi ms-auto d-none" aria-hidden="true">
+                                        <svg className={`bi ms-auto ${storedTheme === "auto" ? '' : 'd-none'}`} aria-hidden="true">
                                             <use href="#check2"></use>
                                         </svg>
                                     </button>
@@ -222,17 +231,14 @@ const Login = () => {
 
                                     <button type="submit" className="btn btn-primary w-100" onClick={e => { handleLoginForm(e); }} disabled={isLoading}> {isLoading ? (
                                         <>
-                                            <span
-                                                className="spinner-border spinner-border-sm me-2 fs-4"
-                                                role="status"
-                                                aria-hidden="true"
-                                            ></span>
+                                            <i className="fa-solid fa-cog fa-spin fa-2x me-2"></i>
                                             <span className='fw-bold fs-5'>Please Wait...</span>
                                         </>
                                     ) : (
                                         <>
-                                            <i className="bi bi-box-arrow-in-right ms-2 me-2 fs-5 p-1 fw-bold"></i>
-                                            <span className='fw-bold fs-5'>Sign In</span>
+
+                                            <i className="fa-solid fa-right-to-bracket fa-2x me-2 fa-fade"></i>
+                                            <span className='fw-bold fs-5 fa-fade'>Sign In</span>
                                         </>
                                     )}</button>
 

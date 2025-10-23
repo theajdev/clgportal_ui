@@ -6,7 +6,7 @@ import useBootstrapTheme from '../../hooks/useBootstrapTheme';
 import { isLoggedIn, doLogout } from '../../services/auth';
 import userContext from '../../context/userContext';
 const Header = () => {
-    useBootstrapTheme();
+    const { storedTheme, resolvedTheme } = useBootstrapTheme();
     const [login, setLogin] = useState(false);
     const userContextData = useContext(userContext);
     const location = useLocation();
@@ -73,7 +73,7 @@ const Header = () => {
             {/* start of navbar */}
             <nav className="navbar navbar-expand-lg navbar-dark bd-navbar fixed-top">
                 <div className="container-fluid">
-                    <a className="navbar-brand" href="##" onClick={() => toggleSidebar()}><i className="bi bi-mortarboard-fill fs-3 me-3 ms-2"></i><span className='fw-bold'>College Portal</span></a>
+                    <a className="navbar-brand" href="##" onClick={(e) => { e.preventDefault(); toggleSidebar(); }}><i className="bi bi-mortarboard-fill fs-3 me-3 ms-2"></i><span className='fw-bold'>College Portal</span></a>
 
                     {/* Theme Switcher Dropdown */}
                     <div className="navbar navbar-expand-lg">
@@ -81,19 +81,27 @@ const Header = () => {
 
                             <button className="btn py-2 dropdown-toggle d-flex align-items-center data-mdb-dropdown-init data-mdb-ripple-init btn-link" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" >
                                 <svg className="bi my-1 theme-icon-active text-white" aria-hidden="true" fill='currentColor'>
-                                    <use href="#circle-half"></use>
+                                    <use
+                                        href={
+                                            storedTheme === "light"
+                                                ? "#sun-fill"
+                                                : storedTheme === "dark"
+                                                    ? "#moon-stars-fill"
+                                                    : "#circle-half"
+                                        }
+                                    ></use>
                                 </svg>
                                 <span className="visually-hidden" id="bd-theme-text">Toggle theme</span>
                             </button>
                             <ul className="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
                                 <li>
-                                    <button type="button" className="dropdown-item d-flex align-items-center" data-mdb-theme-value="light" aria-pressed="false">
+                                    <button type="button" className="dropdown-item d-flex align-items-center" data-mdb-theme-value="light" aria-pressed="false" >
                                         <svg className="bi me-2" aria-hidden="true" fill='currentColor'>
                                             <use href="#sun-fill"></use>
                                         </svg>
                                         Light
 
-                                        <svg className="bi ms-auto d-none" aria-hidden="true">
+                                        <svg className={`bi ms-auto ${storedTheme === "light" ? '' : 'd-none'}`} aria-hidden="true">
                                             <use href="#check2"></use>
                                         </svg>
                                     </button>
@@ -104,19 +112,19 @@ const Header = () => {
                                             <use href="#moon-stars-fill"></use>
                                         </svg>
                                         Dark
-                                        <svg className="bi ms-auto d-none" aria-hidden="true">
+                                        <svg className={`bi ms-auto ${storedTheme === "dark" ? '' : 'd-none'}`} aria-hidden="true">
                                             <use href="#check2"></use>
                                         </svg>
                                     </button>
                                 </li>
 
                                 <li>
-                                    <button type="button" className="dropdown-item d-flex align-items-center active" data-mdb-theme-value="auto" aria-pressed="true">
+                                    <button type="button" className="dropdown-item d-flex align-items-center" data-mdb-theme-value="auto" aria-pressed="true">
                                         <svg className="bi me-2" aria-hidden="true" fill='currentColor'>
                                             <use href="#circle-half"></use>
                                         </svg>
                                         System
-                                        <svg className="bi ms-auto d-none" aria-hidden="true">
+                                        <svg className={`bi ms-auto ${storedTheme === "auto" ? '' : 'd-none'}`} aria-hidden="true">
                                             <use href="#check2"></use>
                                         </svg>
                                     </button>
@@ -173,8 +181,9 @@ const Header = () => {
                     {/* Teacher Sidebar */}
                     {userRole === 'TEACHER' && (
                         <>
+
                             <li>
-                                <Link to="/teacher/profile" className={`nav-link ${location.pathname === '/teacher/profile' ? 'active' : ''}`}><i class="bi bi-person-square fw-bold"></i><span>Profile</span></Link>
+                                <Link to="/teacher" className={`nav-link ${location.pathname === '/teacher' ? 'active' : ''}`}><i class="bi bi-person-square fw-bold"></i><span>Profile</span></Link>
                             </li>
                             <li>
                                 <Link to="/teacher/managestudents" className={`nav-link ${location.pathname === '/teacher/managestudents' ? 'active' : ''}`}><i class="bi bi-person-fill-gear fw-bold"></i><span>Manage Students</span></Link>

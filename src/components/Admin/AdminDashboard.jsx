@@ -14,7 +14,7 @@ import useBootstrapTheme from '../../hooks/useBootstrapTheme';
 
 
 const AdminDashboard = () => {
-    const theme = useBootstrapTheme();
+    const { storedTheme, resolvedTheme } = useBootstrapTheme();
     const [roleCount, setRoleCount] = React.useState(0);
     const [deptCount, setDeptCount] = React.useState(0);
     const [teacherCount, setTeacherCount] = React.useState(0);
@@ -30,7 +30,7 @@ const AdminDashboard = () => {
     useEffect(() => {
 
         document.title = "Admin";
-        console.log("theme" + theme);
+
         Promise.all([
             getRoleCount(),
             getCourseCount(),
@@ -69,12 +69,12 @@ const AdminDashboard = () => {
 
         root.setThemes([
             am5themes_Animated.new(root),
-            theme === "dark" ? am5themes_Dark.new(root) : null,
+            resolvedTheme === "dark" ? am5themes_Dark.new(root) : null,
         ].filter(Boolean));
 
         root1.setThemes([
             am5themes_Animated.new(root1),
-            theme === "dark" ? am5themes_Dark.new(root1) : null,
+            resolvedTheme === "dark" ? am5themes_Dark.new(root1) : null,
         ].filter(Boolean));
 
 
@@ -171,7 +171,7 @@ const AdminDashboard = () => {
             root.dispose();
             root1.dispose();
         };
-    }, [barData, theme]);
+    }, [barData, resolvedTheme]);
 
 
 

@@ -63,8 +63,7 @@ function App() {
               </AuthenticatedRoute>
             }
           >
-            <Route index element={<TeacherDashboard />} />
-            <Route path="profile" element={<TeacherProfile />} />
+            <Route index element={<TeacherProfile />} />
             <Route path="managestudents" element={<ManageStudents />} />
             <Route path="deptnotice" element={<DepartmentNotice />} />
             <Route path="guardiannotice" element={<GuardianNotice />} />

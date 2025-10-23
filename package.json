@@ -6,6 +6,8 @@
     "@amcharts/amcharts5": "^5.14.3",
     "@amcharts/amcharts5-fonts": "^5.0.1",
     "@amcharts/amcharts5-geodata": "^5.1.5",
+    "@fortawesome/fontawesome-free": "^7.1.0",
+    "@fortawesome/react-fontawesome": "^3.1.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
