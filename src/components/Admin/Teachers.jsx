@@ -478,7 +478,7 @@ const Teachers = () => {
                 <ul className="dropdown-menu dropdown-menu-end">
                   <li>
                     <button
-                      className={`dropdown-item ${selected === "All" ? "active" : ""}`}
+                      className={`dropdown-item ${selected === "All" ? "active text-bg-primary" : ""}`}
                       onClick={handleAll}
                     >
                       All
@@ -486,7 +486,7 @@ const Teachers = () => {
                   </li>
                   <li>
                     <button
-                      className={`dropdown-item ${selected === "Valid" ? "active" : ""}`}
+                      className={`dropdown-item ${selected === "Valid" ? "active text-bg-primary" : ""}`}
                       onClick={handleValid}
                     >
                       Valid
@@ -494,7 +494,7 @@ const Teachers = () => {
                   </li>
                   <li>
                     <button
-                      className={`dropdown-item ${selected === "Invalid" ? "active" : ""}`}
+                      className={`dropdown-item ${selected === "Invalid" ? "active text-bg-primary" : ""}`}
                       onClick={handleInvalid}
                     >
                       In-valid

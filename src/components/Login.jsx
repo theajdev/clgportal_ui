@@ -83,9 +83,10 @@ const Login = () => {
 
         loginUser(loginDetails).then((data) => {
             doLogin(data, () => {
-
+                // Simulate a delay to show loading spinner
                 const auth = data.user.type;
                 sessionStorage.setItem("authenticatedUser", data.user.name);
+                sessionStorage.setItem("userId", data.user.id);
                 sessionStorage.setItem("userRole", auth);
                 userContextData.setUser({
                     data: JSON.stringify(data.user),

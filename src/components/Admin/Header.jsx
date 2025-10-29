@@ -95,7 +95,7 @@ const Header = () => {
                             </button>
                             <ul className="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
                                 <li>
-                                    <button type="button" className="dropdown-item d-flex align-items-center" data-mdb-theme-value="light" aria-pressed="false" >
+                                    <button type="button" className={`dropdown-item d-flex align-items-center  ${storedTheme === "light" ? 'text-bg-primary' : ''}`} data-mdb-theme-value="light" aria-pressed="false" >
                                         <svg className="bi me-2" aria-hidden="true" fill='currentColor'>
                                             <use href="#sun-fill"></use>
                                         </svg>
@@ -107,7 +107,7 @@ const Header = () => {
                                     </button>
                                 </li>
                                 <li>
-                                    <button type="button" className="dropdown-item d-flex align-items-center" data-mdb-theme-value="dark" aria-pressed="false">
+                                    <button type="button" className={`dropdown-item d-flex align-items-center ${storedTheme === "dark" ? 'text-bg-primary' : ''}`} data-mdb-theme-value="dark" aria-pressed="false">
                                         <svg className="bi me-2" aria-hidden="true" fill='currentColor'>
                                             <use href="#moon-stars-fill"></use>
                                         </svg>
@@ -119,7 +119,7 @@ const Header = () => {
                                 </li>
 
                                 <li>
-                                    <button type="button" className="dropdown-item d-flex align-items-center" data-mdb-theme-value="auto" aria-pressed="true">
+                                    <button type="button" className={`dropdown-item d-flex align-items-center  ${storedTheme === "auto" ? 'text-bg-primary' : ''}`} data-mdb-theme-value="auto" aria-pressed="true">
                                         <svg className="bi me-2" aria-hidden="true" fill='currentColor'>
                                             <use href="#circle-half"></use>
                                         </svg>
@@ -140,8 +140,8 @@ const Header = () => {
 
                             {isAuth && (
                                 <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="logoutMenu">
-                                    <li><a className="dropdown-item active d-flex" href="##"><i className="bi bi-person-circle ms-2 me-2 fs-6 text-primary fw-bold"></i> {username}</a></li>
-                                    <li><a className="dropdown-item" href="##" onClick={handleLogout}> <i className="bi bi-box-arrow-right ms-2 me-2 fs-6 text-danger fw-bold"></i>Logout</a></li>
+                                    <li><button type="button" className="dropdown-item d-flex align-items-center text-bg-primary" href="##" onClick={(e) => { e.preventDefault(); }}><i className="bi bi-person-circle ms-2 me-2 fs-6 fw-bold"></i> {username}</button></li>
+                                    <li><button type="button" className="dropdown-item" href="##" onClick={handleLogout}> <i className="bi bi-box-arrow-right ms-2 me-2 fs-6 text-danger fw-bold"></i>Logout</button></li>
 
                                 </ul>
                             )}
