@@ -6,9 +6,11 @@ import useBootstrapTheme from '../hooks/useBootstrapTheme';
 import { doLogin, isLoggedIn } from '../services/auth';
 import userContext from '../context/userContext';
 import { ToastContainer, toast } from 'react-toastify';
+import ReCAPTCHA from 'react-google-recaptcha';
 const Login = () => {
+    const [formReady, setFormReady] = useState(false); // disabled until loaded
+    const [loadingCaptcha, setLoadingCaptcha] = useState(true);
     const { storedTheme, resolvedTheme } = useBootstrapTheme();
-    console.log("stored theme: " + storedTheme + " resolved theme: " + resolvedTheme);
     const userContextData = useContext(userContext);
     const [loginDetails, setLoginDetails] = useState({
         usernameOrEmail: "",
@@ -16,10 +18,24 @@ const Login = () => {
         rememberMe: false,
     });
 
+    const [captchaToken, setCaptchaToken] = useState(null); // 👈 NEW
     const [validation, setValidation] = useState({
         usernameOrEmail: false,
         password: false,
     });
+
+
+    useEffect(() => {
+        setLoadingCaptcha(true);
+        setFormReady(false);
+
+        const timer = setTimeout(() => {
+            setLoadingCaptcha(false);
+            setFormReady(true);
+        }, 3000);
+
+        return () => clearTimeout(timer);
+    }, [resolvedTheme]);
 
     useEffect(() => {
         const savedUsername = localStorage.getItem("rememberedUsername");
@@ -73,15 +89,25 @@ const Login = () => {
 
     const [isLoading, setIsLoading] = useState(false);  // State htmlFor loading
     const navigator = useNavigate();
-
+    const SITE_KEY = "6LdpOf4rAAAAAB-0H1vr7dxdoxJ4AblttRQjIcAG"; // 🔑 from Google reCAPTCHA console
     const handleLoginForm = (e) => {
         e.preventDefault();
         if (!validateFields()) return;
+
+        if (!formReady) return;
+
         //console.log("Hey: " + JSON.stringify(loginDetails));
+        if (!captchaToken) {  // 👈 CAPTCHA validation
+            toast.warn("Please verify the CAPTCHA!", {
+                position: "bottom-center",
+                autoClose: 1500,
+            });
+            return;
+        }
 
         setIsLoading(true); // Start loading
 
-        loginUser(loginDetails).then((data) => {
+        loginUser({ ...loginDetails, recaptchaToken: captchaToken }).then((data) => {
             doLogin(data, () => {
                 // Simulate a delay to show loading spinner
                 const auth = data.user.type;
@@ -112,6 +138,10 @@ const Login = () => {
                 }
 
             }); // Adjust delay as needed
+            toast.success("Login Success", {
+                position: "bottom-center",
+                autoClose: 1500,
+            });
         }).catch((error) => {
             console.log(error);
             toast.error("Login Failed! Please check your credentials.", {
@@ -207,12 +237,12 @@ const Login = () => {
                                     <img src="./cap.png" alt="login" width="72" height="57" className='mb-4'></img>
                                     <h1 className="mb-3 fw-normal">Please Sign In</h1>
                                     <div className="form-floating position-relative">
-                                        <input type="email" className={`form-control mb-3 ${validation.usernameOrEmail ? 'ripple-invalid' : ''}`} name="usernameOrEmail" id="usernameOrEmail" aria-describedby="emailHelp" value={loginDetails.usernameOrEmail} onChange={handleChange} disabled={isLoading} placeholder="name@example.com" />
+                                        <input type="email" className={`form-control mb-3 ${validation.usernameOrEmail ? 'ripple-invalid' : ''}`} name="usernameOrEmail" id="usernameOrEmail" aria-describedby="emailHelp" value={loginDetails.usernameOrEmail} onChange={handleChange} disabled={!formReady} placeholder="name@example.com" />
                                         <label htmlFor="usernameOrEmail">Email Or Username</label>
                                     </div>
 
                                     <div className="form-floating position-relative">
-                                        <input type="password" className={`form-control mb-3 ${validation.password ? 'ripple-invalid' : ''}`} name="password" id="password" value={loginDetails.password} onChange={handleChange} disabled={isLoading} placeholder='Password' />
+                                        <input type="password" className={`form-control mb-3 ${validation.password ? 'ripple-invalid' : ''}`} name="password" id="password" value={loginDetails.password} onChange={handleChange} disabled={!formReady} placeholder='Password' />
                                         <label htmlFor="password">Password</label>
                                     </div>
                                     <div className="form-check text-start my-3">
@@ -223,14 +253,23 @@ const Login = () => {
                                             id="checkDefault"
                                             checked={loginDetails.rememberMe}
                                             onChange={handleChange}
-                                            disabled={isLoading}
+                                            disabled={!formReady}
                                         />
                                         <label className="form-check-label" htmlFor="checkDefault">
                                             Remember me
                                         </label>
                                     </div>
 
-                                    <button type="submit" className="btn btn-primary w-100" onClick={e => { handleLoginForm(e); }} disabled={isLoading}> {isLoading ? (
+                                    <ReCAPTCHA
+                                        key={resolvedTheme} // <- force remount when theme changes
+                                        sitekey="6LdpOf4rAAAAAOO46vOLBXGpNTfnrZUWvWWLHrwM"
+                                        onChange={(token) => setCaptchaToken(token)}
+                                        onExpired={() => setCaptchaToken(null)}
+                                        theme={resolvedTheme === "dark" ? "dark" : "light"}
+                                        className="my-3"
+                                    />
+
+                                    <button type="submit" className="btn btn-primary w-100" onClick={e => { handleLoginForm(e); }} disabled={!formReady}> {isLoading ? (
                                         <>
                                             <i className="fa-solid fa-cog fa-spin fa-2x me-2"></i>
                                             <span className='fw-bold fs-5'>Please Wait...</span>

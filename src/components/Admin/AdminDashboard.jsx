@@ -122,7 +122,6 @@ const AdminDashboard = () => {
 
         // ✅ Ensure DOM is ready by wrapping in a minimal delay
         setTimeout(() => {
-            console.log("Chart Data:", barData);
             xAxis.data.setAll(barData);
             series.data.setAll(barData);
             series.appear(10);

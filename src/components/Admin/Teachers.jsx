@@ -15,7 +15,6 @@ const Teachers = () => {
     username: "",
     email: "",
     password: "",
-    profilePic: "",
     status: "",
     deptId: "",
   });
@@ -33,7 +32,6 @@ const Teachers = () => {
     email: false,
     username: false,
     password: false,
-    profilePic: false,
     status: false,
     deptId: false,
   });
@@ -111,7 +109,6 @@ const Teachers = () => {
         email: false,
         username: false,
         password: false,
-        profilePic: false,
         status: false,
         deptId: false,
       });
@@ -158,7 +155,6 @@ const Teachers = () => {
       username: "",
       email: "",
       password: "",
-      profilePic: "",
       status: "",
       deptId: "",
     });
@@ -191,7 +187,6 @@ const Teachers = () => {
           username: "",
           email: "",
           password: "",
-          profilePic: "",
           status: "",
           deptId: "",
         });
@@ -257,7 +252,6 @@ const Teachers = () => {
           username: "",
           email: "",
           password: "",
-          profilePic: "",
           status: "",
           deptId: "",
         });
@@ -348,7 +342,6 @@ const Teachers = () => {
             username: "",
             email: "",
             password: "",
-            profilePic: "",
             status: "",
             deptId: "",
           });
@@ -385,7 +378,6 @@ const Teachers = () => {
       username: "",
       email: "",
       password: "",
-      profilePic: "",
       status: "",
       deptId: "",
     });
@@ -606,10 +598,7 @@ const Teachers = () => {
                   value={teacher.password}
                   onChange={fieldChanged}
                 />
-                <div class="form-floating">
-                  <input class="form-control mb-3" type="file" id="formFile" name="profilePic" value={teacher.profilePic} onChange={fieldChanged} placeholder='Profile Picture' />
-                  <label for="formFile">Profile Picture</label>
-                </div>
+
                 <select
                   name="status"
                   className={`form-control mb-3 ${validation.status ? 'ripple-invalid' : ''}`}
@@ -617,7 +606,7 @@ const Teachers = () => {
                   value={teacher.status}
                   onChange={fieldChanged}
                 >
-                  <option value="" disabled>Select</option>
+                  <option value="" disabled>Select Status</option>
                   <option value="V">Valid</option>
                   <option value="I">Invalid</option>
                 </select>

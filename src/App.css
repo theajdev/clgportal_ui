@@ -58,6 +58,26 @@ table {
   max-width: 85px;
 }
 
+.upload-label {
+  cursor: pointer;
+  color: #0d6efd;
+  font-size: 1.5rem;
+}
+.upload-label:hover {
+  color: #0a58ca;
+}
+input[type="file"] {
+  display: none; /* Hide the real input */
+}
+.bi-mortarboard-fill {
+  display: inline-block;
+  transition: transform 0.6s ease;
+}
+
+.bi-mortarboard-fill.flipped {
+  transform: rotateY(180deg);
+}
+
 @media (max-width: 992px) {
   .main-body {
     margin-top: 0.5rem;

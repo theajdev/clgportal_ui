@@ -14,6 +14,7 @@ const Header = () => {
     const username = sessionStorage.getItem("authenticatedUser");
     const userRole = sessionStorage.getItem("userRole");
     const [isSidebarActive, setSidebarActive] = useState(false);
+    const [isFlipped, setIsFlipped] = useState(false);
     const navigator = useNavigate();
 
     useEffect(() => {
@@ -38,6 +39,7 @@ const Header = () => {
 
     const toggleSidebar = () => {
         setSidebarActive(!isSidebarActive);
+        setIsFlipped(!isFlipped); // toggle flip
     };
 
     return (
@@ -73,7 +75,7 @@ const Header = () => {
             {/* start of navbar */}
             <nav className="navbar navbar-expand-lg navbar-dark bd-navbar fixed-top">
                 <div className="container-fluid">
-                    <a className="navbar-brand" href="##" onClick={(e) => { e.preventDefault(); toggleSidebar(); }}><i className="bi bi-mortarboard-fill fs-3 me-3 ms-2"></i><span className='fw-bold'>College Portal</span></a>
+                    <a className="navbar-brand" href="##" onClick={(e) => { e.preventDefault(); toggleSidebar(); }}><i className={`bi bi-mortarboard-fill fs-3 me-3 ms-2 ${isFlipped ? 'flipped' : ''}`}></i><span className='fw-bold'>College Portal</span></a>
 
                     {/* Theme Switcher Dropdown */}
                     <div className="navbar navbar-expand-lg">
@@ -183,16 +185,16 @@ const Header = () => {
                         <>
 
                             <li>
-                                <Link to="/teacher" className={`nav-link ${location.pathname === '/teacher' ? 'active' : ''}`}><i class="bi bi-person-square fw-bold"></i><span>Profile</span></Link>
+                                <Link to="/teacher" className={`nav-link ${location.pathname === '/teacher' ? 'active' : ''}`}><i className="bi bi-person-square fw-bold"></i><span>Profile</span></Link>
                             </li>
                             <li>
-                                <Link to="/teacher/managestudents" className={`nav-link ${location.pathname === '/teacher/managestudents' ? 'active' : ''}`}><i class="bi bi-person-fill-gear fw-bold"></i><span>Manage Students</span></Link>
+                                <Link to="/teacher/managestudents" className={`nav-link ${location.pathname === '/teacher/managestudents' ? 'active' : ''}`}><i className="bi bi-person-fill-gear fw-bold"></i><span>Manage Students</span></Link>
                             </li>
                             <li>
-                                <Link to="/teacher/deptnotice" className={`nav-link ${location.pathname === '/teacher/deptnotice' ? 'active' : ''}`}><i class="bi bi-buildings-fill fw-bold"></i><span>Department Notice</span></Link>
+                                <Link to="/teacher/deptnotice" className={`nav-link ${location.pathname === '/teacher/deptnotice' ? 'active' : ''}`}><i className="bi bi-buildings-fill fw-bold"></i><span>Department Notice</span></Link>
                             </li>
                             <li>
-                                <Link to="/teacher/guardiannotice" className={`nav-link ${location.pathname === '/teacher/guardiannotice' ? 'active' : ''}`}><i class="bi bi-chat-left-text-fill fw-bold"></i><span>Guardian Notice</span></Link>
+                                <Link to="/teacher/guardiannotice" className={`nav-link ${location.pathname === '/teacher/guardiannotice' ? 'active' : ''}`}><i className="bi bi-chat-left-text-fill fw-bold"></i><span>Guardian Notice</span></Link>
                             </li>
                         </>
                     )}
@@ -201,13 +203,13 @@ const Header = () => {
                     {userRole === 'STUDENT' && (
                         <>
                             <li>
-                                <Link to="/student/profile" className={`nav-link ${location.pathname === '/student/profile' ? 'active' : ''}`}><i class="bi bi-person-square fw-bold"></i><span>Profile</span></Link>
+                                <Link to="/student/profile" className={`nav-link ${location.pathname === '/student/profile' ? 'active' : ''}`}><i className="bi bi-person-square fw-bold"></i><span>Profile</span></Link>
                             </li>
                             <li>
-                                <Link to="/student/teachernotice" className={`nav-link ${location.pathname === '/student/teachernotice' ? 'active' : ''}`}><i class="bi bi-eye-fill fw-bold"></i><span>Teacher Notice</span></Link>
+                                <Link to="/student/teachernotice" className={`nav-link ${location.pathname === '/student/teachernotice' ? 'active' : ''}`}><i className="bi bi-eye-fill fw-bold"></i><span>Teacher Notice</span></Link>
                             </li>
                             <li>
-                                <Link to="/student/feedback" className={`nav-link ${location.pathname === '/student/feedback' ? 'active' : ''}`}><i class="bi bi-pen fw-bold"></i><span>Feedback</span></Link>
+                                <Link to="/student/feedback" className={`nav-link ${location.pathname === '/student/feedback' ? 'active' : ''}`}><i className="bi bi-pen fw-bold"></i><span>Feedback</span></Link>
                             </li>
 
                         </>

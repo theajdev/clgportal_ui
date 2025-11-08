@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { teacherProfile } from '../../services/TeacherService/ProfileService';
+import { getTeacherProfile, getTeacherProfileImage, updateTeacherProfile, uploadTeacherProfile } from '../../services/TeacherService/ProfileService';
 import { toast } from 'react-toastify';
 
 const TeacherProfile = () => {
@@ -10,6 +10,7 @@ const TeacherProfile = () => {
     lastName: '',
     email: '',
     profilePic: '',
+    profileFile: '',
     username: '',
     password: '',
     status: '',
@@ -18,6 +19,10 @@ const TeacherProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [imgLoading, setImgLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);  // State htmlFor loading
+  const [image, setImage] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);// object URL for preview
+  const [meta, setMeta] = useState(null);           // { name, size, type, width, height }
+  const [profileImage, setProfileImage] = useState(null);
   const [validation, setValidation] = useState({
     firstName: false,
     lastName: false,
@@ -47,12 +52,20 @@ const TeacherProfile = () => {
   useEffect(() => {
     setIsLoading(true);
     const id = sessionStorage.getItem("userId");
-    teacherProfile(id).then((res) => {
-      console.log(res);
+
+    getTeacherProfile(id).then((res) => {
+
       setTeacher(res);
+      // Now try to get the image
+      return getTeacherProfileImage(res.profilePic);
+    }).then((res) => {
+      // If your backend returns a blob (binary image)
+      const imageUrl = URL.createObjectURL(res);
+      setProfileImage(imageUrl);
     }).catch((err) => {
       console.log(err);
       setIsLoading(false);
+      setProfileImage(null);
       toast.error("Something went wrong.", {
         position: "top-right",
         autoClose: 1000
@@ -62,12 +75,9 @@ const TeacherProfile = () => {
     });
   }, []);
 
-  //field change handler
+  //field change handler        
   const fieldChanged = (event) => {
     const { name, value } = event.target;
-
-    setTeacher({ ...teacher, [event.target.name]: event.target.value });
-
     setTeacher(prev => ({
       ...prev,
       [name]: value
@@ -78,17 +88,88 @@ const TeacherProfile = () => {
       ...prev,
       [name]: false
     }));
+
   }
+
+  //Handling file change event
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("Please select an image file.");
+      return;
+    }
+
+    setImage(file);
+
+    // Generate preview URL
+    const objectUrl = URL.createObjectURL(file);
+    setPreviewUrl(objectUrl);
+
+    // Get image metadata
+    const img = new Image();
+    img.onload = () => {
+      setMeta({
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        width: img.width,
+        height: img.height
+      });
+    };
+    img.src = objectUrl;
+
+  };
 
   const handleToggleEdit = () => {
     setIsEditing(!isEditing);
-
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!validateFields()) return;
+    const teacherId = sessionStorage.getItem("userId");
+    updateTeacherProfile(teacher, teacherId).then((res) => {
+      console.log(res);
+      uploadTeacherProfile(image, teacherId).then((res) => {
+        console.log(res);
+        toast.success("Profile Image Uploaded!", {
+          position: "top-right",
+          autoClose: 1000
+        });
+        // Refresh the image
+        getTeacherProfileImage(res.profilePic)
+          .then((res) => {
+            const imageUrl = URL.createObjectURL(res);
+            setProfileImage(imageUrl);
+          });
+      }).catch((err) => {
+        console.log(err);
+
+        toast.error("Image Upload Failed.", {
+          position: "top-right",
+          autoClose: 1000
+        });
+        return false;
+      });
+
+      toast.success("Teacher Updated !", {
+        position: "top-right",
+        autoClose: 1000
+      });
+      setIsEditing(false);
+    }).catch((err) => {
+      console.log(err);
+      toast.error("Teacher not updated.", {
+        position: "top-right",
+        autoClose: 1000
+      });
+      return false;
+    });
   };
+
+
 
   return (
     <div>
@@ -107,14 +188,25 @@ const TeacherProfile = () => {
                     )}
 
                     <img
-                      src="https://bootdey.com/img/Content/avatar/avatar6.png"
+                      src={profileImage || "https://bootdey.com/img/Content/avatar/avatar6.png"}
                       alt="Admin"
+                      title={teacher.firstName + ' ' + teacher.lastName}
                       className="rounded-circle p-1 bg-primary"
                       width="110"
-                      style={{ display: imgLoading ? 'none' : 'block' }}
+                      height="110"
                       onLoad={() => setImgLoading(false)}
-                      onError={() => setImgLoading(false)} // hide loader if error occurs
+                      onError={() => {
+                        setImgLoading(false);
+                        setProfileImage(null); // fallback to default if error occurs
+                      }}
                     />
+                    {/* <!-- Label acts as the clickable pencil icon --> */}
+                    <label htmlFor="image" className="upload-label" title="Upload File">
+                      <i className="bi bi-pencil"></i>
+                    </label>
+
+                    {/* <!-- Hidden file input --> */}
+                    <input type="file" id="image" onChange={handleFileChange} name="image"></input>
                     <div className="mt-3">
                       <h4>{teacher.firstName}&nbsp;{teacher.lastName}</h4>
                       <p className="text-secondary mb-1">Full Stack Developer</p>
@@ -214,9 +306,41 @@ const TeacherProfile = () => {
                     </div>
                     <div className="col-sm-9 text-secondary">
                       {isEditing ? (
-                        <input type="text" className="form-control" defaultValue="(320) 380-4539" />
+                        <input type="text" className="form-control" defaultValue="(320) 380-4539" name="mobile" />
                       ) : (
                         <p className="mb-0">(320) 380-4539</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Username */}
+                  <div className="row mb-3">
+                    <div className="col-sm-3">
+                      <h6 className="mb-0">Username</h6>
+                    </div>
+                    <div className="col-sm-9 text-secondary">
+                      {isEditing ? (
+                        <input type="text" className="form-control" name="username" value={teacher.username} onChange={fieldChanged} />
+                      ) : (
+                        <p className="mb-0">{teacher.username === ""
+                          ? `-`
+                          : teacher.username}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Password */}
+                  <div className="row mb-3">
+                    <div className="col-sm-3">
+                      <h6 className="mb-0">Password</h6>
+                    </div>
+                    <div className="col-sm-9 text-secondary">
+                      {isEditing ? (
+                        <input type="password" className="form-control" name="password" value={teacher.password} onChange={fieldChanged} />
+                      ) : (
+                        <p className="mb-0">{teacher.password === ""
+                          ? `-`
+                          : teacher.password}</p>
                       )}
                     </div>
                   </div>
