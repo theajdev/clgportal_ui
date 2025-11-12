@@ -12,6 +12,8 @@ const Teachers = () => {
     firstName: "",
     middleName: "",
     lastName: "",
+    mobileNo: "",
+    address: 0,
     username: "",
     email: "",
     password: "",
@@ -31,6 +33,8 @@ const Teachers = () => {
     lastName: false,
     email: false,
     username: false,
+    mobileNo: false,
+    address: false,
     password: false,
     status: false,
     deptId: false,
@@ -43,6 +47,8 @@ const Teachers = () => {
     if (!teacher.firstName.trim()) { errors.firstName = true; }
     if (!teacher.lastName.trim()) { errors.lastName = true; }
     if (!teacher.username.trim()) { errors.username = true; }
+    if (!teacher.mobileNo) { errors.mobileNo = true; }
+    if (!teacher.address) { errors.address = true; }
     if (!teacher.email.trim()) {
       errors.email = true;
     } else {
@@ -53,7 +59,10 @@ const Teachers = () => {
       }
     }
 
-    if (!teacher.password.trim()) { errors.password = true; }
+    if (!isUpdate) {
+      if (!teacher.password.trim()) { errors.password = true; }
+    }
+
     if (!teacher.status) { errors.status = true; }
     if (!teacher.deptId) { errors.deptId = true; }
 
@@ -102,12 +111,15 @@ const Teachers = () => {
 
     const handleModalClose = () => {
       // Clear validation errors
+
       setValidation({
         firstName: false,
         middleName: false,
         lastName: false,
         email: false,
         username: false,
+        mobileNo: false,
+        address: false,
         password: false,
         status: false,
         deptId: false,
@@ -153,6 +165,8 @@ const Teachers = () => {
       middleName: "",
       lastName: "",
       username: "",
+      mobileNo: 0,
+      address: "",
       email: "",
       password: "",
       status: "",
@@ -185,6 +199,8 @@ const Teachers = () => {
           middleName: "",
           lastName: "",
           username: "",
+          mobileNo: 0,
+          address: "",
           email: "",
           password: "",
           status: "",
@@ -220,7 +236,10 @@ const Teachers = () => {
   // edit teacher
   const editTeacher = (teacher) => {
     setIsUpdate(true);
-    setTeacher(teacher);
+    setTeacher({
+      ...teacher,
+      password: '',  // <-- important: don't show hashed password
+    });
     var myModal = new bootstrap.Modal(document.getElementById('teacherModal'), {
       backdrop: 'static',
       keyboard: false
@@ -234,7 +253,11 @@ const Teachers = () => {
     event.preventDefault();
     setIsUpdate(true);
     if (!validateFields()) return;
-
+    // ✅ Only include password if user entered a new one
+    const updatedTeacher = { ...teacher };
+    if (teacher.password && teacher.password.trim() !== '') {
+      updatedTeacher.password = teacher.password;
+    }
     modifyTeacher(teacher, teacher.id).then(response => {
 
       toast.info("teacher updating please wait.", {
@@ -250,6 +273,8 @@ const Teachers = () => {
           middleName: "",
           lastName: "",
           username: "",
+          mobileNo: 0,
+          address: "",
           email: "",
           password: "",
           status: "",
@@ -340,6 +365,8 @@ const Teachers = () => {
             middleName: "",
             lastName: "",
             username: "",
+            mobileNo: 0,
+            address: "",
             email: "",
             password: "",
             status: "",
@@ -376,6 +403,8 @@ const Teachers = () => {
       middleName: "",
       lastName: "",
       username: "",
+      mobileNo: 0,
+      address: "",
       email: "",
       password: "",
       status: "",
@@ -580,6 +609,22 @@ const Teachers = () => {
                   className={`form-control mb-3 ${validation.username ? 'ripple-invalid' : ''}`}
                   placeholder='username'
                   value={teacher.username}
+                  onChange={fieldChanged}
+                />
+                <input
+                  type='text'
+                  name="mobileNo"
+                  className={`form-control mb-3 ${validation.mobileNo ? 'ripple-invalid' : ''}`}
+                  placeholder='mobile number'
+                  value={teacher.mobileNo}
+                  onChange={fieldChanged}
+                />
+                <textarea
+                  size="50"
+                  name="address"
+                  className={`form-control mb-3 ${validation.address ? 'ripple-invalid' : ''}`}
+                  placeholder='Address'
+                  value={teacher.address}
                   onChange={fieldChanged}
                 />
                 <input

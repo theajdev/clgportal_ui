@@ -8,6 +8,8 @@ const TeacherProfile = () => {
     firstName: '',
     middleName: '',
     lastName: '',
+    mobileNo: '',
+    address: '',
     email: '',
     profilePic: '',
     profileFile: '',
@@ -27,6 +29,8 @@ const TeacherProfile = () => {
     firstName: false,
     lastName: false,
     email: false,
+    address: false,
+    mobileNo: false,
     username: false,
     password: false,
     status: false
@@ -39,8 +43,17 @@ const TeacherProfile = () => {
     if (!teacher.firstName.trim()) { errors.firstName = true; }
     if (!teacher.lastName.trim()) { errors.lastName = true; }
     if (!teacher.username.trim()) { errors.usernamer = true; }
-    if (!teacher.email.trim()) { errors.email = true; }
-    if (!teacher.password.trim()) { errors.password = true; }
+    if (!teacher.mobileNo) { errors.mobileNo = true; }
+    if (!teacher.address) { errors.address = true; }
+    if (!teacher.email.trim()) {
+      errors.email = true;
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(teacher.email)) {
+        errors.email = true;
+        toast.error("Invalid email format");
+      }
+    }
     if (!teacher.status.trim()) { errors.status = true; }
 
 
@@ -54,8 +67,10 @@ const TeacherProfile = () => {
     const id = sessionStorage.getItem("userId");
 
     getTeacherProfile(id).then((res) => {
-
-      setTeacher(res);
+      setTeacher({
+        ...res,
+        password: '',  // <-- important: don't show hashed password
+      });
       // Now try to get the image
       return getTeacherProfileImage(res.profilePic);
     }).then((res) => {
@@ -127,9 +142,15 @@ const TeacherProfile = () => {
   };
 
   const handleSubmit = (event) => {
+
     event.preventDefault();
     if (!validateFields()) return;
     const teacherId = sessionStorage.getItem("userId");
+    // ✅ Only include password if user entered a new one
+    const updatedTeacher = { ...teacher };
+    if (teacher.password && teacher.password.trim() !== '') {
+      updatedTeacher.password = teacher.password;
+    }
     updateTeacherProfile(teacher, teacherId).then((res) => {
       console.log(res);
       uploadTeacherProfile(image, teacherId).then((res) => {
@@ -210,7 +231,7 @@ const TeacherProfile = () => {
                     <div className="mt-3">
                       <h4>{teacher.firstName}&nbsp;{teacher.lastName}</h4>
                       <p className="text-secondary mb-1">Full Stack Developer</p>
-                      <p className="text-muted font-size-sm">Bay Area, San Francisco, CA</p>
+                      <p className="text-muted font-size-sm">{teacher.address}</p>
                       <button className="btn btn-primary" onClick={handleToggleEdit}>
                         {isEditing ? 'Cancel' : 'Edit Profile'}
                       </button>
@@ -306,9 +327,11 @@ const TeacherProfile = () => {
                     </div>
                     <div className="col-sm-9 text-secondary">
                       {isEditing ? (
-                        <input type="text" className="form-control" defaultValue="(320) 380-4539" name="mobile" />
+                        <input type="text" className="form-control" value={teacher.mobileNo} name="mobileNo" onChange={fieldChanged} />
                       ) : (
-                        <p className="mb-0">(320) 380-4539</p>
+                        <p className="mb-0">{teacher.mobileNo === ""
+                          ? `-`
+                          : teacher.mobileNo}</p>
                       )}
                     </div>
                   </div>
@@ -355,10 +378,14 @@ const TeacherProfile = () => {
                         <input
                           type="text"
                           className="form-control"
-                          defaultValue="Bay Area, San Francisco, CA"
+                          value={teacher.address}
+                          name='address'
+                          onChange={fieldChanged}
                         />
                       ) : (
-                        <p className="mb-0">Bay Area, San Francisco, CA</p>
+                        <p className="mb-0">{teacher.address === ""
+                          ? `-`
+                          : teacher.address}</p>
                       )}
                     </div>
                   </div>
