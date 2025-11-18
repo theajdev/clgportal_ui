@@ -77,6 +77,7 @@ const Teachers = () => {
     checkTokenAndLogout();
     setIsLoading(true);
     getAllTeachers().then((data) => {
+      console.log(data);
       setTeachers(data);
       setIsLoading(false);
     }).catch((err) => {
@@ -93,13 +94,11 @@ const Teachers = () => {
       }, 0); // ensures DOM is updated
     });
 
-
     getAllCourses().then((dept) => {
       setDepts(dept);
     }).catch((err) => {
       console.log(err);
     });
-
 
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     tooltipTriggerList.forEach(tooltipTriggerEl => {
@@ -234,10 +233,11 @@ const Teachers = () => {
   };
 
   // edit teacher
-  const editTeacher = (teacher) => {
+  const editTeacher = (data) => {
+    console.log(data);
     setIsUpdate(true);
     setTeacher({
-      ...teacher,
+      ...data,
       password: '',  // <-- important: don't show hashed password
     });
     var myModal = new bootstrap.Modal(document.getElementById('teacherModal'), {
@@ -376,12 +376,10 @@ const Teachers = () => {
 
         }, 2000);
 
-
         setTimeout(() => {
           toast.dismiss();
           handleAll();
         }, 3500);
-
 
         return true;
       }).catch((error) => {

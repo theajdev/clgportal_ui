@@ -35,27 +35,23 @@
 }
 
 .table-wrapper {
-  max-height: 350px;
+  max-height: 355px;
   /* Adjust height as needed */
   overflow-y: auto;
 }
 
-thead th {
-  position: sticky;
-  top: 0;
-  background-color: #f8f9fa;
-  /* Light gray bg to match Bootstrap table */
-  z-index: 1;
+table.dataTable tbody td.dt-control:before {
+  display: none !important;
 }
 
-table {
-  table-layout: fixed;
+table.dataTable thead > tr > th.dt-ordering-asc span.dt-column-order::before {
+  display: none !important;
 }
 
-.col-srno {
-  width: 85px;
-  min-width: 85px;
-  max-width: 85px;
+table.dataTable tbody td,
+table.dataTable th {
+  table-layout: fixed !important;
+  white-space: nowrap !important;
 }
 
 .upload-label {
@@ -96,42 +92,30 @@ input[type="file"] {
 }
 
 @media (max-width: 768px) {
-  table,
-  thead,
-  tbody,
-  th,
-  td,
-  tr {
-    display: block;
+  .dt-buttons .btn {
+    width: 100%;
+    margin-bottom: 6px;
+  }
+}
+
+@media print {
+  table.dataTable {
+    table-layout: fixed !important;
+    width: 100% !important;
   }
 
-  thead {
-    display: none;
+  table.dataTable th:nth-child(5),
+  table.dataTable td:nth-child(5) {
+    width: 20% !important; /* Email */
   }
 
-  tr {
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
-    background: #fff;
+  table.dataTable th:nth-child(6),
+  table.dataTable td:nth-child(6) {
+    width: 20% !important; /* Username */
   }
 
-  td {
-    text-align: right;
-    position: relative;
-    padding-left: 50%;
-    border-bottom: 1px solid #eee;
-  }
-
-  td::before {
-    content: attr(data-label);
-    position: absolute;
-    left: 15px;
-    width: 45%;
-    padding-right: 10px;
-    font-weight: bold;
-    text-align: left;
-    color: #333;
+  table.dataTable td,
+  table.dataTable th {
+    white-space: nowrap !important;
   }
 }

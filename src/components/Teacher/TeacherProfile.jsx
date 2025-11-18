@@ -25,6 +25,7 @@ const TeacherProfile = () => {
   const [previewUrl, setPreviewUrl] = useState(null);// object URL for preview
   const [meta, setMeta] = useState(null);           // { name, size, type, width, height }
   const [profileImage, setProfileImage] = useState(null);
+  const [isUpdate, setIsUpdate] = useState(false);
   const [validation, setValidation] = useState({
     firstName: false,
     lastName: false,
@@ -42,7 +43,7 @@ const TeacherProfile = () => {
 
     if (!teacher.firstName.trim()) { errors.firstName = true; }
     if (!teacher.lastName.trim()) { errors.lastName = true; }
-    if (!teacher.username.trim()) { errors.usernamer = true; }
+    if (!teacher.username.trim()) { errors.username = true; }
     if (!teacher.mobileNo) { errors.mobileNo = true; }
     if (!teacher.address) { errors.address = true; }
     if (!teacher.email.trim()) {
@@ -54,6 +55,11 @@ const TeacherProfile = () => {
         toast.error("Invalid email format");
       }
     }
+
+    if (!isUpdate) {
+      if (!teacher.password.trim()) { errors.password = true; }
+    }
+
     if (!teacher.status.trim()) { errors.status = true; }
 
 
@@ -142,7 +148,7 @@ const TeacherProfile = () => {
   };
 
   const handleSubmit = (event) => {
-
+    setIsUpdate(true);
     event.preventDefault();
     if (!validateFields()) return;
     const teacherId = sessionStorage.getItem("userId");

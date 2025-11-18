@@ -23,9 +23,14 @@ export const modifyTeacher = (teacher, id) => {
 };
 
 export const getTeachersByStatus = (status) => {
-  console.log("Status:", status);
   return private_axios_url
     .get(`/teacher/status/${status}`)
+    .then((response) => response.data);
+};
+
+export const getTeacherById = (id) => {
+  return private_axios_url
+    .get(`/teacher/${id}`)
     .then((response) => response.data);
 };
 
