@@ -465,8 +465,6 @@ const ManageStudents = () => {
 
     checkTokenAndLogout();
     getStudentDetailsRef.current = getStudentDetails;
-
-
     handleAllRef.current = handleAll;
 
     getAllStudents().then((data) => {
@@ -743,7 +741,7 @@ const ManageStudents = () => {
           </div>
           <div className="card-body">
             <div className='table-wrapper'>
-              <table ref={tableRef} className="table display nowrap" id="datatable">
+              <table ref={tableRef} className="table display nowrap">
                 <thead>
                 </thead>
                 <tbody>

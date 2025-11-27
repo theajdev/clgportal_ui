@@ -2,7 +2,7 @@
   text-align: center;
   color: #f8f9fa;
 }
-.App-header{
+.App-header {
   min-height: 83vh;
   display: flex;
   flex-direction: column;
@@ -19,21 +19,20 @@ body {
   transition: background-color 0.5s, color 0.5s;
 }
 
-.bg-login{
+.bg-login {
   background-image: url("/public/images/1.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   display: flex;
   background-attachment: fixed;
-  
 }
 
 /* Light Theme */
-.light-theme{
+.light-theme {
   background-color: #f8f9fa; /* Light background */
   color: #343a40; /* Dark text */
 }
-.dark-theme{
+.dark-theme {
   background-color: #343a40; /* Light background */
   color: #f8f9fa; /* Dark text */
 }
@@ -43,16 +42,9 @@ body {
   background-color: #702cf9e1;
 }
 
-
-.dropdown-item.active, .dropdown-item:active {
+.dropdown-item.active,
+.dropdown-item:active {
   color: var(--bs-dropdown-link-active-color);
   text-decoration: none;
   background-color: #702cf9e1 !important;
 }
-
-
-
-
-
-
-

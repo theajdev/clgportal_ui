@@ -4,7 +4,6 @@ import "./App.css";
 import Login from "./components/Login";
 import UserType from "./components/Admin/UserType";
 import Courses from "./components/Admin/Courses"; // Typo fixed here (Cousres to Courses)
-import ManageCourses from "./components/Admin/ManageCourses";
 import Teachers from "./components/Admin/Teachers";
 import AdminNotice from "./components/Admin/AdminNotice";
 import Header from "./components/Admin/Header";
@@ -38,7 +37,6 @@ function App() {
         <ToastContainer position="bottom-center" />
         <Routes>
           <Route path="/" element={<Login />} />
-
           <Route
             path="/admin"
             element={
@@ -50,7 +48,6 @@ function App() {
             <Route index element={<AdminDashboard />} />
             <Route path="usertype" element={<UserType />} />
             <Route path="courses" element={<Courses />} />
-            <Route path="manageCourses" element={<ManageCourses />} />
             <Route path="teachers" element={<Teachers />} />
             <Route path="adminNotice" element={<AdminNotice />} />
           </Route>

@@ -35,7 +35,7 @@
 }
 
 .table-wrapper {
-  max-height: 355px;
+  max-height: 360px;
   /* Adjust height as needed */
   overflow-y: auto;
 }
@@ -72,6 +72,16 @@ input[type="file"] {
 
 .bi-mortarboard-fill.flipped {
   transform: rotateY(180deg);
+}
+
+.rc-anchor-dark {
+  background: #222222e8 !important;
+  color: #fff !important;
+}
+
+.rc-anchor-dark.rc-anchor-normal,
+.rc-anchor-dark.rc-anchor-compact {
+  border: 1px solid #222222e8 !important;
 }
 
 @media (max-width: 992px) {
