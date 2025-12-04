@@ -1,12 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import $ from 'jquery';
+import jszip from 'jszip';
+import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
+import "datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css";
+import "datatables.net-select-bs5/css/select.bootstrap5.min.css";
 import bootstrap from 'bootstrap/dist/js/bootstrap.js';
 import { addTeacher, deleteTeacher, getAllTeachers, getTeachersByStatus, modifyTeacher } from '../../services/AdminServices/TeacherService';
 import { getAllCourses } from '../../services/AdminServices/DeptService';
 import { toast } from 'react-toastify';
 import { checkTokenAndLogout } from '../../services/auth';
+import "datatables.net-bs5";
+import 'datatables.net-buttons/js/buttons.html5.js';
+import 'datatables.net-buttons/js/buttons.print.js';
+import 'datatables.net-responsive-bs5';
 
 const Teachers = () => {
-
+  window.JSZip = jszip;
   const [teacher, setTeacher] = useState({
     id: "",
     firstName: "",
@@ -21,7 +30,6 @@ const Teachers = () => {
     deptId: "",
   });
 
-  const [teachers, setTeachers] = useState([]);
   const [depts, setDepts] = useState([]);
   const [isUpdate, setIsUpdate] = useState(false);
   const [selected, setSelected] = useState("All");
@@ -71,15 +79,428 @@ const Teachers = () => {
     return Object.keys(errors).length === 0;
   };
 
+  const tableTeacherRef = useRef();
+  const getTeacherDetailsRef = useRef();
+  const handleAllRef = useRef();
+  const modalTeacherElRef = useRef(null);
+  const modalRef = useRef(null);
+
+  useEffect(() => {
+    getAllCourses()
+      .then((dept) => setDepts(dept))
+      .catch((err) => console.log(err));
+  }, []);
+
+  const getTeacherDetails = useCallback((teachers) => {
+
+    if (depts.length === 0) return;
+
+    const tableEl = tableTeacherRef.current;
+
+    // If table already exists → destroy it completely
+    if ($.fn.dataTable.isDataTable(tableEl)) {
+      $(tableEl).DataTable().clear().destroy();
+      $(tableEl).empty(); // prevents duplicated headers
+    }
+
+    $(tableEl).DataTable({
+      processing: true,
+      fixedHeader: true,
+
+      dom:
+        "<'row mb-3'<'col-12 col-md-6 d-flex align-items-center justify-content-start mb-2 mb-md-0'f>" +
+        "<'col-12 col-md-6 d-flex justify-content-start justify-content-md-end'B>>" +
+        "<'row'<'col-sm-12'tr>>" +
+        "<'row mt-3'<'col-sm-5'i><'col-sm-7'p>>",
+
+      buttons: [
+        {
+          extend: 'excelHtml5',
+          title: 'Teachers List',
+          text: '<i class="bi bi-file-earmark-excel"></i> Excel',
+          className: 'btn btn-success btn-sm',
+          exportOptions: {
+            columns: [1, 2, 3, 4, 5, 6, 7],
+            format: {
+              body: function (data, row, column, node) {
+                if (column === 1) {
+                  return row + 1;
+                }
+                return data;
+              }
+            }
+          }
+        }, {
+          extend: 'print',
+          className: 'btn btn-dark btn-sm',
+          text: '<i class="bi bi-printer"></i> Print',
+          exportOptions: {
+            columns: [1, 2, 3, 4, 5, 6, 7],
+            format: {
+              body: function (data, row, column, node) {
+                if (column === 1) {
+                  return row + 1;
+                }
+                return data;
+              }
+            }
+          }
+        }
+      ],
+      language: {
+
+        processing: `
+                          <div className="text-center">
+                            <strong role="status">Loading teachers...</strong>
+                            <div className="spinner-grow spinner-grow-sm text-danger" role='status'></div>
+                            <div className="spinner-grow spinner-grow-sm text-success" role="status"></div>
+                            <div className="spinner-grow spinner-grow-sm text-primary" role="status"></div>
+                            <div className="spinner-grow spinner-grow-sm text-warning" role="status"></div>
+                            <div className="spinner-grow spinner-grow-sm text-light" role="status"></div>
+                            <div className="spinner-grow spinner-grow-sm text-dark" role="status"></div>
+                          </div>
+                      `,
+        emptyTable: `
+                          <div class="text-center py-4">
+                            <i class="bi bi-database-x text-danger" style="font-size: 2.5rem;"></i>
+                            <h5 class="mt-3 text-muted fw-bold">No Teachers Available</h5>
+                            <p class="text-secondary">Please adjust your filter or add a new teacher.</p>
+                          </div>
+                        `
+      },
+
+      data: teachers, // ✅ direct data assignment here
+      order: [[1, 'asc']],
+      on: {
+        draw: (e) => {
+          let start = e.dt.page.info().start;
+
+          e.dt.column(1, { page: 'current' })
+            .nodes()
+            .each((cell, i) => {
+              cell.textContent = start + i + 1;
+            });
+        }
+      },
+      columns: [
+        {
+          className: 'dt-control',
+          orderable: false,
+          data: null,
+          defaultContent: '<i class="bi bi-plus-circle text-success fw-bold" style="font-size: 1.2rem;"></i>'
+        },
+        {
+          title: "Sr. No.",
+          className: "text-center",
+          data: null,
+        },
+
+        {
+          title: "First Name",
+          className: "text-center",
+          data: function (row, type, val, meta) {
+            if (row.firstName === null || row.firstName === undefined || row.firstName === '') {
+              return '-'; // Replace blank with dash
+            } else {
+              return row.firstName;
+            }
+          }
+
+        },
+        {
+          title: "Middle Name",
+          className: "text-center",
+          data: function (row, type, val, meta) {
+            if (row.middleName === null || row.middleName === undefined || row.middleName === '') {
+              return '-'; // Replace blank with dash
+            } else {
+              return row.middleName;
+            }
+          }
+
+        },
+        {
+          title: "Last Name",
+          className: "text-center",
+          data: function (row, type, val, meta) {
+            if (row.lastName === null || row.lastName === undefined || row.lastName === '') {
+              return '-'; // Replace blank with dash
+            } else {
+              return row.lastName;
+            }
+          }
+        },
+        {
+          title: "Mobile No",
+          className: "text-center",
+          data: function (row, type, val, meta) {
+            if (row.mobileNo === null || row.mobileNo === undefined || row.mobileNo === '') {
+              return '-'; // Replace blank with dash
+            } else {
+              return row.mobileNo;
+            }
+          },
+        },
+        {
+          title: "Address",
+          className: "text-center",
+          data: function (row, type, val, meta) {
+            if (row.address === null || row.address === undefined || row.address === '') {
+              return '-'; // Replace blank with dash
+            } else {
+              return row.address;
+            }
+          },
+        },
+        {
+          title: "Email",
+          className: "text-center",
+          data: function (row, type, val, meta) {
+            if (row.email === null || row.email === undefined || row.email === '') {
+              return '-'; // Replace blank with dash
+            } else {
+              return row.email;
+            }
+          }
+        },
+        {
+          title: "Username",
+          className: "text-center",
+          data: function (row, type, val, meta) {
+            if (row.username === null || row.username === undefined || row.username === '') {
+              return '-'; // Replace blank with dash
+            } else {
+              return row.username;
+            }
+          }
+        },
+        {
+          title: "Department",
+          className: "text-center",
+          data: function (row, type, val, meta) {
+            console.log("Row: " + row.deptId);
+            if (row.deptId === null || row.deptId === undefined || row.deptId === '') {
+              return '-'; // Replace blank with dash
+            } else {
+              let dept = null;
+              depts.forEach((d) => {
+                if (d.id === row.deptId) {
+                  dept = d.deptDesc;
+                };
+              });
+              return dept;
+            }
+          }
+        }
+      ],
+      responsive: {
+        details: {
+          type: 'column',
+          target: 'td.dt-control',
+          renderer: function (api, rowIdx, columns) {
+            const rowData = api.row(rowIdx).data();
+            // Wrap the child table in a td with colspan=3
+            let childTableWrapper = $('<td colspan="3"/>');
+            let table = $('<table class="table table-borderless mb-0"/>');
+
+            columns.forEach(col => {
+              if (col.hidden) {
+
+                let value = col.data;
+                if (value === null || value === undefined || value === '') {
+                  value = '-'; // Replace blank with dash
+                }
+
+                table.append(
+                  $('<tr/>').append(
+                    $('<td/>').html(`<strong>${col.title}:</strong>`),
+                    $('<td/>').text(value)
+                  )
+                );
+              }
+            });
+
+            // Add action buttons row
+            table.append(
+              $('<tr/>').append(
+                $('<td/>').html(`
+                <button class="btn btn-info me-2 edit-btn" data-id="${rowData.id}">
+                  <i class="bi bi-pencil-square"></i> Edit
+                </button>
+                <button class="btn btn-danger delete-btn" data-id="${rowData}">
+                  <i class="bi bi-trash"></i> Delete
+                </button>
+              `)
+              )
+            );
+
+            childTableWrapper.append(table);
+            return childTableWrapper.prop('outerHTML');
+          }
+        }
+      }
+
+
+    });
+
+    $(tableEl).on('click', 'td.dt-control', function () {
+      let tr = $(this).closest('tr');
+      let icon = $(this).find('i');
+
+      if (tr.hasClass('dt-hasChild')) {
+        // Row is currently expanded → will collapse
+        icon.removeClass('bi-plus-circle text-success').addClass('bi-dash-circle text-danger');
+      } else {
+        // Row is collapsed → will expand
+        icon.removeClass('bi-dash-circle text-danger').addClass('bi-plus-circle text-success');
+      }
+    });
+
+    $(tableEl).off('click', '.edit-btn')
+      .on('click', '.edit-btn', function (e) {
+        const table = $(tableEl).DataTable();
+        const rowData = table.row($(this).parents('tr')).data();
+        setIsUpdate(true);
+        setTeacher({
+          ...rowData,
+        });
+
+        modalRef.current.show();
+
+      });
+
+    $(tableEl)
+      .off('click', '.delete-btn')
+      .on('click', '.delete-btn', function (e) {
+        const table = $(tableEl).DataTable();
+        const rowData = table.row($(this).parents('tr')).data();
+        const id = rowData.id;
+        const name = rowData.firstName + " " + rowData.lastName;
+        toast.info(({ closeToast }) => (
+          <div className='text-center p-2'>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="38"
+              height="38"
+              fill="red"
+              className="bi bi-exclamation-triangle"
+              viewBox="0 0 16 16"
+              aria-label="Warning"
+              role="img"
+            >
+              <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z" />
+              <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
+            </svg><p><b>Are you sure you want to delete the student {name}?</b></p><div className='d-flex p-2 justify-content-center'><button className='btn btn-outline-warning flex-row' onClick={() => {
+              deleteTeacherId(id);
+            }}>Yes</button>
+              <button className='btn btn-outline-secondary ms-2 flex-row' onClick={() => {
+                closeToast();
+              }}>No</button></div></div>
+        ), { position: "top-center", icon: false });
+
+
+        const deleteTeacherId = (id) => {
+          deleteTeacher(id).then(response => {
+            toast.info("Teacher deleting please wait...", { position: "top-right", autoClose: 1200 });
+
+            setTimeout(() => {
+              toast.dismiss();
+              setTeacher({
+                id: "",
+                firstName: "",
+                middleName: "",
+                lastName: "",
+                username: "",
+                mobileNo: 0,
+                address: "",
+                email: "",
+                password: "",
+                status: "",
+                deptId: "",
+              });
+              toast.success(response.message, { position: "top-right", autoClose: 1600 });
+            }, 2000);
+
+            setTimeout(() => {
+              toast.dismiss();
+              handleAllRef.current?.();
+            }, 3500);
+            return true;
+          }).catch((error) => {
+            console.log("error", JSON.stringify(error));
+            toast.error("teacher not deleted.", {
+              position: "top-right",
+            });
+            return false;
+          });
+        }
+      });
+  }, [depts]);
+
+
+  // handle all
+  const handleAll = useCallback((event) => {
+    setSelected("All");
+    setTeacher({
+      id: "",
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      username: "",
+      mobileNo: 0,
+      address: "",
+      email: "",
+      password: "",
+      status: "",
+      deptId: "",
+    });
+
+    getAllTeachers().then((res) => {
+      getTeacherDetailsRef.current?.(res);
+    }).catch((err) => {
+      console.log(err);
+      toast.error("Something went wrong.", {
+        position: "top-right",
+      });
+    });
+
+  }, []);
+
+
+
+  //handle valid
+  const handleValid = (event) => {
+    event.preventDefault();
+    setSelected("Valid");
+    getTeachersByStatus('V').then((res) => {
+      getTeacherDetails(res);
+    }).catch((err) => {
+      console.log(err);
+      toast.error("Something went wrong.", {
+        position: "top-right",
+      });
+    });
+
+  };
+
+
 
   useEffect(() => {
     document.title = "Teacher - Admin";
+    const el = modalTeacherElRef.current;
+    if (!el) return;
+
+    // Create modal with static backdrop (cannot close by clicking outside)
+    modalRef.current = new bootstrap.Modal(el, {
+      backdrop: 'static',
+      keyboard: false
+    });
+
     checkTokenAndLogout();
-    setIsLoading(true);
+    getTeacherDetailsRef.current = getTeacherDetails;
+    handleAllRef.current = handleAll;
     getAllTeachers().then((data) => {
-      console.log(data);
-      setTeachers(data);
-      setIsLoading(false);
+      getTeacherDetails(data);
     }).catch((err) => {
       console.log(err);
     }).finally(() => {
@@ -94,19 +515,13 @@ const Teachers = () => {
       }, 0); // ensures DOM is updated
     });
 
-    getAllCourses().then((dept) => {
-      setDepts(dept);
-    }).catch((err) => {
-      console.log(err);
-    });
+
 
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     tooltipTriggerList.forEach(tooltipTriggerEl => {
       new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    //cleanup validation errors on modal close
-    const modalElement = document.getElementById('teacherModal');
 
     const handleModalClose = () => {
       // Clear validation errors
@@ -125,17 +540,12 @@ const Teachers = () => {
       });
     };
 
-    if (modalElement) {
-      modalElement.addEventListener('hidden.bs.modal', handleModalClose);
-    }
+    el.addEventListener("hidden.bs.modal", handleModalClose);
 
-    // Clean up listener on unmount
     return () => {
-      if (modalElement) {
-        modalElement.removeEventListener('hidden.bs.modal', handleModalClose);
-      }
+      el.removeEventListener("hidden.bs.modal", handleModalClose);
     };
-  }, []);
+  }, [getTeacherDetails, handleAll]);
 
   //field change handler
   const fieldChanged = (event) => {
@@ -171,11 +581,7 @@ const Teachers = () => {
       status: "",
       deptId: "",
     });
-    var myModal = new bootstrap.Modal(document.getElementById('teacherModal'), {
-      backdrop: 'static',
-      keyboard: false
-    });
-    myModal.show();
+    modalRef.current.show();
   };
 
   // save teacher
@@ -208,16 +614,7 @@ const Teachers = () => {
 
 
         toast.success("Teacher added.", { position: "top-right", autoClose: 1600 });
-        const modalElement = document.getElementById('teacherModal');
-        const modalInstance =
-          bootstrap.Modal.getInstance(modalElement) ||
-          new bootstrap.Modal(modalElement, {
-            backdrop: 'non-static',
-            keyboard: false
-          });
-        if (modalInstance) {
-          modalInstance.hide();
-        }
+        modalRef.current.hide();
       }, 2000);
 
       setTimeout(() => {
@@ -231,22 +628,6 @@ const Teachers = () => {
       setIsLoading(false);
     });
   };
-
-  // edit teacher
-  const editTeacher = (data) => {
-    console.log(data);
-    setIsUpdate(true);
-    setTeacher({
-      ...data,
-      password: '',  // <-- important: don't show hashed password
-    });
-    var myModal = new bootstrap.Modal(document.getElementById('teacherModal'), {
-      backdrop: 'static',
-      keyboard: false
-    });
-    myModal.show();
-  };
-
 
   // update teacher
   const updateTeacher = (event) => {
@@ -282,16 +663,7 @@ const Teachers = () => {
         });
         toast.success("teacher updated.", { position: "top-right", autoClose: 1600 });
 
-        const modalElement = document.getElementById('teacherModal');
-        const modalInstance =
-          bootstrap.Modal.getInstance(modalElement) ||
-          new bootstrap.Modal(modalElement, {
-            backdrop: 'non-static',
-            keyboard: false
-          });
-        if (modalInstance) {
-          modalInstance.hide();
-        }
+        modalRef.current.hide();
       }, 2000);
 
       setTimeout(() => {
@@ -327,118 +699,13 @@ const Teachers = () => {
   };
 
 
-  // delete teacher
-  const removeTeacher = (event, id, name) => {
-    event.preventDefault();
-    toast.info(({ closeToast }) => (
-      <div className='text-center p-2'>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="38"
-          height="38"
-          fill="red"
-          className="bi bi-exclamation-triangle"
-          viewBox="0 0 16 16"
-          aria-label="Warning"
-          role="img"
-        >
-          <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z" />
-          <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
-        </svg><p><b>Are you sure you want to delete the teacher '{name}'?</b></p><div className='d-flex p-2 justify-content-center'><button className='btn btn-outline-warning flex-row' onClick={() => {
-          deleteTeacherId(id);
-          closeToast();
-        }}>Yes</button>
-          <button className='btn btn-outline-secondary ms-2 flex-row' onClick={() => {
-            closeToast();
-          }}>No</button></div></div>
-    ), { position: "top-center", icon: false });
-
-    const deleteTeacherId = (id) => {
-      deleteTeacher(id).then(response => {
-        toast.info("Teacher deleting please wait...", { position: "top-right", autoClose: 1200 });
-
-        setTimeout(() => {
-          toast.dismiss();
-          setTeacher({
-            id: "",
-            firstName: "",
-            middleName: "",
-            lastName: "",
-            username: "",
-            mobileNo: 0,
-            address: "",
-            email: "",
-            password: "",
-            status: "",
-            deptId: "",
-          });
-          toast.success(response.message, { position: "top-right", autoClose: 1600 });
-
-        }, 2000);
-
-        setTimeout(() => {
-          toast.dismiss();
-          handleAll();
-        }, 3500);
-
-        return true;
-      }).catch((error) => {
-        console.log("error", JSON.stringify(error));
-        toast.error("teacher not deleted.", {
-          position: "top-right",
-        });
-        return false;
-      });
-    }
-  };
-
-  // handle all
-  const handleAll = (event) => {
-    setSelected("All");
-    setTeacher({
-      id: "",
-      firstName: "",
-      middleName: "",
-      lastName: "",
-      username: "",
-      mobileNo: 0,
-      address: "",
-      email: "",
-      password: "",
-      status: "",
-      deptId: "",
-    });
-    getAllTeachers().then((res) => {
-      console.log(res);
-      setTeachers(res);
-    }).catch((err) => {
-      console.log(err);
-    }).finally(() => {
-      setIsLoading(false);
-    });
-  };
-
-  //handle valid
-  const handleValid = (event) => {
-    event.preventDefault();
-    setSelected("Valid");
-    getTeachersByStatus('V').then((res) => {
-      console.log(res);
-      setTeachers(res);
-    }).catch((err) => {
-      console.log(err);
-    }).finally(() => {
-      setIsLoading(false);
-    });
-  }
-
   //handle invalid
   const handleInvalid = (event) => {
     event.preventDefault();
     setSelected("Invalid");
     getTeachersByStatus('I').then((res) => {
       console.log(res);
-      setTeachers(res);
+      getTeacherDetails(res);
     }).catch((err) => {
       console.log(err);
     }).finally(() => {
@@ -535,41 +802,16 @@ const Teachers = () => {
                 </div>
                 ) : (
                   <div className=' table-wrapper'>
-                    <table className="table table-responsible">
-                      <thead>
-                        <tr>
-                          <th scope="row">Sr. No.</th>
-                          <th scope="row">First Name</th>
-                          <th scope="row">Last Name</th>
-                          <th scope="row">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {(!teachers || teachers.length === 0) ? (
-                          <tr>
-                            <td colSpan="4" className="text-center"><div className="text-muted fw-semibold" style={{ fontSize: "1.2rem", padding: "20px" }}>
-                              <span role="img" aria-label="sad" style={{ fontSize: "2.5rem" }}>🤷🏻</span> No teachers found
-                            </div></td>
-                          </tr>
-                        ) : (
-
-                          teachers.map((row) => (
-                            <tr key={row.id}>
-                              <td>{row.id}</td>
-                              <td>{row.firstName}</td>
-                              <td>{row.lastName}</td>
-                              <td><button className='btn btn-info me-2' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Edit" onClick={e => { handleRipple(e); editTeacher(row) }}><i className="bi bi-pencil-square"></i></button> <button className='btn btn-danger' data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Delete" onClick={e => { handleRipple(e); removeTeacher(e, row.id, row.deptDesc) }}><i className="bi bi-trash"></i></button></td>
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
+                    <table className="table nowrap display" ref={tableTeacherRef}>
+                      <thead></thead>
+                      <tbody></tbody>
                     </table>
                   </div>
                 )}
             </div>
           </div>
         </div>
-        <div className="modal fade" id="teacherModal" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+        <div className="modal fade" id="teacherModal" ref={modalTeacherElRef} aria-labelledby="exampleModalLabel" aria-hidden="true" >
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
