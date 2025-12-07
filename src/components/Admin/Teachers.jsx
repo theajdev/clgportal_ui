@@ -33,7 +33,6 @@ const Teachers = () => {
   const [depts, setDepts] = useState([]);
   const [isUpdate, setIsUpdate] = useState(false);
   const [selected, setSelected] = useState("All");
-  const [isLoading, setIsLoading] = useState(false);  // State htmlFor loading
 
   const [validation, setValidation] = useState({
     firstName: false,
@@ -151,7 +150,7 @@ const Teachers = () => {
 
         processing: `
                           <div className="text-center">
-                            <strong role="status">Loading teachers...</strong>
+                            <strong role="status">Loading Teachers...</strong>
                             <div className="spinner-grow spinner-grow-sm text-danger" role='status'></div>
                             <div className="spinner-grow spinner-grow-sm text-success" role="status"></div>
                             <div className="spinner-grow spinner-grow-sm text-primary" role="status"></div>
@@ -278,7 +277,6 @@ const Teachers = () => {
           title: "Department",
           className: "text-center",
           data: function (row, type, val, meta) {
-            console.log("Row: " + row.deptId);
             if (row.deptId === null || row.deptId === undefined || row.deptId === '') {
               return '-'; // Replace blank with dash
             } else {
@@ -491,6 +489,7 @@ const Teachers = () => {
     if (!el) return;
 
     // Create modal with static backdrop (cannot close by clicking outside)
+
     modalRef.current = new bootstrap.Modal(el, {
       backdrop: 'static',
       keyboard: false
@@ -504,7 +503,7 @@ const Teachers = () => {
     }).catch((err) => {
       console.log(err);
     }).finally(() => {
-      setIsLoading(false);
+
 
       // Delay tooltip setup until after DOM updates
       setTimeout(() => {
@@ -624,8 +623,6 @@ const Teachers = () => {
       // Append new teacher to the list
     }).catch((err) => {
       console.log(err.response.data.message);
-    }).finally(() => {
-      setIsLoading(false);
     });
   };
 
@@ -708,33 +705,8 @@ const Teachers = () => {
       getTeacherDetails(res);
     }).catch((err) => {
       console.log(err);
-    }).finally(() => {
-      setIsLoading(false);
     });
   }
-
-
-  const handleRipple = (e) => {
-    const button = e.currentTarget;
-    const rect = button.getBoundingClientRect();
-
-    // Remove any old ripple
-    document.querySelectorAll('.global-ripple').forEach(el => el.remove());
-
-    const circle = document.createElement('span');
-    circle.classList.add('global-ripple');
-
-    const size = Math.max(rect.width, rect.height);
-    circle.style.width = circle.style.height = `${size}px`;
-    circle.style.left = `${e.clientX - size / 2}px`;
-    circle.style.top = `${e.clientY - size / 2}px`;
-
-    document.body.appendChild(circle);
-
-    circle.addEventListener('animationend', () => {
-      circle.remove();
-    });
-  };
 
   return (
     <>
@@ -789,25 +761,13 @@ const Teachers = () => {
                 </ul>
               </div>
             </div>
-            <div className={`card-body ${isLoading ? "disabled" : " "}`}>
-              {
-                isLoading ? (<div className="text-center">
-                  <strong role="status">Loading teachers...</strong>
-                  <div className="spinner-grow spinner-grow-sm text-danger" role='status'></div>
-                  <div className="spinner-grow spinner-grow-sm text-success" role="status"></div>
-                  <div className="spinner-grow spinner-grow-sm text-primary" role="status"></div>
-                  <div className="spinner-grow spinner-grow-sm text-warning" role="status"></div>
-                  <div className="spinner-grow spinner-grow-sm text-light" role="status"></div>
-                  <div className="spinner-grow spinner-grow-sm text-dark" role="status"></div>
-                </div>
-                ) : (
-                  <div className=' table-wrapper'>
-                    <table className="table nowrap display" ref={tableTeacherRef}>
-                      <thead></thead>
-                      <tbody></tbody>
-                    </table>
-                  </div>
-                )}
+            <div className="card-body">
+              <div className=' table-wrapper'>
+                <table className="table nowrap display" ref={tableTeacherRef}>
+                  <thead></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -911,9 +871,9 @@ const Teachers = () => {
               </div>
               <div className="modal-footer">
                 {isUpdate ? (
-                  <button type="button" className="btn btn-warning" onClick={e => { handleRipple(e); updateTeacher(e) }}>Update</button>
+                  <button type="button" className="btn btn-warning" onClick={e => { updateTeacher(e) }}>Update</button>
                 ) : (
-                  <button type="button" className="btn btn-primary" onClick={e => { handleRipple(e); saveTeacher(e) }}>Save</button>
+                  <button type="button" className="btn btn-primary" onClick={e => { saveTeacher(e) }}>Save</button>
                 )
                 }
                 <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
