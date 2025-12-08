@@ -87,6 +87,13 @@ const ManageStudents = () => {
   const modalElRef = useRef(null);
   const modalRef = useRef(null);
 
+  useEffect(() => {
+    getAllCourses()
+      .then((dept) => setDepts(dept))
+      .catch((err) => console.log(err));
+  }, []);
+
+
   const getStudentDetails = useCallback((studs) => {
     const tableEl = tableRef.current;
 
@@ -96,16 +103,21 @@ const ManageStudents = () => {
       $(tableEl).empty(); // prevents duplicated headers
     }
 
-    $(tableEl).DataTable({
+
+    const dt = $(tableEl).DataTable({
       processing: true,
       fixedHeader: true,
 
+
       dom:
-        "<'row mb-3'<'col-12 col-md-6 d-flex align-items-center justify-content-start mb-2 mb-md-0'f>" +
-        "<'col-12 col-md-6 d-flex justify-content-start justify-content-md-end'B>>" +
+        "<'row mb-3'" +
+        "<'col-12 col-md-6 d-flex align-items-center gap-2 justify-content-start mb-2 mb-md-0'" +
+        "f <'my-custom-dropdown'>" +
+        ">" +
+        "<'col-12 col-md-6 d-flex justify-content-start justify-content-md-end'B>" +
+        ">" +
         "<'row'<'col-sm-12'tr>>" +
         "<'row mt-3'<'col-sm-5'i><'col-sm-7'p>>",
-
       buttons: [
         {
           extend: 'excelHtml5',
@@ -248,6 +260,23 @@ const ManageStudents = () => {
 
         },
         {
+          title: "Department",
+          className: "text-center",
+          data: function (row, type, val, meta) {
+            if (row.deptId === null || row.deptId === undefined || row.deptId === '') {
+              return '-'; // Replace blank with dash
+            } else {
+              let dept = null;
+              depts.forEach((d) => {
+                if (d.id === row.deptId) {
+                  dept = d.deptDesc;
+                };
+              });
+              return dept;
+            }
+          }
+        },
+        {
           title: "Guardian Name",
           className: "text-center",
           data: function (row, type, val, meta) {
@@ -307,6 +336,21 @@ const ManageStudents = () => {
       }
 
 
+    });
+
+    // Inject dropdown HTML dynamically using departments list
+    $('.my-custom-dropdown').html(`
+    <select id="deptFilter" class="form-select form-select-sm" style="width:180px;">
+      <option value="">All Departments</option>
+      ${depts
+        .map(d => `<option value="${d.deptDesc}">${d.deptDesc}</option>`)
+        .join("")}
+    </select>
+  `);
+
+    // Filtering Logic
+    $('#deptFilter').on('change', function () {
+      dt.column(7).search(this.value).draw(); // Change column index as needed
     });
 
     $(tableEl).on('click', 'td.dt-control', function () {
@@ -403,7 +447,7 @@ const ManageStudents = () => {
           });
         }
       });
-  }, []);
+  }, [depts]);
 
   // handle all
   const handleAll = useCallback((event) => {
@@ -480,13 +524,6 @@ const ManageStudents = () => {
       tooltipTriggerList.forEach(tooltipTriggerEl => {
         new bootstrap.Tooltip(tooltipTriggerEl);
       });
-    });
-
-    getAllCourses().then((dept) => {
-      setDepts(dept);
-    }).catch((err) => {
-      console.log(err);
-
     });
 
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');

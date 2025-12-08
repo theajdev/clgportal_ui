@@ -102,13 +102,17 @@ const Teachers = () => {
       $(tableEl).empty(); // prevents duplicated headers
     }
 
-    $(tableEl).DataTable({
+    const dt = $(tableEl).DataTable({
       processing: true,
       fixedHeader: true,
 
       dom:
-        "<'row mb-3'<'col-12 col-md-6 d-flex align-items-center justify-content-start mb-2 mb-md-0'f>" +
-        "<'col-12 col-md-6 d-flex justify-content-start justify-content-md-end'B>>" +
+        "<'row mb-3'" +
+        "<'col-12 col-md-6 d-flex align-items-center gap-2 justify-content-start mb-2 mb-md-0'" +
+        "f <'my-custom-dropdown'>" +
+        ">" +
+        "<'col-12 col-md-6 d-flex justify-content-start justify-content-md-end'B>" +
+        ">" +
         "<'row'<'col-sm-12'tr>>" +
         "<'row mt-3'<'col-sm-5'i><'col-sm-7'p>>",
 
@@ -339,6 +343,21 @@ const Teachers = () => {
       }
 
 
+    });
+
+    // Inject dropdown HTML dynamically using departments list
+    $('.my-custom-dropdown').html(`
+        <select data-mdb-select-init id="deptFilter" class="form-select form-select-sm" style="width:180px;" >
+          <option value="">All Departments</option>
+          ${depts
+        .map(d => `<option value="${d.deptDesc}">${d.deptDesc}</option>`)
+        .join("")}
+        </select>
+      `);
+
+    // Filtering Logic
+    $('#deptFilter').on('change', function () {
+      dt.column(9).search(this.value).draw(); // Change column index as needed
     });
 
     $(tableEl).on('click', 'td.dt-control', function () {

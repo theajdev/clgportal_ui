@@ -83,6 +83,16 @@ input[type="file"] {
 .rc-anchor-dark.rc-anchor-compact {
   border: 1px solid #222222e8 !important;
 }
+.top {
+  display: flex;
+  align-items: center; /* Vertically align items */
+  justify-content: space-between; /* Distribute space between elements */
+}
+
+.dataTables_filter {
+  /* Adjust as needed for your specific setup */
+  margin-left: 10px; /* Example spacing */
+}
 
 @media (max-width: 992px) {
   .main-body {
