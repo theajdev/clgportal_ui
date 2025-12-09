@@ -5,6 +5,7 @@ import Footer from '../Footer';
 import useBootstrapTheme from '../../hooks/useBootstrapTheme';
 import { isLoggedIn, doLogout } from '../../services/auth';
 import userContext from '../../context/userContext';
+import { getNoticeByDepts } from '../../services/AdminServices/NoticeService';
 const Header = () => {
     const { storedTheme, resolvedTheme } = useBootstrapTheme();
     const [login, setLogin] = useState(false);
@@ -16,10 +17,22 @@ const Header = () => {
     const [isSidebarActive, setSidebarActive] = useState(false);
     const [isFlipped, setIsFlipped] = useState(false);
     const navigator = useNavigate();
+    const [deptNotices, setDeptNotices] = useState([]);
 
     useEffect(() => {
 
         setLogin(isLoggedIn());
+
+        // Fetch notices for the user's department
+        const deptId = sessionStorage.getItem("deptId");
+        getNoticeByDepts(deptId)
+            .then((notices) => {
+                console.log("Notices for Dept:" + JSON.stringify(notices));
+                const count = notices.length;
+                setDeptNotices(count);
+                console.log("Number of notices: " + count);
+            })
+            .catch((err) => console.log(err));
 
     }, []);
 
@@ -77,9 +90,26 @@ const Header = () => {
                 <div className="container-fluid">
                     <a className="navbar-brand" href="##" onClick={(e) => { e.preventDefault(); toggleSidebar(); }}><i className={`bi bi-mortarboard-fill fs-3 me-3 ms-2 ${isFlipped ? 'flipped' : ''}`}></i><span className='fw-bold'>College Portal</span></a>
 
+
+
+
+                    <span class="btn btn-link ms-auto">
+                        <span class="position-relative d-inline-block">
+                            {/*<!-- Bell Icon -->*/}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-bell-fill" viewBox="0 0 16 16">
+                                <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5 5 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901" />
+                            </svg>
+                            {/*<!-- Badge --> */}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{ transform: 'scale(0.8)' }}>
+                                {deptNotices}
+                                <span class="visually-hidden">unread messages</span>
+                            </span>
+                        </span>
+                    </span>
+
                     {/* Theme Switcher Dropdown */}
                     <div className="navbar navbar-expand-lg">
-                        <div className='dropdown bd-mode-toggle ms-auto d-flex'>
+                        <div className='dropdown bd-mode-toggle d-flex'>
 
                             <button className="btn py-2 dropdown-toggle d-flex align-items-center data-mdb-dropdown-init data-mdb-ripple-init btn-link" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" >
                                 <svg className="bi my-1 theme-icon-active text-white" aria-hidden="true" fill='currentColor'>

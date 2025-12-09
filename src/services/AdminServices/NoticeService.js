@@ -33,3 +33,9 @@ export const getNoticeCount = () => {
     .get(`/notice/count`)
     .then((response) => response.data);
 };
+
+export const getNoticeByDepts = (id) => {
+  return private_axios_url
+    .get(`/notice/depts/${id}`)
+    .then((response) => response.data);
+};

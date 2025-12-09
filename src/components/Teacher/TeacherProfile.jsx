@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getTeacherProfile, getTeacherProfileImage, updateTeacherProfile, uploadTeacherProfile } from '../../services/TeacherService/ProfileService';
 import { toast } from 'react-toastify';
+import { getAllCourses } from '../../services/AdminServices/DeptService';
 
 const TeacherProfile = () => {
   const [teacher, setTeacher] = useState({
@@ -16,6 +17,7 @@ const TeacherProfile = () => {
     username: '',
     password: '',
     status: '',
+    deptId: ''
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -26,6 +28,7 @@ const TeacherProfile = () => {
   const [meta, setMeta] = useState(null);           // { name, size, type, width, height }
   const [profileImage, setProfileImage] = useState(null);
   const [isUpdate, setIsUpdate] = useState(false);
+  const [depts, setDepts] = useState([]);
   const [validation, setValidation] = useState({
     firstName: false,
     lastName: false,
@@ -69,14 +72,23 @@ const TeacherProfile = () => {
   };
 
   useEffect(() => {
+    getAllCourses()
+      .then((dept) => setDepts(dept))
+      .catch((err) => console.log(err));
+  }, []);
+
+  useEffect(() => {
     setIsLoading(true);
     const id = sessionStorage.getItem("userId");
 
     getTeacherProfile(id).then((res) => {
+      console.log("Teacher Details:" + JSON.stringify(res));
       setTeacher({
         ...res,
         password: '',  // <-- important: don't show hashed password
       });
+
+      sessionStorage.setItem("deptId", res.deptId);
       // Now try to get the image
       return getTeacherProfileImage(res.profilePic);
     }).then((res) => {
@@ -236,7 +248,9 @@ const TeacherProfile = () => {
                     <input type="file" id="image" onChange={handleFileChange} name="image"></input>
                     <div className="mt-3">
                       <h4>{teacher.firstName}&nbsp;{teacher.lastName}</h4>
-                      <p className="text-secondary mb-1">Full Stack Developer</p>
+                      <p className="text-secondary mb-1">
+                        {depts.find(d => d.id === teacher.deptId)?.deptDesc || ""}
+                      </p>
                       <p className="text-muted font-size-sm">{teacher.address}</p>
                       <button className="btn btn-primary" onClick={handleToggleEdit}>
                         {isEditing ? 'Cancel' : 'Edit Profile'}
