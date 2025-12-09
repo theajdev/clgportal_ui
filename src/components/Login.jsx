@@ -9,6 +9,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import ReCAPTCHA from 'react-google-recaptcha';
 const Login = () => {
     const [formReady, setFormReady] = useState(false); // disabled until loaded
+    const [progress, setProgress] = useState(0);
+    const [captchaLoading, setCaptchaLoading] = useState(true);
     const [loadingCaptcha, setLoadingCaptcha] = useState(true);
     const { storedTheme, resolvedTheme } = useBootstrapTheme();
     const userContextData = useContext(userContext);
@@ -23,6 +25,37 @@ const Login = () => {
         usernameOrEmail: false,
         password: false,
     });
+
+    useEffect(() => {
+        const observer = new MutationObserver(() => {
+            const iframe = document.querySelector('iframe[src*="recaptcha"]');
+            if (iframe) {
+                iframe.onload = () => {
+                    setProgress(100);
+                    setTimeout(() => setCaptchaLoading(false), 400);
+                    observer.disconnect();
+                };
+            }
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        return () => observer.disconnect();
+    }, []);
+
+
+    useEffect(() => {
+        if (!captchaLoading) return;
+
+        const interval = setInterval(() => {
+            setProgress(prev => {
+                if (prev >= 95) return 95; // wait for actual recaptcha load
+                return prev + 1; // increase 1% every 30ms ≈ 3 seconds total
+            });
+        }, 30);
+
+        return () => clearInterval(interval);
+    }, [captchaLoading]);
 
 
     useEffect(() => {
@@ -176,6 +209,19 @@ const Login = () => {
                 <div className='col-md-6 mx-auto mt-5'>
                     <div className='App-login' disabled={isLoading}>
 
+                        {captchaLoading && (
+                            <div className="progress mb-3" style={{ height: "25px" }}>
+                                <div
+                                    className="progress-bar progress-bar-striped progress-bar-animated"
+                                    style={{ width: `${progress}%`, transition: "width 0.2s linear" }}
+                                    role="progressbar" aria-valuenow={progress} aria-valuemin="0" aria-valuemax="100"
+                                >
+                                    Loading...{progress}%
+                                </div>
+
+                            </div>
+                        )}
+
                         <div className="dropdown position-fixed mb-3 me-3 bd-mode-toggle">
                             <button className="btn btn-primary py-2 dropdown-toggle d-flex align-items-center data-mdb-dropdown-init data-mdb-ripple-init" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" >
                                 <svg className="bi my-1 theme-icon-active" aria-hidden="true">
@@ -267,6 +313,10 @@ const Login = () => {
                                         onExpired={() => setCaptchaToken(null)}
                                         theme={resolvedTheme === "dark" ? "dark" : "light"}
                                         className="my-3"
+                                        onLoad={() => {
+                                            setProgress(100);
+                                            setTimeout(() => setCaptchaLoading(false), 300);
+                                        }}
                                     />
 
                                     <button type="submit" className="btn btn-primary w-100" onClick={e => { handleLoginForm(e); }} disabled={!formReady}> {isLoading ? (
