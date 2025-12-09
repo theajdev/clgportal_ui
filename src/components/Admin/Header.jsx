@@ -23,16 +23,18 @@ const Header = () => {
 
         setLogin(isLoggedIn());
 
-        // Fetch notices for the user's department
-        const deptId = sessionStorage.getItem("deptId");
-        getNoticeByDepts(deptId)
-            .then((notices) => {
-                console.log("Notices for Dept:" + JSON.stringify(notices));
-                const count = notices.length;
-                setDeptNotices(count);
-                console.log("Number of notices: " + count);
-            })
-            .catch((err) => console.log(err));
+        setTimeout(() => {
+            // Fetch notices for the user's department
+            const deptId = sessionStorage.getItem("deptId");
+            getNoticeByDepts(deptId)
+                .then((notices) => {
+                    console.log("Notices for Dept:" + JSON.stringify(notices));
+                    const count = notices.length;
+                    setDeptNotices(count);
+                    console.log("Number of notices: " + count);
+                })
+                .catch((err) => console.log(err));
+        }, 1000);
 
     }, []);
 
