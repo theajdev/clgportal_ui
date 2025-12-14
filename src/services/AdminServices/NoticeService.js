@@ -39,3 +39,15 @@ export const getNoticeByDepts = (id) => {
     .get(`/notice/depts/${id}`)
     .then((response) => response.data);
 };
+
+export const readNotice = (noticeId, userId, userType) => {
+  return private_axios_url
+    .post(`/notice/${noticeId}/read/${userId}?userType=${userType}`)
+    .then((response) => response.data);
+};
+
+export const getNoticeReadDetails = (noticeId) => {
+  return private_axios_url
+    .get(`/notice/read/${noticeId}`)
+    .then((response) => response.data);
+};

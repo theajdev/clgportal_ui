@@ -3519,7 +3519,7 @@ fieldset:disabled .btn {
   color: var(--mdb-dropdown-link-color);
   text-align: inherit;
   white-space: nowrap;
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgba(225, 220, 220, 0.199);
   border: 0;
   border-radius: var(--mdb-dropdown-item-border-radius, 0);
 }
@@ -15427,7 +15427,7 @@ fieldset:disabled .btn-outline-dark {
   --mdb-btn-font-weight: 500;
   --mdb-btn-color: #3b71ca;
   --mdb-btn-hover-color: rgb(56.05, 107.35, 191.9);
-  --mdb-btn-hover-bg: hsl(0, 0%, 96%);
+  --mdb-btn-hover-bg: hsl(0deg 0% 96% / 0%)
   --mdb-btn-focus-color: rgb(53.1, 101.7, 181.8);
   --mdb-btn-active-color: rgb(50.15, 96.05, 171.7);
   --mdb-btn-disabled-color: #9e9e9e;
@@ -15526,7 +15526,7 @@ fieldset:disabled .btn-tertiary {
 [data-mdb-theme="dark"] .btn-link {
   --mdb-btn-color: #9fa6b2;
   --mdb-btn-hover-color: rgb(187.8, 192.7, 201.1);
-  --mdb-btn-hover-bg: rgb(63.6, 66.4, 71.2);
+  --mdb-btn-hover-bg: hsl(0deg 0% 96% / 0%)
   --mdb-btn-focus-color: rgb(187.8, 192.7, 201.1);
   --mdb-btn-active-color: rgb(187.8, 192.7, 201.1);
 }

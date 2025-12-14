@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import $ from 'jquery';
 import jszip from 'jszip';
 import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
+import "datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css";
 import "datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css";
 import "datatables.net-select-bs5/css/select.bootstrap5.min.css";
 import bootstrap from 'bootstrap/dist/js/bootstrap.js';
@@ -12,7 +13,7 @@ import { checkTokenAndLogout } from '../../services/auth';
 import "datatables.net-bs5";
 import 'datatables.net-buttons/js/buttons.html5.js';
 import 'datatables.net-buttons/js/buttons.print.js';
-import 'datatables.net-responsive-bs5';
+import "datatables.net-fixedcolumns-bs5";
 
 const Teachers = () => {
   window.JSZip = jszip;
@@ -103,9 +104,14 @@ const Teachers = () => {
     }
 
     const dt = $(tableEl).DataTable({
-      processing: true,
-      fixedHeader: true,
-
+      scrollY: "300px",
+      scrollX: true,
+      scrollCollapse: true,
+      fixedColumns: {
+        leftColumns: 3
+      },
+      autoWidth: false,
+      width: "100%",
       dom:
         "<'row mb-3'" +
         "<'col-12 col-md-6 d-flex align-items-center gap-2 justify-content-start mb-2 mb-md-0'" +
@@ -123,10 +129,10 @@ const Teachers = () => {
           text: '<i class="bi bi-file-earmark-excel"></i> Excel',
           className: 'btn btn-success btn-sm',
           exportOptions: {
-            columns: [1, 2, 3, 4, 5, 6, 7],
+            columns: [0, 1, 2, 3, 4, 5, 6],
             format: {
               body: function (data, row, column, node) {
-                if (column === 1) {
+                if (column === 0) {
                   return row + 1;
                 }
                 return data;
@@ -138,15 +144,21 @@ const Teachers = () => {
           className: 'btn btn-dark btn-sm',
           text: '<i class="bi bi-printer"></i> Print',
           exportOptions: {
-            columns: [1, 2, 3, 4, 5, 6, 7],
+            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8],
             format: {
               body: function (data, row, column, node) {
-                if (column === 1) {
+                if (column === 0) {
                   return row + 1;
                 }
                 return data;
               }
             }
+          },
+          customize: function (win) {
+            $(win.document.body).css('zoom', '0.8');
+            $(win.document.body).find('table')
+              .addClass('compact')
+              .css('width', '100%');
           }
         }
       ],
@@ -178,7 +190,7 @@ const Teachers = () => {
         draw: (e) => {
           let start = e.dt.page.info().start;
 
-          e.dt.column(1, { page: 'current' })
+          e.dt.column(0, { page: 'current' })
             .nodes()
             .each((cell, i) => {
               cell.textContent = start + i + 1;
@@ -186,12 +198,6 @@ const Teachers = () => {
         }
       },
       columns: [
-        {
-          className: 'dt-control',
-          orderable: false,
-          data: null,
-          defaultContent: '<i class="bi bi-plus-circle text-success fw-bold" style="font-size: 1.2rem;"></i>'
-        },
         {
           title: "Sr. No.",
           className: "text-center",
@@ -211,6 +217,17 @@ const Teachers = () => {
 
         },
         {
+          title: "Last Name",
+          className: "text-center",
+          data: function (row, type, val, meta) {
+            if (row.lastName === null || row.lastName === undefined || row.lastName === '') {
+              return '-'; // Replace blank with dash
+            } else {
+              return row.lastName;
+            }
+          }
+        },
+        {
           title: "Middle Name",
           className: "text-center",
           data: function (row, type, val, meta) {
@@ -221,17 +238,6 @@ const Teachers = () => {
             }
           }
 
-        },
-        {
-          title: "Last Name",
-          className: "text-center",
-          data: function (row, type, val, meta) {
-            if (row.lastName === null || row.lastName === undefined || row.lastName === '') {
-              return '-'; // Replace blank with dash
-            } else {
-              return row.lastName;
-            }
-          }
         },
         {
           title: "Mobile No",
@@ -293,54 +299,24 @@ const Teachers = () => {
               return dept;
             }
           }
-        }
-      ],
-      responsive: {
-        details: {
-          type: 'column',
-          target: 'td.dt-control',
-          renderer: function (api, rowIdx, columns) {
-            const rowData = api.row(rowIdx).data();
-            // Wrap the child table in a td with colspan=3
-            let childTableWrapper = $('<td colspan="3"/>');
-            let table = $('<table class="table table-borderless mb-0"/>');
-
-            columns.forEach(col => {
-              if (col.hidden) {
-
-                let value = col.data;
-                if (value === null || value === undefined || value === '') {
-                  value = '-'; // Replace blank with dash
-                }
-
-                table.append(
-                  $('<tr/>').append(
-                    $('<td/>').html(`<strong>${col.title}:</strong>`),
-                    $('<td/>').text(value)
-                  )
-                );
-              }
-            });
-
-            // Add action buttons row
-            table.append(
-              $('<tr/>').append(
-                $('<td/>').html(`
-                <button class="btn btn-info me-2 edit-btn" data-id="${rowData.id}">
-                  <i class="bi bi-pencil-square"></i> Edit
-                </button>
-                <button class="btn btn-danger delete-btn" data-id="${rowData}">
-                  <i class="bi bi-trash"></i> Delete
-                </button>
-              `)
-              )
-            );
-
-            childTableWrapper.append(table);
-            return childTableWrapper.prop('outerHTML');
+        }, {
+          title: "Action",
+          className: "text-center",
+          data: function (row, type, val, meta) {
+            return `<div class="dropdown-center">
+  <button class="btn dropdown-toggle btn-success" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Action
+  </button>
+  <ul class="dropdown-menu">
+    <li><a class="dropdown-item btn edit-btn bg-warning text-white text-center" href="javascript:void(0);"  data-id="${row.id}"> <i class="bi bi-pencil-square me-2"></i> Edit</a></li>
+    <li><a class="dropdown-item btn delete-btn bg-danger  text-white text-center" href="javascript:void(0)" data-id="${row}" ><i class="bi bi-trash me-2"></i> Delete</a></li>
+    
+  </ul>
+</div>`;
           }
         }
-      }
+      ],
+
 
 
     });

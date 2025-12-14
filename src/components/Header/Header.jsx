@@ -1,12 +1,17 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState, useContext, use } from 'react'
 import { useNavigate, Link, Outlet, useLocation } from 'react-router-dom';
 import "../../sidebar/sidebar.css";
 import Footer from '../Footer';
 import useBootstrapTheme from '../../hooks/useBootstrapTheme';
 import { isLoggedIn, doLogout } from '../../services/auth';
 import userContext from '../../context/userContext';
-import { getNoticeByDepts } from '../../services/AdminServices/NoticeService';
+import { getNoticeByDepts, getNoticeReadDetails } from '../../services/AdminServices/NoticeService';
+import { useNotice } from './NoticeContextComponent';
+import timeAgo from '../Admin/timeAgo';
 const Header = () => {
+    const { unreadCount, notices } = useNotice();
+    const [guardianNotices, setGuardianNotices] = useState([]);
+    const [activeTab, setActiveTab] = useState("department");
     const { storedTheme, resolvedTheme } = useBootstrapTheme();
     const [login, setLogin] = useState(false);
     const userContextData = useContext(userContext);
@@ -17,26 +22,14 @@ const Header = () => {
     const [isSidebarActive, setSidebarActive] = useState(false);
     const [isFlipped, setIsFlipped] = useState(false);
     const navigator = useNavigate();
-    const [deptNotices, setDeptNotices] = useState([]);
 
     useEffect(() => {
 
         setLogin(isLoggedIn());
 
-        setTimeout(() => {
-            // Fetch notices for the user's department
-            const deptId = sessionStorage.getItem("deptId");
-            getNoticeByDepts(deptId)
-                .then((notices) => {
-                    console.log("Notices for Dept:" + JSON.stringify(notices));
-                    const count = notices.length;
-                    setDeptNotices(count);
-                    console.log("Number of notices: " + count);
-                })
-                .catch((err) => console.log(err));
-        }, 1000);
 
     }, []);
+
 
     const handleLogout = () => {
         doLogout(() => {
@@ -94,24 +87,111 @@ const Header = () => {
 
 
 
+                    <div className="dropdown ms-auto dropdown-hover">
+                        <span className="btn btn-link dropdown-toggle" data-bs-toggle="dropdown">
+                            <span className="position-relative d-inline-block">
 
-                    <span class="btn btn-link ms-auto">
-                        <span class="position-relative d-inline-block">
-                            {/*<!-- Bell Icon -->*/}
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-bell-fill" viewBox="0 0 16 16">
-                                <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5 5 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901" />
-                            </svg>
-                            {/*<!-- Badge --> */}
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{ transform: 'scale(0.8)' }}>
-                                {deptNotices}
-                                <span class="visually-hidden">unread messages</span>
+                                {/* Bell Icon */}
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" className="bi bi-bell-fill" viewBox="0 0 16 16">
+                                    <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5 5 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901" />
+                                </svg>
+
+                                {/* Badge */}
+                                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{ transform: 'scale(0.8)' }}>
+                                    {unreadCount}
+                                </span>
+
                             </span>
                         </span>
-                    </span>
+
+                        {/* Dropdown content */}
+                        <div className="dropdown-menu p-0" style={{ width: "300px", left: "-240px" }}>
+                            <div className="card p-2" style={{ maxHeight: "350px", overflowY: "auto" }}>
+
+                                {/* --- Card Header with Tabs --- */}
+                                <div className="card-header p-0 bd-navbar pt-2 ps-2 pb-3">
+                                    <span className='fw-bold text-white'>Notices</span>
+                                    <ul className="nav nav-tabs card-header-tabs">
+                                        <li className="nav-item">
+                                            <button
+                                                className={`nav-link ms-2 ${activeTab === "department" ? "active" : ""}`}
+                                                onClick={() => setActiveTab("department")}
+                                            >
+                                                Department
+                                            </button>
+                                        </li>
+                                        <li className="nav-item">
+                                            <button
+                                                className={`nav-link ${activeTab === "guardian" ? "active" : ""}`}
+                                                onClick={() => setActiveTab("guardian")}
+                                            >
+                                                Guardian
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                {/* --- Card Body Content Based on Tab --- */}
+                                <div className="list-group list-group-flush">
+                                    {/* Department Notices */}
+                                    {activeTab === "department" && (
+                                        <>
+                                            {notices.length === 0 && (
+                                                <div className="list-group-item text-center text-muted py-3 bg-dark text-white">
+                                                    No department notices
+                                                </div>
+                                            )}
+
+                                            {notices.map((notice, index) => (
+                                                <Link
+                                                    key={index}
+                                                    to="/teacher/deptnotice"
+                                                    className="list-group-item list-group-item-action mt-2 mb-2"
+                                                >
+                                                    <div className="d-flex align-items-center">
+                                                        <div className="fw-semibold">
+                                                            {notice.noticeTitle}
+                                                        </div>
+
+                                                        <span className="badge text-muted ms-auto">{timeAgo(notice.postedOn)}</span>
+                                                    </div>
+
+                                                </Link>
+                                            ))}
+                                        </>
+                                    )}
+
+                                    {/* Guardian Notices */}
+                                    {activeTab === "guardian" && (
+                                        <>
+                                            {guardianNotices.length === 0 && (
+                                                <div className="list-group-item text-center text-muted py-3">
+                                                    No guardian notices
+                                                </div>
+                                            )}
+
+                                            {guardianNotices.map((notice, index) => (
+                                                <Link
+                                                    key={index}
+                                                    to="/teacher/guardiannotice"
+                                                    className="list-group-item list-group-item-action"
+                                                >
+                                                    <div className="fw-semibold">{notice.noticeTitle}</div>
+                                                    <small className="text-muted">{timeAgo(notice.postedOn)}</small>
+                                                </Link>
+                                            ))}
+                                        </>
+                                    )}
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
 
                     {/* Theme Switcher Dropdown */}
                     <div className="navbar navbar-expand-lg">
-                        <div className='dropdown bd-mode-toggle d-flex'>
+                        <div className='dropdown bd-mode-toggle d-flex dropdown-center'>
 
                             <button className="btn py-2 dropdown-toggle d-flex align-items-center data-mdb-dropdown-init data-mdb-ripple-init btn-link" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)" >
                                 <svg className="bi my-1 theme-icon-active text-white" aria-hidden="true" fill='currentColor'>
@@ -127,7 +207,7 @@ const Header = () => {
                                 </svg>
                                 <span className="visually-hidden" id="bd-theme-text">Toggle theme</span>
                             </button>
-                            <ul className="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
+                            <ul className="dropdown-menu shadow dropdown-menu-start" aria-labelledby="bd-theme-text">
                                 <li>
                                     <button type="button" className={`dropdown-item d-flex align-items-center  ${storedTheme === "light" ? 'text-bg-primary' : ''}`} data-mdb-theme-value="light" aria-pressed="false" >
                                         <svg className="bi me-2" aria-hidden="true" fill='currentColor'>
@@ -173,7 +253,7 @@ const Header = () => {
                             </a>
 
                             {isAuth && (
-                                <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="logoutMenu">
+                                <ul className="dropdown-menu dropdown-menu-start" aria-labelledby="logoutMenu">
                                     <li><button type="button" className="dropdown-item d-flex align-items-center text-bg-primary" href="##" onClick={(e) => { e.preventDefault(); }}><i className="bi bi-person-circle ms-2 me-2 fs-6 fw-bold"></i> {username}</button></li>
                                     <li><button type="button" className="dropdown-item" href="##" onClick={handleLogout}> <i className="bi bi-box-arrow-right ms-2 me-2 fs-6 text-danger fw-bold"></i>Logout</button></li>
 

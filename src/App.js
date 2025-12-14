@@ -6,7 +6,6 @@ import UserType from "./components/Admin/UserType";
 import Courses from "./components/Admin/Courses"; // Typo fixed here (Cousres to Courses)
 import Teachers from "./components/Admin/Teachers";
 import AdminNotice from "./components/Admin/AdminNotice";
-import Header from "./components/Admin/Header";
 import TeacherDashboard from "./components/Teacher/TeacherDashboard";
 import TeacherProfile from "./components/Teacher/TeacherProfile";
 import ManageStudents from "./components/Teacher/ManageStudents";
@@ -20,6 +19,9 @@ import AdminDashboard from "./components/Admin/AdminDashboard";
 import { isLoggedIn } from "./services/auth";
 import UserProvider from "./context/UserProvider";
 import { ToastContainer } from "react-toastify";
+import Header from "./components/Header/Header";
+import NoticeContextComponent from "./components/Header/NoticeContextComponent";
+import DashBoard from "./components/Header/DashBoard";
 
 function App() {
   function AuthenticatedRoute({ children, allowedRoles }) {
@@ -32,56 +34,58 @@ function App() {
   }
 
   return (
-    <UserProvider>
-      <BrowserRouter>
-        <ToastContainer position="bottom-center" />
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route
-            path="/admin"
-            element={
-              <AuthenticatedRoute allowedRoles={["ADMIN"]}>
-                <Header />
-              </AuthenticatedRoute>
-            }
-          >
-            <Route index element={<AdminDashboard />} />
-            <Route path="usertype" element={<UserType />} />
-            <Route path="courses" element={<Courses />} />
-            <Route path="teachers" element={<Teachers />} />
-            <Route path="adminNotice" element={<AdminNotice />} />
-          </Route>
+    <NoticeContextComponent>
+      <UserProvider>
+        <BrowserRouter>
+          <ToastContainer position="bottom-center" />
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route
+              path="/admin"
+              element={
+                <AuthenticatedRoute allowedRoles={["ADMIN"]}>
+                  <Header />
+                </AuthenticatedRoute>
+              }
+            >
+              <Route index element={<AdminDashboard />} />
+              <Route path="usertype" element={<UserType />} />
+              <Route path="courses" element={<Courses />} />
+              <Route path="teachers" element={<Teachers />} />
+              <Route path="adminNotice" element={<AdminNotice />} />
+            </Route>
 
-          <Route
-            path="/teacher"
-            element={
-              <AuthenticatedRoute allowedRoles={["TEACHER"]}>
-                <Header />
-              </AuthenticatedRoute>
-            }
-          >
-            <Route index element={<TeacherProfile />} />
-            <Route path="managestudents" element={<ManageStudents />} />
-            <Route path="deptnotice" element={<DepartmentNotice />} />
-            <Route path="guardiannotice" element={<GuardianNotice />} />
-          </Route>
+            <Route
+              path="/teacher"
+              element={
+                <AuthenticatedRoute allowedRoles={["TEACHER"]}>
+                  <DashBoard />
+                </AuthenticatedRoute>
+              }
+            >
+              <Route index element={<TeacherProfile />} />
+              <Route path="managestudents" element={<ManageStudents />} />
+              <Route path="deptnotice" element={<DepartmentNotice />} />
+              <Route path="guardiannotice" element={<GuardianNotice />} />
+            </Route>
 
-          <Route
-            path="/student"
-            element={
-              <AuthenticatedRoute allowedRoles={["STUDENT"]}>
-                <Header />
-              </AuthenticatedRoute>
-            }
-          >
-            <Route index element={<StudentDashboard />} />
-            <Route path="profile" element={<StudentProfile />} />
-            <Route path="teachernotice" element={<TeacherNotice />} />
-            <Route path="feedback" element={<FeedBack />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </UserProvider>
+            <Route
+              path="/student"
+              element={
+                <AuthenticatedRoute allowedRoles={["STUDENT"]}>
+                  <Header />
+                </AuthenticatedRoute>
+              }
+            >
+              <Route index element={<StudentDashboard />} />
+              <Route path="profile" element={<StudentProfile />} />
+              <Route path="teachernotice" element={<TeacherNotice />} />
+              <Route path="feedback" element={<FeedBack />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </UserProvider>
+    </NoticeContextComponent>
   );
 }
 
