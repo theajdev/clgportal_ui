@@ -27,47 +27,51 @@ const Login = () => {
     });
 
     useEffect(() => {
-        const observer = new MutationObserver(() => {
-            const iframe = document.querySelector('iframe[src*="recaptcha"]');
-            if (iframe) {
-                iframe.onload = () => {
-                    setProgress(100);
-                    setTimeout(() => setCaptchaLoading(false), 400);
-                    observer.disconnect();
-                };
+        const updateProgress = () => {
+            switch (document.readyState) {
+                case "loading":
+                    setProgress(20);
+                    break;
+                case "interactive":
+                    setProgress(50);
+                    break;
+                case "complete":
+                    setProgress(80);
+                    break;
+                default:
+                    break;
             }
-        });
+        };
 
-        observer.observe(document.body, { childList: true, subtree: true });
+        updateProgress();
+        document.addEventListener("readystatechange", updateProgress);
 
-        return () => observer.disconnect();
+        return () =>
+            document.removeEventListener("readystatechange", updateProgress);
     }, []);
 
+    useEffect(() => {
+        const onLoad = () => {
+            setProgress(90);
+        };
+
+        window.addEventListener("load", onLoad);
+        return () => window.removeEventListener("load", onLoad);
+    }, []);
 
     useEffect(() => {
-        if (!captchaLoading) return;
-
-        const interval = setInterval(() => {
-            setProgress(prev => {
-                if (prev >= 95) return 95; // wait for actual recaptcha load
-                return prev + 1; // increase 1% every 30ms ≈ 3 seconds total
+        if (progress >= 90) {
+            requestAnimationFrame(() => {
+                setProgress(100);
+                setFormReady(true);
             });
-        }, 30);
-
-        return () => clearInterval(interval);
-    }, [captchaLoading]);
-
+        }
+    }, [progress]);
 
     useEffect(() => {
         setLoadingCaptcha(true);
         setFormReady(false);
 
-        const timer = setTimeout(() => {
-            setLoadingCaptcha(false);
-            setFormReady(true);
-        }, 3000);
-
-        return () => clearTimeout(timer);
     }, [resolvedTheme]);
 
     useEffect(() => {
@@ -130,17 +134,17 @@ const Login = () => {
         if (!formReady) return;
 
         //console.log("Hey: " + JSON.stringify(loginDetails));
-        if (!captchaToken) {  // 👈 CAPTCHA validation
-            toast.warn("Please verify the CAPTCHA!", {
-                position: "bottom-center",
-                autoClose: 1500,
-            });
-            return;
-        }
+        /* if (!captchaToken) {  // 👈 CAPTCHA validation
+             toast.warn("Please verify the CAPTCHA!", {
+                 position: "bottom-center",
+                 autoClose: 1500,
+             });
+             return;
+         }*/
 
         setIsLoading(true); // Start loading
 
-        loginUser({ ...loginDetails, recaptchaToken: captchaToken }).then((data) => {
+        loginUser({ ...loginDetails }).then((data) => {
             doLogin(data, () => {
                 // Simulate a delay to show loading spinner
                 const auth = data.user.type;
@@ -210,7 +214,7 @@ const Login = () => {
                     <div className='App-login' disabled={isLoading}>
 
                         {captchaLoading && (
-                            <div className="progress mb-3" style={{ height: "25px" }}>
+                            <div className={`progress mb-3 progress-fade ${formReady ? "hide" : ""}`} style={{ height: "25px" }} >
                                 <div
                                     className="progress-bar progress-bar-striped progress-bar-animated"
                                     style={{ width: `${progress}%`, transition: "width 0.2s linear" }}
@@ -305,8 +309,9 @@ const Login = () => {
                                             Remember me
                                         </label>
                                     </div>
+                                    {/* CAPTCHA COMPONENT 
 
-                                    <ReCAPTCHA
+                                     <ReCAPTCHA
                                         key={resolvedTheme} // <- force remount when theme changes
                                         sitekey="6LdpOf4rAAAAAOO46vOLBXGpNTfnrZUWvWWLHrwM"
                                         onChange={(token) => setCaptchaToken(token)}
@@ -318,7 +323,7 @@ const Login = () => {
                                             setTimeout(() => setCaptchaLoading(false), 300);
                                         }}
                                     />
-
+                                        */}
                                     <button type="submit" className="btn btn-primary w-100" onClick={e => { handleLoginForm(e); }} disabled={!formReady}> {isLoading ? (
                                         <>
                                             <i className="fa-solid fa-cog fa-spin fa-2x me-2"></i>

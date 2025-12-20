@@ -23,11 +23,15 @@ const Cousres = () => {
   });
   const [isUpdate, setIsUpdate] = useState(false);
   const [selected, setSelected] = useState("All");
-  const coursesTableRef = useRef();
+  const statusRef = useRef("A");
   const courseModalElRef = useRef(null);
-  const getAllCoursesRef = useRef();
   const modalRef = useRef(null);
-  const handleAllRef = useRef();
+  const [deleteInfo, setDeleteInfo] = useState({
+    id: null,
+    name: ""
+  });
+  const deleteModalRef = useRef(null);
+  const deleteModalInstanceRef = useRef(null);
 
   const [validation, setValidation] = useState({
     deptDesc: false,
@@ -66,17 +70,66 @@ const Cousres = () => {
 
   };
 
+  const courseTableDomRef = useRef(null);      // ONLY for <table>
+  const tableApiRef = useRef(null);      // ONLY for DataTable instance
 
-  const getAllCourse = useCallback((data) => {
-    const tableEl = coursesTableRef.current;
+  // on page load
+  useEffect(() => {
+    document.title = "Department - Admin";
+    checkTokenAndLogout();
+    const el = courseModalElRef.current;
+    if (!el) return;
+    // Create modal with static backdrop (cannot close by clicking outside)
+    modalRef.current = new bootstrap.Modal(el, {
+      backdrop: 'static',
+      keyboard: false
+    });
 
-    // If table already exists → destroy it completely
-    if ($.fn.dataTable.isDataTable(tableEl)) {
-      $(tableEl).DataTable().clear().destroy();
-      $(tableEl).empty(); // prevents duplicated headers
-    }
+    const handleModalClose = () => {
+      // Clear validation errors
+      setValidation({
+        deptDesc: false,
+        status: false,
+      });
+    };
 
-    $(tableEl).DataTable({
+    el.addEventListener("hidden.bs.modal", handleModalClose);
+
+    return () => {
+      el.removeEventListener("hidden.bs.modal", handleModalClose);
+    };
+
+  }, []);
+
+
+  useEffect((data) => {
+
+    if (tableApiRef.current) return;
+
+    tableApiRef.current = $(courseTableDomRef.current).DataTable({
+      ajax: function (_, callback) {
+        $.blockUI({
+          border: 'none',
+          padding: '15px',
+          backgroundColor: '#000',
+          '-webkit-border-radius': '10px',
+          '-moz-border-radius': '10px',
+          opacity: .5,
+          color: '#ffffff05',
+          message: '<div class="blockui-message">Please Wait...<span class="spinner-border text-primary spinner-border-sm ms-1"></span></div>'
+        });
+        const api =
+          statusRef.current === "A"
+            ? getAllCourses()
+            : getCoursesByStatus(statusRef.current);
+
+        api.then(res => {
+          callback({ data: res });
+          $.unblockUI();
+        }).catch(() => {
+          $.unblockUI();
+        });
+      },
       processing: true,
       fixedHeader: true,
       dom:
@@ -120,25 +173,11 @@ const Cousres = () => {
         }
       ],
       language: {
-
-        processing: `
-                                <div className="text-center">
-                                  <strong role="status">Loading courses...</strong>
-                                  <div className="spinner-grow spinner-grow-sm text-danger" role='status'></div>
-                                  <div className="spinner-grow spinner-grow-sm text-success" role="status"></div>
-                                  <div className="spinner-grow spinner-grow-sm text-primary" role="status"></div>
-                                  <div className="spinner-grow spinner-grow-sm text-warning" role="status"></div>
-                                  <div className="spinner-grow spinner-grow-sm text-light" role="status"></div>
-                                  <div className="spinner-grow spinner-grow-sm text-dark" role="status"></div>
-                                </div>
-                            `,
-        emptyTable: `
-                                <div class="text-center py-4">
+        emptyTable: `<div class="text-center py-4">
                                   <i class="bi bi-database-x text-danger" style="font-size: 2.5rem;"></i>
                                   <h5 class="mt-3 text-muted fw-bold">No Courses Available</h5>
                                   <p class="text-secondary">Please adjust your filter or add a new user types.</p>
-                                </div>
-                              `
+                     </div>`
       },
 
       data: data, // ✅ direct data assignment here
@@ -177,101 +216,85 @@ const Cousres = () => {
           title: "Actions",
           className: "text-center",
           data: function (row, type, val, meta) {
-            return `<button class="btn btn-info me-2 edit-btn" data-id="${row.id}" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Edit">
-                        <i class="bi bi-pencil-square" ></i></button>
-                      <button class="btn btn-danger delete-btn" data-id="${row}" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Delete">
-                        <i class="bi bi-trash"></i></button>`;
+            return `<div class="dropdown-center">
+                      <button class="btn dropdown-toggle btn-outline-primary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Action
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item edit-btn text-center" href="javascript:void(0);"  data-id="${row.id}">Edit <i class="bi bi-pencil-square text-warning"></i></a></li>
+                        <li><a class="dropdown-item delete-btn text-center" href="javascript:void(0);" data-id="${row.id}" >Delete <i class="bi bi-trash text-danger"></i></a></li>
+                      </ul>
+                    </div>`;
           }
         }
       ],
     });
 
-    $(tableEl).on('click', 'td.dt-control', function () {
-      let tr = $(this).closest('tr');
-      let icon = $(this).find('i');
-
-      if (tr.hasClass('dt-hasChild')) {
-        // Row is currently expanded → will collapse
-        icon.removeClass('bi-plus-circle text-success').addClass('bi-dash-circle text-danger');
-      } else {
-        // Row is collapsed → will expand
-        icon.removeClass('bi-dash-circle text-danger').addClass('bi-plus-circle text-success');
-      }
+    $(courseTableDomRef.current).on('click', '.edit-btn', function () {
+      const data = tableApiRef.current.row($(this).parents('tr')).data();
+      setIsUpdate(true);
+      setCourse({
+        ...data
+      });
+      modalRef.current.show();
     });
 
-    $(tableEl).off('click', '.edit-btn')
-      .on('click', '.edit-btn', function (e) {
-        const table = $(tableEl).DataTable();
-        const rowData = table.row($(this).parents('tr')).data();
-        setIsUpdate(true);
-        setCourse({
-          ...rowData
-        });
-        modalRef.current.show();
-      });
+    $(courseTableDomRef.current).on('click', '.delete-btn', function () {
+      const id = $(this).data('id');
+      const data = tableApiRef.current.row($(this).parents('tr')).data();
+      const name = data.deptDesc;
+      setDeleteInfo({ id, name });
+      if (!deleteModalInstanceRef.current) {
+        deleteModalInstanceRef.current = new bootstrap.Modal(
+          deleteModalRef.current,
+          {
+            backdrop: 'static',
+            keyboard: false,
+          }
+        );
+      }
 
-    $(tableEl).off('click', '.delete-btn')
-      .on('click', '.delete-btn', function (e) {
-        const table = $(tableEl).DataTable();
-        const rowData = table.row($(this).parents('tr')).data();
-        const id = rowData.id;
-        const name = rowData.deptDesc;
-        toast.info(({ closeToast }) => (
-          <div className='text-center p-2'>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="38"
-              height="38"
-              fill="red"
-              className="bi bi-exclamation-triangle"
-              viewBox="0 0 16 16"
-              aria-label="Warning"
-              role="img"
-            >
-              <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z" />
-              <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
-            </svg><p><b>Are you sure you want to delete the Course {name}?</b></p><div className='d-flex p-2 justify-content-center'><button className='btn btn-outline-warning flex-row' onClick={() => {
-              deleteCourseId(id);
-            }}>Yes</button>
-              <button className='btn btn-outline-secondary ms-2 flex-row' onClick={() => {
-                closeToast();
-              }}>No</button></div></div>
-        ), { position: "top-center", icon: false });
-
-
-        const deleteCourseId = (id) => {
-          deleteCourse(id).then(response => {
-            toast.info("Course deleting please wait...", { position: "top-right", autoClose: 1200 });
-            setTimeout(() => {
-              toast.dismiss();
-              setCourse({
-                id: '',
-                deptDesc: '',
-                status: '',
-              });
-              toast.success(response.message, { position: "top-right", autoClose: 1600 });
-            }, 2000);
-
-            setTimeout(() => {
-              toast.dismiss();
-              handleAllRef.current?.();
-            }, 3500);
-            return true;
-          }).catch((error) => {
-            console.log("error", JSON.stringify(error));
-            toast.error("Course not deleted.", {
-              position: "top-right",
-            });
-            return false;
-          });
-        }
-      });
-
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    tooltipTriggerList.forEach(tooltipTriggerEl => {
-      new bootstrap.Tooltip(tooltipTriggerEl);
+      deleteModalInstanceRef.current.show();
     });
   }, []);
+
+  const deleteCourseId = (id) => {
+    deleteCourse(id).then(response => {
+      toast.info("Course deleting please wait...", { position: "top-right", autoClose: 1200 });
+      setTimeout(() => {
+        toast.dismiss();
+        setCourse({
+          id: '',
+          deptDesc: '',
+          status: '',
+        });
+        toast.success(response.message, { position: "top-right", autoClose: 1600 });
+      }, 2000);
+
+      setTimeout(() => {
+        toast.dismiss();
+        // ✅ CLOSE MODAL HERE
+        deleteModalInstanceRef.current?.hide();
+        setDeleteInfo({ id: null, name: "" });
+        handleAll();
+      }, 3500);
+      return true;
+    }).catch((error) => {
+      console.log("error", JSON.stringify(error));
+      toast.error("Course not deleted.", {
+        position: "top-right",
+      });
+      return false;
+    });
+  };
+
+  const reloadTable = () => {
+    if (!tableApiRef.current) return;
+    tableApiRef.current.ajax.reload(() => {
+      // 🔥 THIS IS THE KEY LINE
+      tableApiRef.current.rows().invalidate('data').draw(false);
+    }, false);
+  };
 
   // handle all
   const handleAll = useCallback((event) => {
@@ -280,99 +303,26 @@ const Cousres = () => {
       id: '',
       deptDesc: '',
       status: '',
-    })
-
-    getAllCourses().then((res) => {
-      getAllCoursesRef.current?.(res);
-    }).catch((err) => {
-      console.log(err);
-      toast.error("Something went wrong.", {
-        position: "top-right",
-      });
     });
+    statusRef.current = "A";
+    reloadTable();
   }, []);
 
   //handle invalid
   const handleInvalid = (event) => {
     event.preventDefault();
     setSelected("Invalid");
-    getCoursesByStatus('I').then((res) => {
-      getAllCoursesRef.current?.(res);
-    }).catch((err) => {
-      console.log(err);
-    });
+    statusRef.current = "I";
+    reloadTable();
   }
 
   //handle valid
   const handleValid = (event) => {
     event.preventDefault();
     setSelected("Valid");
-    getCoursesByStatus("V").then((res) => {
-      getAllCoursesRef.current?.(res);
-    }).catch((err) => {
-      console.log(err);
-      toast.error("Something went wrong.", {
-        position: "top-right",
-      });
-    });
+    statusRef.current = "V";
+    reloadTable();
   };
-
-  // on page load
-  useEffect(() => {
-    document.title = "Department - Admin";
-    checkTokenAndLogout();
-    const el = courseModalElRef.current;
-    if (!el) return;
-    // Create modal with static backdrop (cannot close by clicking outside)
-    modalRef.current = new bootstrap.Modal(el, {
-      backdrop: 'static',
-      keyboard: false
-    });
-
-    handleAllRef.current = handleAll;
-    getAllCoursesRef.current = getAllCourse;
-    getAllCourses().then((res) => {
-      console.log(res);
-      getAllCoursesRef.current?.(res);
-    }).catch((err) => {
-      console.log(err);
-    }).finally(() => {
-      // Delay tooltip setup until after DOM updates
-      setTimeout(() => {
-        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        tooltipTriggerList.forEach(tooltipTriggerEl => {
-          new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-      }, 0); // ensures DOM is updated
-    });
-
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    tooltipTriggerList.forEach(tooltipTriggerEl => {
-      new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-
-    //cleanup validation errors on modal close
-    const modalElement = document.getElementById('coursesModal');
-
-    const handleModalClose = () => {
-      // Clear validation errors
-      setValidation({
-        deptDesc: false,
-        status: false,
-      });
-    };
-
-    if (modalElement) {
-      modalElement.addEventListener('hidden.bs.modal', handleModalClose);
-    }
-
-    // Clean up listener on unmount
-    return () => {
-      if (modalElement) {
-        modalElement.removeEventListener('hidden.bs.modal', handleModalClose);
-      }
-    };
-  }, [getAllCourse, handleAll]);
 
   // add new Course
   const newCourse = () => {
@@ -404,7 +354,6 @@ const Cousres = () => {
           status: '',
         });
 
-
         toast.success("Course added.", { position: "top-right", autoClose: 1600 });
         modalRef.current.hide();
       }, 2000);
@@ -426,7 +375,6 @@ const Cousres = () => {
     if (!validateFields()) return;
 
     updateDepartment(course, course.id).then(response => {
-
       toast.info("Course updating please wait.", {
         position: "top-right",
         autoClose: 1200,
@@ -530,7 +478,7 @@ const Cousres = () => {
             </div>
             <div className="card-body">
               <div className=' table-wrapper'>
-                <table className="table table-responsive" ref={coursesTableRef}>
+                <table className="table table-responsive" ref={courseTableDomRef}>
                   <thead></thead>
                   <tbody></tbody>
                 </table>
@@ -581,6 +529,50 @@ const Cousres = () => {
           </div>
         </div>
       </div>
+
+      <div className="modal" tabIndex="-1" id="deleteCourseModal" ref={deleteModalRef}>
+        <div className="modal-dialog modal-dialog-centered modal-sm">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h6 className="modal-title">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="38"
+                  height="38"
+                  fill="red"
+                  className="bi bi-exclamation-triangle"
+                  viewBox="0 0 16 16"
+                  aria-label="Warning"
+                  role="img"
+                >
+                  <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z" />
+                  <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
+                </svg>
+                <span className='ms-3 fw-bold text-warning'>Warning</span>
+              </h6>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              <div className='text-center p-2'>
+                <p className="fw-semibold fs-5">
+                  Are you sure?
+                </p>
+                <p>
+                  You’re about to remove{" "}
+                  <span className="fw-bold text-danger">{deleteInfo.name}</span>{" "}
+                  from the course list.
+                </p>
+                <p className="text-muted mb-0">
+                  This change cannot be reversed.
+                </p></div>
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-primary" onClick={() => deleteCourseId(deleteInfo.id)}>Yes</button>
+              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">No</button>
+            </div>
+          </div>
+        </div>
+      </div >
     </>
   )
 }

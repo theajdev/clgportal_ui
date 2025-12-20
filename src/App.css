@@ -30,10 +30,24 @@
   z-index: 0 !important;
 }
 
-.dropdown-toggle::after {
-  color: #fff !important;
+.progress-fade {
+  opacity: 1;
+  transition: opacity 0.4s ease;
 }
 
+.progress-fade.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+.dt-scroll-foot {
+  overflow: visible !important;
+}
+.dt-scroll {
+  overflow: visible !important;
+}
+t-body {
+  overflow: visible !important;
+}
 table.dataTable {
   width: 100% !important;
 }

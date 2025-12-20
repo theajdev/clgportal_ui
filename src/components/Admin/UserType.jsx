@@ -5,7 +5,7 @@ import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
 import "datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css";
 import "datatables.net-select-bs5/css/select.bootstrap5.min.css";
 import bootstrap from 'bootstrap/dist/js/bootstrap.js';
-import { addNewRole, deleteRole, getAllRoles, getRolesByStatus, UpdateRole } from '../../services/AdminServices/RoleService';
+import { addNewRole, deleteRole, getAllUserTypes, getUserTypesByStatus, UpdateRole } from '../../services/AdminServices/RoleService';
 import { toast } from 'react-toastify';
 import { checkTokenAndLogout } from '../../services/auth';
 import "datatables.net-bs5";
@@ -14,8 +14,6 @@ import 'datatables.net-buttons/js/buttons.print.js';
 import 'datatables.net-responsive-bs5';
 
 // Initialization for ES Users
-
-
 const UserType = () => {
   window.JSZip = jszip;
   const [role, setRole] = useState({
@@ -26,11 +24,17 @@ const UserType = () => {
   });
   const [isUpdate, setIsUpdate] = useState(false);
   const [selected, setSelected] = useState("All");
-  const userTypeTableRef = useRef();
+  const [deleteInfo, setDeleteInfo] = useState({
+    id: null,
+    name: ""
+  });
   const studModalElRef = useRef(null);
-  const getAllUserTypesRef = useRef();
   const modalRef = useRef(null);
-  const handleAllRef = useRef();
+  const userTypeTableRef = useRef(null);      // ONLY for <table>
+  const tableApiRef = useRef(null);      // ONLY for DataTable instance
+  const statusRef = useRef("A");
+  const deleteUserTypeModalRef = useRef(null);
+  const deleteModalInstanceRef = useRef(null);
 
   const [validation, setValidation] = useState({
     roleDisp: false,
@@ -69,18 +73,76 @@ const UserType = () => {
     return Object.keys(errors).length === 0;
   };
 
-  const getAllUserTypes = useCallback((data) => {
-    const tableEl = userTypeTableRef.current;
+  //On page load
+  useEffect(() => {
+    document.title = "User Types - Admin";
+    const el = studModalElRef.current;
+    if (!el) return;
 
-    // If table already exists → destroy it completely
-    if ($.fn.dataTable.isDataTable(tableEl)) {
-      $(tableEl).DataTable().clear().destroy();
-      $(tableEl).empty(); // prevents duplicated headers
-    }
+    // Create modal with static backdrop (cannot close by clicking outside)
+    modalRef.current = new bootstrap.Modal(el, {
+      backdrop: 'static',
+      keyboard: false
+    });
 
-    $(tableEl).DataTable({
-      processing: true,
-      fixedHeader: true,
+    checkTokenAndLogout();
+
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltipTriggerList.forEach(tooltipTriggerEl => {
+      new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+
+    const handleModalClose = () => {
+      setValidation({
+        roleDisp: false,
+        roleDesc: false,
+        status: false,
+      });
+    };
+
+    el.addEventListener("hidden.bs.modal", handleModalClose);
+
+    return () => {
+      el.removeEventListener("hidden.bs.modal", handleModalClose);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (tableApiRef.current) return;
+
+    tableApiRef.current = $(userTypeTableRef.current).DataTable({
+      ajax: function (_, callback) {
+        $.blockUI({
+          border: 'none',
+          padding: '15px',
+          backgroundColor: '#000',
+          '-webkit-border-radius': '10px',
+          '-moz-border-radius': '10px',
+          opacity: .5,
+          color: '#ffffff05',
+          message: '<div class="blockui-message">Please Wait...<span class="spinner-border text-primary spinner-border-sm ms-1"></span></div>'
+        });
+        const api =
+          statusRef.current === "A"
+            ? getAllUserTypes()
+            : getUserTypesByStatus(statusRef.current);
+
+        api.then(res => {
+          callback({ data: res });
+          $.unblockUI();
+        }).catch(() => {
+          $.unblockUI();
+        });
+      },
+      scrollY: "300px",
+      scrollX: true,
+      scrollCollapse: true,
+      fixedColumns: {
+        leftColumns: 2
+      },
+      autoWidth: false,
+      width: "100%",
       dom:
         "<'row mb-3'<'col-12 col-md-6 d-flex align-items-center justify-content-start mb-2 mb-md-0'f>" +
         "<'col-12 col-md-6 d-flex justify-content-start justify-content-md-end'B>>" +
@@ -118,32 +180,23 @@ const UserType = () => {
                 return data;
               }
             }
+          },
+          customize: function (win) {
+            $(win.document.body).css('zoom', '0.8');
+            $(win.document.body).find('table')
+              .addClass('compact')
+              .css('width', '100%');
           }
         }
       ],
       language: {
 
-        processing: `
-                              <div className="text-center">
-                                <strong role="status">Loading user types...</strong>
-                                <div className="spinner-grow spinner-grow-sm text-danger" role='status'></div>
-                                <div className="spinner-grow spinner-grow-sm text-success" role="status"></div>
-                                <div className="spinner-grow spinner-grow-sm text-primary" role="status"></div>
-                                <div className="spinner-grow spinner-grow-sm text-warning" role="status"></div>
-                                <div className="spinner-grow spinner-grow-sm text-light" role="status"></div>
-                                <div className="spinner-grow spinner-grow-sm text-dark" role="status"></div>
-                              </div>
-                          `,
-        emptyTable: `
-                              <div class="text-center py-4">
+        emptyTable: `<div class="text-center py-4">
                                 <i class="bi bi-database-x text-danger" style="font-size: 2.5rem;"></i>
                                 <h5 class="mt-3 text-muted fw-bold">No User Types Available</h5>
                                 <p class="text-secondary">Please adjust your filter or add a new user types.</p>
-                              </div>
-                            `
+                      </div>`
       },
-
-      data: data, // ✅ direct data assignment here
       order: [[1, 'asc']],
       on: {
         draw: (e) => {
@@ -179,104 +232,93 @@ const UserType = () => {
           title: "Actions",
           className: "text-center",
           data: function (row, type, val, meta) {
-            return `<button class="btn btn-info me-2 edit-btn" data-id="${row.id}" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Edit">
-                      <i class="bi bi-pencil-square" ></i></button>
-                    <button class="btn btn-danger delete-btn" data-id="${row}" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Delete">
-                      <i class="bi bi-trash"></i></button>`;
+            return `<div class="dropdown-center">
+                      <button class="btn dropdown-toggle btn-outline-primary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Action
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item edit-btn text-center" href="javascript:void(0);"  data-id="${row.id}">Edit <i class="bi bi-pencil-square text-warning"></i></a></li>
+                        <li><a class="dropdown-item delete-btn text-center" href="javascript:void(0);" data-id="${row.id}" >Delete <i class="bi bi-trash text-danger"></i></a></li>
+                      </ul>
+                    </div>`;
           }
         }
       ],
     });
 
-    $(tableEl).on('click', 'td.dt-control', function () {
-      let tr = $(this).closest('tr');
-      let icon = $(this).find('i');
-
-      if (tr.hasClass('dt-hasChild')) {
-        // Row is currently expanded → will collapse
-        icon.removeClass('bi-plus-circle text-success').addClass('bi-dash-circle text-danger');
-      } else {
-        // Row is collapsed → will expand
-        icon.removeClass('bi-dash-circle text-danger').addClass('bi-plus-circle text-success');
-      }
+    $(userTypeTableRef.current).on('click', '.edit-btn', function () {
+      const data = tableApiRef.current.row($(this).parents('tr')).data();
+      setIsUpdate(true);
+      setRole({
+        ...data,
+        roleDesc: data.roleDisp,
+      });
+      modalRef.current.show();
     });
 
-    $(tableEl).off('click', '.edit-btn')
-      .on('click', '.edit-btn', function (e) {
-        const table = $(tableEl).DataTable();
-        const rowData = table.row($(this).parents('tr')).data();
-        setIsUpdate(true);
-        setRole({
-          ...rowData,
-          roleDesc: rowData.roleDisp,
-        });
-        modalRef.current.show();
-      });
+    // Handle Delete button click
+    $(userTypeTableRef.current).on('click', '.delete-btn', function () {
+      const id = $(this).data('id');
+      const data = tableApiRef.current.row($(this).parents('tr')).data();
 
-    $(tableEl).off('click', '.delete-btn')
-      .on('click', '.delete-btn', function (e) {
-        const table = $(tableEl).DataTable();
-        const rowData = table.row($(this).parents('tr')).data();
-        const id = rowData.id;
-        const name = rowData.roleDisp;
-        toast.info(({ closeToast }) => (
-          <div className='text-center p-2'>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="38"
-              height="38"
-              fill="red"
-              className="bi bi-exclamation-triangle"
-              viewBox="0 0 16 16"
-              aria-label="Warning"
-              role="img"
-            >
-              <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z" />
-              <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
-            </svg><p><b>Are you sure you want to delete the user type {name}?</b></p><div className='d-flex p-2 justify-content-center'><button className='btn btn-outline-warning flex-row' onClick={() => {
-              deleteUserTypeId(id);
-            }}>Yes</button>
-              <button className='btn btn-outline-secondary ms-2 flex-row' onClick={() => {
-                closeToast();
-              }}>No</button></div></div>
-        ), { position: "top-center", icon: false });
+      const name = data.roleDisp;
 
-
-        const deleteUserTypeId = (id) => {
-          deleteRole(id).then(response => {
-            toast.info("User type deleting please wait...", { position: "top-right", autoClose: 1200 });
-            setTimeout(() => {
-              toast.dismiss();
-              setRole({
-                roleDisp: "",
-                roleDesc: "",
-                status: "",
-                id: "",
-              });
-              toast.success(response.message, { position: "top-right", autoClose: 1600 });
-            }, 2000);
-
-            setTimeout(() => {
-              toast.dismiss();
-              handleAllRef.current?.();
-            }, 3500);
-            return true;
-          }).catch((error) => {
-            console.log("error", JSON.stringify(error));
-            toast.error("User type not deleted.", {
-              position: "top-right",
-            });
-            return false;
-          });
-        }
-      });
-
+      // ✅ Save into React state
+      setDeleteInfo({ id, name });
+      if (!deleteModalInstanceRef.current) {
+        deleteModalInstanceRef.current = new bootstrap.Modal(
+          deleteUserTypeModalRef.current,
+          {
+            backdrop: 'static',
+            keyboard: false,
+          }
+        );
+      }
+      deleteModalInstanceRef.current.show();
+    });
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     tooltipTriggerList.forEach(tooltipTriggerEl => {
       new bootstrap.Tooltip(tooltipTriggerEl);
     });
   }, []);
 
+  const deleteUserTypeId = (id) => {
+    deleteRole(id).then(response => {
+      toast.info("User type deleting please wait...", { position: "top-right", autoClose: 1200 });
+      setTimeout(() => {
+        toast.dismiss();
+        setRole({
+          roleDisp: "",
+          roleDesc: "",
+          status: "",
+          id: "",
+        });
+        toast.success(response.message, { position: "top-right", autoClose: 1600 });
+      }, 2000);
+
+      setTimeout(() => {
+        // ✅ CLOSE MODAL HERE
+        deleteModalInstanceRef.current?.hide();
+        setDeleteInfo({ id: null, name: "" });
+        handleAll();
+      }, 3500);
+      return true;
+    }).catch((error) => {
+      console.log("error", JSON.stringify(error));
+      toast.error("User type not deleted.", {
+        position: "top-right",
+      });
+      return false;
+    });
+  }
+
+  const reloadTable = () => {
+    if (!tableApiRef.current) return;
+    tableApiRef.current.ajax.reload(() => {
+      // 🔥 THIS IS THE KEY LINE
+      tableApiRef.current.rows().invalidate('data').draw(false);
+    }, false);
+  };
 
   // handle all
   const handleAll = useCallback((event) => {
@@ -287,70 +329,26 @@ const UserType = () => {
       status: "",
       id: "",
     });
-
-    getAllRoles().then((res) => {
-      getAllUserTypesRef.current?.(res);
-    }).catch((err) => {
-      console.log(err);
-      toast.error("Something went wrong.", {
-        position: "top-right",
-      });
-    });
+    statusRef.current = "A";
+    reloadTable();
   }, []);
+
+  //handle valid
+  const handleValid = (event) => {
+    event.preventDefault();
+    setSelected("Valid");
+    statusRef.current = "V";
+    reloadTable();
+
+  };
 
   //handle invalid
   const handleInvalid = (event) => {
     event.preventDefault();
     setSelected("Invalid");
-    getRolesByStatus('I').then((res) => {
-      getAllUserTypes(res);
-    }).catch((err) => {
-      console.log(err);
-    });
+    statusRef.current = "I";
+    reloadTable();
   }
-
-  //On page load
-  useEffect(() => {
-    document.title = "User Types - Admin";
-    const el = studModalElRef.current;
-    if (!el) return;
-
-    // Create modal with static backdrop (cannot close by clicking outside)
-    modalRef.current = new bootstrap.Modal(el, {
-      backdrop: 'static',
-      keyboard: false
-    });
-
-    checkTokenAndLogout();
-    handleAllRef.current = handleAll;
-    getAllUserTypesRef.current = getAllUserTypes;
-    getAllRoles().then((data) => {
-      getAllUserTypes(data);
-    }).catch((err) => {
-      console.log(err);
-
-    });
-
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    tooltipTriggerList.forEach(tooltipTriggerEl => {
-      new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-
-
-    const handleModalClose = () => {
-      setValidation({
-        roleDisp: false,
-        roleDesc: false,
-        status: false,
-      });
-    };
-
-    el.addEventListener("hidden.bs.modal", handleModalClose);
-
-    return () => {
-      el.removeEventListener("hidden.bs.modal", handleModalClose);
-    };
-  }, [getAllUserTypes, handleAll]);
 
   // add new user type
   const newUserType = () => {
@@ -383,8 +381,6 @@ const UserType = () => {
           status: "",
           id: "",
         });
-
-
         toast.success("User type added.", { position: "top-right", autoClose: 1600 });
         modalRef.current.hide();
       }, 2000);
@@ -452,24 +448,6 @@ const UserType = () => {
         icon: false,
       });
       return false;
-    });
-  };
-
-
-
-
-
-  //handle valid
-  const handleValid = (event) => {
-    event.preventDefault();
-    setSelected("Valid");
-    getRolesByStatus("V").then((res) => {
-      getAllUserTypes(res);
-    }).catch((err) => {
-      console.log(err);
-      toast.error("Something went wrong.", {
-        position: "top-right",
-      });
     });
   };
 
@@ -582,6 +560,49 @@ const UserType = () => {
               }
               <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" data-mdb-ripple-init>Close</button>
 
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="modal" tabIndex="-1" id="deleteTeacherModal" ref={deleteUserTypeModalRef}>
+        <div className="modal-dialog modal-dialog-centered modal-sm">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h6 className="modal-title">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="38"
+                  height="38"
+                  fill="red"
+                  className="bi bi-exclamation-triangle"
+                  viewBox="0 0 16 16"
+                  aria-label="Warning"
+                  role="img"
+                >
+                  <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z" />
+                  <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
+                </svg>
+                <span className='ms-3 fw-bold text-warning'>Warning</span>
+              </h6>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              <div className='text-center p-2'>
+                <p className="fw-semibold fs-5">
+                  Are you sure?
+                </p>
+                <p>
+                  You’re about to remove{" "}
+                  <span className="fw-bold text-danger">{deleteInfo.name}</span>{" "}
+                  from the user types list.
+                </p>
+                <p className="text-muted mb-0">
+                  This change cannot be reversed.
+                </p></div>
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-primary" onClick={() => deleteUserTypeId(deleteInfo.id)}>Yes</button>
+              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">No</button>
             </div>
           </div>
         </div>

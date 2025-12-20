@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import $ from 'jquery';
 import jszip from 'jszip';
 import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
@@ -27,12 +27,13 @@ const AdminNotice = () => {
 
   const input = notice.postedOn;
   const formatted = dayjs(input).format("DD-MM-YYYY HH:mm:ss");
-
   const [depts, setDepts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);  // State htmlFor loading
   const [isUpdate, setIsUpdate] = useState(false);
   const [selected, setSelected] = useState("All");
-
+  const [deleteInfo, setDeleteInfo] = useState({
+    id: null,
+    name: ""
+  });
   const [validation, setValidation] = useState({
     noticeTitle: false,
     noticeDesc: false,
@@ -42,14 +43,11 @@ const AdminNotice = () => {
 
   const validateFields = () => {
     const errors = {};
-
     if (!notice.noticeTitle.trim()) { errors.noticeTitle = true; }
     if (!notice.noticeDesc.trim()) { errors.noticeDesc = true; }
     if (!notice.status || notice.status.trim() === "") { errors.status = true; } else if (!notice.deptId || notice.deptId.length === 0) { errors.deptId = true; }
 
     setValidation(prev => ({ ...prev, ...errors }));
-
-
 
     return Object.keys(errors).length === 0;
   };
@@ -69,39 +67,117 @@ const AdminNotice = () => {
     }));
   };
 
-  const tableAdminNoticeRef = useRef();
-  const getAdminNoticeDetailsRef = useRef();
-  const handleAllRef = useRef();
+
   const modalAdminNoticeElRef = useRef(null);
   const modalViewNoticeElRef = useRef(null);
   const modalRef = useRef(null);
   const modalViewRef = useRef(null);
+  const statusRef = useRef("A");
+  const tableDomRef = useRef(null);      // ONLY for <table>
+  const tableApiRef = useRef(null);      // ONLY for DataTable instance
+  const deleteNoticeModalRef = useRef(null);
+  const deleteModalInstanceRef = useRef(null);
+  const deptMapRef = useRef({});
 
   useEffect(() => {
-    getAllCourses()
-      .then((dept) => setDepts(dept))
-      .catch((err) => console.log(err));
-  }, []);
+    document.title = "Notice - Admin";
+    const el = modalAdminNoticeElRef.current;
+    if (!el) return;
 
-  const getAdminNoticeDetails = useCallback((notices) => {
-
-    if (depts.length === 0) return;
-
-    const tableEl = tableAdminNoticeRef.current;
-
-    // If table already exists → destroy it completely
-    if ($.fn.dataTable.isDataTable(tableEl)) {
-      $(tableEl).DataTable().clear().destroy();
-      $(tableEl).empty(); // prevents duplicated headers
+    // Create modal with static backdrop (cannot close by clicking outside)
+    if (!modalRef.current) {
+      modalRef.current = new bootstrap.Modal(el, {
+        backdrop: 'static',
+        keyboard: false
+      });
     }
 
-    $(tableEl).DataTable({
-      processing: true,
-      fixedHeader: true,
+    const viewEl = modalViewNoticeElRef.current;
+    if (!viewEl) return;
+    if (!modalViewRef.current) {
+      modalViewRef.current = new bootstrap.Modal(viewEl, {
+        backdrop: 'static',
+        keyboard: false
+      });
+    }
 
+    checkTokenAndLogout();
+
+    getAllCourses()
+      .then((dept) => {
+        console.log("Departments from API:", dept); // 👈 here
+        setDepts(dept);
+      })
+      .catch((err) => console.log(err));
+
+    const handleModalClose = () => {
+      // Clear validation errors
+      setValidation({
+        noticeTitle: false,
+        noticeDesc: false,
+        deptId: false,
+        status: false,
+      });
+    };
+
+    el.addEventListener("hidden.bs.modal", handleModalClose);
+    return () => {
+      el.removeEventListener("hidden.bs.modal", handleModalClose);
+    };
+
+  }, []);
+
+  useEffect(() => {
+    const map = {};
+    depts.forEach(d => {
+      map[String(d.id)] = d.deptDesc;   // normalize key
+    });
+    deptMapRef.current = map;
+  }, [depts]);
+
+  useEffect(() => {
+    if (depts.length === 0) return;
+    if (tableApiRef.current) return;
+
+    tableApiRef.current = $(tableDomRef.current).DataTable({
+      ajax: function (_, callback) {
+        $.blockUI({
+          border: 'none',
+          padding: '15px',
+          backgroundColor: '#000',
+          '-webkit-border-radius': '10px',
+          '-moz-border-radius': '10px',
+          opacity: .5,
+          color: '#ffffff05',
+          message: '<div class="blockui-message">Please Wait...<span class="spinner-border text-primary spinner-border-sm ms-1"></span></div>'
+        });
+        const api =
+          statusRef.current === "A"
+            ? getAllNotices()
+            : getNoticeByStatus(statusRef.current);
+
+        api.then(res => {
+          callback({ data: res });
+          $.unblockUI();
+        }).catch(() => {
+          $.unblockUI();
+        });
+      },
+      scrollY: "300px",
+      scrollX: true,
+      scrollCollapse: true,
+      fixedColumns: {
+        leftColumns: 2
+      },
+      autoWidth: false,
+      width: "100%",
       dom:
-        "<'row mb-3'<'col-12 col-md-6 d-flex align-items-center justify-content-start mb-2 mb-md-0'f>" +
-        "<'col-12 col-md-6 d-flex justify-content-start justify-content-md-end'B>>" +
+        "<'row mb-3'" +
+        "<'col-12 col-md-6 d-flex align-items-center gap-2 justify-content-start mb-2 mb-md-0'" +
+        "f <'my-custom-dropdown'>" +
+        ">" +
+        "<'col-12 col-md-6 d-flex justify-content-start justify-content-md-end'B>" +
+        ">" +
         "<'row'<'col-sm-12'tr>>" +
         "<'row mt-3'<'col-sm-5'i><'col-sm-7'p>>",
 
@@ -140,18 +216,6 @@ const AdminNotice = () => {
         }
       ],
       language: {
-
-        processing: `
-                            <div className="text-center">
-                              <strong role="status">Loading Notices...</strong>
-                              <div className="spinner-grow spinner-grow-sm text-danger" role='status'></div>
-                              <div className="spinner-grow spinner-grow-sm text-success" role="status"></div>
-                              <div className="spinner-grow spinner-grow-sm text-primary" role="status"></div>
-                              <div className="spinner-grow spinner-grow-sm text-warning" role="status"></div>
-                              <div className="spinner-grow spinner-grow-sm text-light" role="status"></div>
-                              <div className="spinner-grow spinner-grow-sm text-dark" role="status"></div>
-                            </div>
-                        `,
         emptyTable: `
                             <div class="text-center py-4">
                               <i class="bi bi-database-x text-danger" style="font-size: 2.5rem;"></i>
@@ -160,8 +224,6 @@ const AdminNotice = () => {
                             </div>
                           `
       },
-
-      data: notices, // ✅ direct data assignment here
       order: [[1, 'asc']],
       on: {
         draw: (e) => {
@@ -175,13 +237,11 @@ const AdminNotice = () => {
         }
       },
       columns: [
-
         {
           title: "Sr. No.",
           className: "text-center",
           data: null,
         },
-
         {
           title: "Title",
           className: "text-center",
@@ -192,162 +252,135 @@ const AdminNotice = () => {
               return row.noticeTitle;
             }
           }
-
         },
         {
           title: "Departments",
           className: "text-center",
-          data: function (row, type, val, meta) {
-            if (row.deptId === null || row.deptId === undefined || row.deptId === '') {
-              return '-'; // Replace blank with dash
-            } else {
-              // Handle null, undefined, empty string
-              if (!row.deptId || row.deptId.length === 0) {
-                return "-";
-              }
-
-              let deptIds = row.deptId;
-
-              // If it's a single ID → convert to array
-              if (!Array.isArray(deptIds)) {
-                deptIds = [deptIds];
-              }
-
-              // Map dept IDs to department names
-              const names = deptIds
-                .map(id => {
-                  const dept = depts.find(d => d.id === id);
-                  return dept ? dept.deptDesc : id;
-                })
-                .join(", ");
-
-              return names;
-
+          data: row => {
+            if (!Array.isArray(row.deptId) || row.deptId.length === 0) {
+              return "-";
             }
-          }
 
+            return row.deptId
+              .map(id => deptMapRef.current[String(id)])
+              .filter(Boolean)
+              .join(", ");
+          }
         },
         {
           title: "Actions",
           className: "text-center",
           data: function (row, type, val, meta) {
             console.log("row", row);
-            return `<button class="btn btn-warning me-2 view-btn" data-id="${row.id}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" className="bi bi-eye" viewBox="0 0 16 16">
-                              <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
-                              <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
-                            </svg> View
-                  </button>
-                  <button class="btn btn-info me-2 edit-btn" data-id="${row.id}">
-                    <i class="bi bi-pencil-square"></i> Edit
-                  </button>
-                  <button class="btn btn-danger delete-btn" data-id="${row.id}">
-                    <i class="bi bi-trash"></i> Delete
-                  </button>`;
+            return `<div class="dropdown-center">
+                      <button class="btn dropdown-toggle btn-outline-primary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Action
+                      </button>
+                      <ul class="dropdown-menu">
+                      <li><a class="dropdown-item view-btn text-center" href="javascript:void(0);"  data-id="${row.id}">View <i class="bi bi-eye text-info"></i></a></li>
+                        <li><a class="dropdown-item edit-btn text-center" href="javascript:void(0);"  data-id="${row.id}">Edit <i class="bi bi-pencil-square text-warning"></i></a></li>
+                        <li><a class="dropdown-item delete-btn text-center" href="javascript:void(0);" data-id="${row.id}" >Delete <i class="bi bi-trash text-danger"></i></a></li>
+                      </ul>
+                    </div>`;
           }
         }
       ],
 
     });
 
-    $(tableEl).off('click', '.view-btn')
-      .on('click', '.view-btn', function (e) {
-        const table = $(tableEl).DataTable();
-        const rowData = table.row($(this).parents('tr')).data();
+    $(tableDomRef.current).on('click', '.view-btn', function () {
+      const data = tableApiRef.current.row($(this).parents('tr')).data();
 
-        setIsUpdate(false);
+      setIsUpdate(false);
 
-        setNotice({
-          ...rowData,
-        });
-        modalViewRef.current.show();
+      setNotice({
+        ...data,
       });
+      modalViewRef.current.show();
+    });
 
-    $(tableEl).off('click', '.edit-btn')
-      .on('click', '.edit-btn', function (e) {
-        const table = $(tableEl).DataTable();
-        const rowData = table.row($(this).parents('tr')).data();
-        setIsUpdate(true);
-        setNotice({
-          ...rowData,
-        });
-        modalRef.current.show();
+    // Handle Edit button click
+    $(tableDomRef.current).on('click', '.edit-btn', function () {
+      const data = tableApiRef.current.row($(this).parents('tr')).data();
+      setIsUpdate(true);
+      setNotice({
+        ...data,
       });
+      modalRef.current.show();
+    });
 
-    $(tableEl)
-      .off('click', '.delete-btn')
-      .on('click', '.delete-btn', function (e) {
-        const table = $(tableEl).DataTable();
-        const rowData = table.row($(this).parents('tr')).data();
-        const id = rowData.id;
-        const name = rowData.noticeTitle;
-        toast.info(({ closeToast }) => (
-          <div className='text-center p-2'>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="38"
-              height="38"
-              fill="red"
-              className="bi bi-exclamation-triangle"
-              viewBox="0 0 16 16"
-              aria-label="Warning"
-              role="img"
-            >
-              <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z" />
-              <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
-            </svg><p><b>Are you sure you want to delete the notice {name}?</b></p><div className='d-flex p-2 justify-content-center'><button className='btn btn-outline-warning flex-row' onClick={() => {
-              deleteNoticeId(id);
-            }}>Yes</button>
-              <button className='btn btn-outline-secondary ms-2 flex-row' onClick={() => {
-                closeToast();
-              }}>No</button></div></div>
-        ), { position: "top-center", icon: false });
+    // Handle Delete button click
+    $(tableDomRef.current).on('click', '.delete-btn', function () {
+      const id = $(this).data('id');
+      const data = tableApiRef.current.row($(this).parents('tr')).data();
+      const name = data.noticeTitle;
+      // ✅ Save into React state
+      setDeleteInfo({ id, name });
+      if (!deleteModalInstanceRef.current) {
+        deleteModalInstanceRef.current = new bootstrap.Modal(
+          deleteNoticeModalRef.current,
+          {
+            backdrop: 'static',
+            keyboard: false,
+          }
+        );
+      }
 
-
-        const deleteNoticeId = (id) => {
-          deleteNotice(id).then(response => {
-            toast.info("Notice deleting please wait...", { position: "top-right", autoClose: 1200 });
-
-            setTimeout(() => {
-              toast.dismiss();
-              setNotice({
-                id: '',
-                noticeTitle: '',
-                noticeDesc: '',
-                deptId: [],
-                status: ''
-              });
-              toast.success(response.message, { position: "top-right", autoClose: 1600 });
-
-            }, 2000);
-
-
-            setTimeout(() => {
-              toast.dismiss();
-              handleAllRef.current?.();
-            }, 3500);
-
-            setNotice({
-              id: '',
-              noticeTitle: '',
-              noticeDesc: '',
-              deptId: [],
-              status: ''
-            });
-            return true;
-          }).catch((error) => {
-            // console.log("error", JSON.stringify(error));
-            toast.error("Notice not deleted.", {
-              position: "top-right",
-            });
-            return false;
-          });
-        }
-      });
+      deleteModalInstanceRef.current.show();
+    });
   }, [depts]);
 
+  const deleteNoticeId = (id) => {
+    deleteNotice(id).then(response => {
+      toast.info("Notice deleting please wait...", { position: "top-right", autoClose: 1200 });
+      setTimeout(() => {
+        toast.dismiss();
+        setNotice({
+          id: '',
+          noticeTitle: '',
+          noticeDesc: '',
+          deptId: [],
+          status: ''
+        });
+        toast.success(response.message, { position: "top-right", autoClose: 1600 });
+
+      }, 2000);
+
+      setTimeout(() => {
+        toast.dismiss();
+        // ✅ CLOSE MODAL HERE
+        deleteModalInstanceRef.current?.hide();
+        setDeleteInfo({ id: null, name: "" });
+        handleAll();
+      }, 3500);
+
+      setNotice({
+        id: '',
+        noticeTitle: '',
+        noticeDesc: '',
+        deptId: [],
+        status: ''
+      });
+      return true;
+    }).catch((error) => {
+      // console.log("error", JSON.stringify(error));
+      toast.error("Notice not deleted.", {
+        position: "top-right",
+      });
+      return false;
+    });
+  }
+
+  const reloadTable = () => {
+    if (!tableApiRef.current) return;
+    tableApiRef.current.ajax.reload(() => {
+      // 🔥 THIS IS THE KEY LINE
+      tableApiRef.current.rows().invalidate('data').draw(false);
+    }, false);
+  };
+
   // handle all
-  const handleAll = useCallback((event) => {
+  const handleAll = (event) => {
     setSelected("All");
     setNotice({
       id: '',
@@ -356,20 +389,9 @@ const AdminNotice = () => {
       deptId: [],
       status: ''
     });
-
-
-    getAllNotices().then(response => {
-      getAdminNoticeDetailsRef.current?.(response);
-    }).catch(error => {
-      console.log("error", error);
-      toast.error("Something went wrong.", {
-        position: "top-right",
-      });
-    });
-
-  }, []);
-
-
+    statusRef.current = "A";
+    reloadTable();
+  };
 
   //handle valid
   const handleValid = (event) => {
@@ -382,94 +404,17 @@ const AdminNotice = () => {
       deptId: [],
       status: ''
     });
-    getNoticeByStatus('V').then(response => {
-      getAdminNoticeDetails(response);
-    }).catch(error => {
-      console.log("error", error);
-      toast.error("Something went wrong.", {
-        position: "top-right",
-      });
-    }).finally(() => {
-      setIsLoading(false);
-    });
-
+    statusRef.current = "V";
+    reloadTable();
   };
 
-  useEffect(() => {
-    document.title = "Notice - Admin";
-    const el = modalAdminNoticeElRef.current;
-    if (!el) return;
-
-    // Create modal with static backdrop (cannot close by clicking outside)
-    if (!modalRef.current) {
-      modalRef.current = new bootstrap.Modal(el, {
-        backdrop: 'static',
-        keyboard: false
-      });
-    }
-
-    const viewEl = modalViewNoticeElRef.current;
-    if (!viewEl) return;
-    if (!modalViewRef.current) {
-      modalViewRef.current = new bootstrap.Modal(viewEl, {
-        backdrop: 'static',
-        keyboard: false
-      });
-    }
-
-    checkTokenAndLogout();
-    getAdminNoticeDetailsRef.current = getAdminNoticeDetails;
-    handleAllRef.current = handleAll;
-    getAllNotices().then((data) => {
-      getAdminNoticeDetails(data);
-    }).catch((error) => {
-      console.log("error", error);
-      toast.error("Something went wrong.", {
-        position: "top-right",
-      });
-    }).finally(() => {
-      // Delay tooltip setup until after DOM updates
-      setTimeout(() => {
-        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        tooltipTriggerList.forEach(tooltipTriggerEl => {
-          new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-      }, 0); // ensures DOM is updated
-    });
-
-    const selectAll = document.getElementById('selectAll');
-    const checkboxes = document.querySelectorAll('.item-checkbox');
-
-    selectAll.addEventListener('change', function () {
-      checkboxes.forEach(cb => cb.checked = this.checked);
-    });
-
-    checkboxes.forEach(cb => {
-      cb.addEventListener('change', function () {
-        if (!this.checked) {
-          selectAll.checked = false;
-        } else if (document.querySelectorAll('.item-checkbox:checked').length === checkboxes.length) {
-          selectAll.checked = true;
-        }
-      });
-    });
-
-    const handleModalClose = () => {
-      // Clear validation errors
-      setValidation({
-        noticeTitle: false,
-        noticeDesc: false,
-        deptId: false,
-        status: false,
-      });
-    };
-
-    el.addEventListener("hidden.bs.modal", handleModalClose);
-    return () => {
-      el.removeEventListener("hidden.bs.modal", handleModalClose);
-    };
-
-  }, [getAdminNoticeDetails, handleAll]);
+  //handle invalid
+  const handleInvalid = (event) => {
+    event.preventDefault();
+    setSelected("Invalid");
+    statusRef.current = "I";
+    reloadTable();
+  }
 
   // handle new user type button click
   const newNotice = () => {
@@ -483,20 +428,6 @@ const AdminNotice = () => {
     setIsUpdate(false);
     modalRef.current.show();
   };
-
-  //handle invalid
-  const handleInvalid = () => {
-    setSelected("Invalid");
-    getNoticeByStatus('I').then(response => {
-      getAdminNoticeDetails(response);
-    }).catch(error => {
-      console.log("error", error);
-      toast.error("Something went wrong.", {
-        position: "top-right",
-      });
-    });
-  }
-
 
   const editNotice = (e) => {
     e.preventDefault();
@@ -573,11 +504,6 @@ const AdminNotice = () => {
     });
   }
 
-
-
-
-
-
   return (
     <>
 
@@ -631,10 +557,9 @@ const AdminNotice = () => {
             </div>
           </div>
 
-          <div className={`card-body ${isLoading ? "disabled" : " "}`}>
-
+          <div className="card-body">
             <div className='table-wrapper'>
-              <table className="table nowrap display" ref={tableAdminNoticeRef}>
+              <table className="table nowrap display" ref={tableDomRef}>
                 <thead>
                 </thead>
                 <tbody>
@@ -643,7 +568,6 @@ const AdminNotice = () => {
             </div>
           </div>
         </div>
-
       </div>
 
       <div className="modal fade" id="adminNoticeModal" ref={modalAdminNoticeElRef} tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -667,6 +591,7 @@ const AdminNotice = () => {
                   className={`btn dropdown-toggle w-100 ${validation.deptId ? 'ripple-invalid' : 'btn-outline-secondary'}`}
                   type="button"
                   data-bs-toggle="dropdown"
+                  data-bs-auto-close="outside"
                   aria-expanded="false"
                 >
                   {notice.deptId.length === 0
@@ -747,8 +672,6 @@ const AdminNotice = () => {
                   ))}
                 </ul>
               </div>
-
-
               <select
                 name="status"
                 className={`form-select mb-3 ${validation.status ? 'ripple-invalid' : ''}`}
@@ -764,22 +687,16 @@ const AdminNotice = () => {
             </div>
             <div className="modal-footer">
               {isUpdate ? (
-
                 <button type="button" className="btn btn-warning" onClick={e => { editNotice(e) }}>Update</button>
-
               ) : (
-
                 <button type="button" className="btn btn-primary" onClick={e => { sendNotice(e) }}>Save</button>
-
               )
-
               }
               <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" >Close</button>
             </div>
           </div>
         </div>
       </div>
-
 
       <div className="modal fade" id="ViewNotice" ref={modalViewNoticeElRef} tabIndex="-1" aria-labelledby="ViewNoticeLable" aria-hidden="true">
         <div className="modal-dialog">
@@ -828,11 +745,50 @@ const AdminNotice = () => {
         </div>
       </div>
 
+      <div className="modal" tabIndex="-1" id="deleteTeacherModal" ref={deleteNoticeModalRef}>
+        <div className="modal-dialog modal-dialog-centered modal-sm">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h6 className="modal-title">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="38"
+                  height="38"
+                  fill="red"
+                  className="bi bi-exclamation-triangle"
+                  viewBox="0 0 16 16"
+                  aria-label="Warning"
+                  role="img"
+                >
+                  <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z" />
+                  <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
+                </svg>
+                <span className='ms-3 fw-bold text-warning'>Warning</span>
+              </h6>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              <div className='text-center p-2'>
+                <p className="fw-semibold fs-5">
+                  Are you sure?
+                </p>
+                <p>
+                  You’re about to remove{" "}
+                  <span className="fw-bold text-danger">{deleteInfo.name}</span>{" "}
+                  from the teachers list.
+                </p>
+                <p className="text-muted mb-0">
+                  This change cannot be reversed.
+                </p></div>
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-primary" onClick={() => deleteNoticeId(deleteInfo.id)}>Yes</button>
+              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">No</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
-
-
-
-
   )
 }
 

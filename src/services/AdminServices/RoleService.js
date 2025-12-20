@@ -1,10 +1,10 @@
 import { private_axios_url } from "../base";
 
-export const getAllRoles = () => {
+export const getAllUserTypes = () => {
   return private_axios_url.get("/role/").then((response) => response.data);
 };
 
-export const getRolesByStatus = (status) => {
+export const getUserTypesByStatus = (status) => {
   return private_axios_url
     .get(`/role/status/${status}`)
     .then((response) => response.data);
