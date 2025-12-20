@@ -109,14 +109,19 @@ const Cousres = () => {
     tableApiRef.current = $(courseTableDomRef.current).DataTable({
       ajax: function (_, callback) {
         $.blockUI({
-          border: 'none',
-          padding: '15px',
-          backgroundColor: '#000',
-          '-webkit-border-radius': '10px',
-          '-moz-border-radius': '10px',
-          opacity: .5,
-          color: '#ffffff05',
-          message: '<div class="blockui-message">Please Wait...<span class="spinner-border text-primary spinner-border-sm ms-1"></span></div>'
+          message: `<div class="blockui-box">
+                      <i class="fa-solid fa-spinner fa-spin fa-spin-pulse fa-2x blockui-icon"></i>
+                      <div class="blockui-text">Please wait...</div>
+                    </div>`,
+          css: {
+            border: 'none',
+            backgroundColor: 'transparent'
+          },
+          overlayCSS: {
+            backgroundColor: '#000',
+            opacity: 0.5,
+            cursor: 'wait'
+          }
         });
         const api =
           statusRef.current === "A"
