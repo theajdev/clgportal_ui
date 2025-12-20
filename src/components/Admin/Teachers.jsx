@@ -340,7 +340,7 @@ const Teachers = () => {
           title: "Action",
           className: "text-center",
           data: function (row, type, val, meta) {
-            return `<div class="dropdown-center">
+            return `<div class="dropdown">
                       <button class="btn dropdown-toggle btn-outline-primary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Action
                       </button>

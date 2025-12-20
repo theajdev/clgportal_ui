@@ -169,6 +169,12 @@ const Cousres = () => {
                 return data;
               }
             }
+          },
+          customize: function (win) {
+            $(win.document.body).css('zoom', '0.8');
+            $(win.document.body).find('table')
+              .addClass('compact')
+              .css('width', '100%');
           }
         }
       ],
@@ -179,8 +185,6 @@ const Cousres = () => {
                                   <p class="text-secondary">Please adjust your filter or add a new user types.</p>
                      </div>`
       },
-
-      data: data, // ✅ direct data assignment here
       order: [[1, 'asc']],
       on: {
         draw: (e) => {

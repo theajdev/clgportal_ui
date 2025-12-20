@@ -39,15 +39,16 @@
   opacity: 0;
   pointer-events: none;
 }
-.dt-scroll-foot {
+
+.dataTables_scrollBody {
   overflow: visible !important;
 }
-.dt-scroll {
+
+.dropdown-menu,
+.show {
   overflow: visible !important;
 }
-t-body {
-  overflow: visible !important;
-}
+
 table.dataTable {
   width: 100% !important;
 }
