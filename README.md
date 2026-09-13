@@ -8,10 +8,10 @@ Bootstrap Icons: icon
 
 ## 🚀 How to Run
 
-clone the project: https://github.com/gurkanucar/post-sharing-fe
+clone the project: https://github.com/theajdev/clgportal_ui
 
 ```bash
-git clone (https://github.com/theajdev/clgportal_ui/)
+git clone https://github.com/theajdev/clgportal_ui.git
 cd clgportal_ui
 ```
 
