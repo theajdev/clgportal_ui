@@ -13,6 +13,7 @@ clone the project: https://github.com/gurkanucar/post-sharing-fe
 ```bash
 git clone (https://github.com/theajdev/clgportal_ui/)
 cd clgportal_ui
+```
 
 ## Available Scripts
 
