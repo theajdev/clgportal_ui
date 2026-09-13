@@ -1,10 +1,24 @@
 # College Portal - Front-End
 
-## 🚀 Used Packages
+## 📦 Used Packages
 
-Bootstrap: ui package
+Bootstrap: 5.3.3
 
-Bootstrap Icons: icon
+Icons: Font Awesome, React FontAwesome, Bootstrap Icons
+
+DataTables: datatables.net-bs-5, Buttons, FixedColumns, Responsive, SearchBuilder, Select
+
+Day.js: 1.11.18
+
+Axios: 1.7.9
+
+jQuery: 3.7.1
+
+jQuery BlockUI: 2.7.0
+
+SweetAlert2: 11.17.2
+
+Charts: amCharts 5
 
 ## 🚀 How to Run
 
