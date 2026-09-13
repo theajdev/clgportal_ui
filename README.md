@@ -23,7 +23,7 @@
 
 ## 🚀 **`How to Run`**
 
-clone the project: https://github.com/theajdev/clgportal_ui
+**clone the project: https://github.com/theajdev/clgportal_ui**
 
 ```bash
 git clone https://github.com/theajdev/clgportal_ui.git
