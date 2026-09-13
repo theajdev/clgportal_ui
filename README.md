@@ -2,23 +2,16 @@
 
 📦 **Used Packages**
 
-**Bootstrap:** 5.3.3
-
-**Icons:** Font Awesome, React FontAwesome, Bootstrap Icons
-
-**DataTables:** datatables.net-bs-5, Buttons, FixedColumns, Responsive, SearchBuilder, Select
-
-**Day.js:** 1.11.18
-
-**Axios:** 1.7.9
-
-**jQuery:** 3.7.1
-
-**jQuery BlockUI:** 2.7.0
-
-**SweetAlert2:** 11.17.2
-
-**Charts:** amCharts5
+- ![Static Badge](https://img.shields.io/badge/Bootstrap-5.3.3-%237952B3?logo=bootstrap&logoSize=auto)
+- ![Static Badge](https://img.shields.io/badge/Font%20Awesome%20Free-7.1.0-%23538DD7?logo=fontawesome&logoSize=auto)
+- ![Static Badge](https://img.shields.io/badge/Bootstrap%20icons-1.11.18-%231496FF?logo=bootstrap&logoSize=auto)
+- ![Static Badge](https://img.shields.io/badge/%F0%9F%93%9AdataTables-2.3.4-%2309476B?logoSize=auto)
+- ![Static Badge](https://img.shields.io/badge/jQuery-3.7.1-%230769AD?logo=jquery&logoSize=auto)
+- ![Static Badge](https://img.shields.io/badge/DAY.JS-1.11.18-%23EB1B23?logoSize=auto&labelColor=%23EB1B23&color=%23FFBC00)
+- ![Static Badge](https://img.shields.io/badge/Axios-1.7.9-%235A29E4?logo=axios&logoSize=auto)
+- ![Static Badge](https://img.shields.io/badge/jQuery%20BlockUI-2.7.0-%232396F3?logo=uikit&logoSize=auto)
+- ![Static Badge](https://img.shields.io/badge/%F0%9F%8D%A9%20SweetAlert2-11.17.2-%23FF6D70?logoSize=auto)
+- ![Static Badge](https://img.shields.io/badge/amCharts-5-%235190EF?logo=chartdotjs&logoSize=auto)
 
 
 ## 🚀 **`How to Run`**
