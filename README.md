@@ -1,6 +1,18 @@
-# Getting Started with Create React App
+# College Portal - Front-End
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 🚀 Used Packages
+
+Bootstrap: ui package
+
+Bootstrap Icons: icon
+
+## 🚀 How to Run
+
+clone the project: https://github.com/gurkanucar/post-sharing-fe
+
+```bash
+git clone (https://github.com/theajdev/clgportal_ui/)
+cd clgportal_ui
 
 ## Available Scripts
 
