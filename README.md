@@ -21,7 +21,7 @@
 **Charts:** amCharts5
 
 
-## 🚀 How to Run
+## 🚀 `How to Run`
 
 clone the project: https://github.com/theajdev/clgportal_ui
 
@@ -38,7 +38,7 @@ run app
 npm start
 ```
 
-### `npm run build`
+### 🛠️ `npm run build`
 
 Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
